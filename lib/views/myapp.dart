@@ -1,3 +1,7 @@
+import 'package:club_app_admin/backend/admin/admin_provider.dart';
+import 'package:club_app_admin/backend/authentication/authentication_provider.dart';
+import 'package:club_app_admin/backend/common/menu_provider.dart';
+import 'package:club_app_admin/backend/products_backend/product_provider.dart';
 import 'package:club_model/club_model.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +17,10 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AppThemeProvider>(create: (_) => AppThemeProvider(), lazy: false),
+        ChangeNotifierProvider<AdminProvider>(create: (_) => AdminProvider(), lazy: false),
+        ChangeNotifierProvider<AuthenticationProvider>(create: (_) => AuthenticationProvider(), lazy: false),
+        ChangeNotifierProvider<MenuProvider>(create: (_) => MenuProvider(), lazy: false),
+        ChangeNotifierProvider<ProductProvider>(create: (_) => ProductProvider(), lazy: false),
       ],
       child: MainApp(),
     );
