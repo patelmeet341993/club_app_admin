@@ -18,14 +18,14 @@ class AddProduct extends StatefulWidget {
   ProductModel? productModel;
   bool isEdit = false;
   int? index;
-   AddProduct({this.productModel,this.isEdit = false,this.index});
+
+  AddProduct({this.productModel, this.isEdit = false, this.index});
 
   @override
   State<AddProduct> createState() => _AddProductState();
 }
 
 class _AddProductState extends State<AddProduct> {
-
   final _formKey = GlobalKey<FormState>();
   late ProductProvider productProvider;
   late ProductController productController;
@@ -41,7 +41,6 @@ class _AddProductState extends State<AddProduct> {
   Uint8List? brandThumbnailImage;
 
   Future<void> addThumbnailImage() async {
-
     setState(() {});
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -50,17 +49,15 @@ class _AddProductState extends State<AddProduct> {
       allowCompression: true,
     );
 
-    if(result?.files.firstElement != null) {
+    if (result?.files.firstElement != null) {
       PlatformFile platformFile = result!.files.firstElement!;
       thumbnailImage = platformFile.bytes;
 
       if (mounted) setState(() {});
     }
-
   }
 
   Future<void> addBrandThumbnailImage() async {
-
     setState(() {});
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -69,34 +66,33 @@ class _AddProductState extends State<AddProduct> {
       allowCompression: true,
     );
 
-    if(result?.files.firstElement != null) {
+    if (result?.files.firstElement != null) {
       PlatformFile platformFile = result!.files.firstElement!;
       brandThumbnailImage = platformFile.bytes;
       if (mounted) setState(() {});
     }
-
   }
 
-  Future<void> getData() async {
-
-  }
+  Future<void> getData() async {}
 
   Future<void> submitProduct() async {
     setState(() {
       isLoading = true;
     });
-
-
-
-    if(widget.productModel != null && widget.index != null && widget.isEdit == true ){
+    BrandModel brandModel = BrandModel(
+      name: brandNameController.text.trim(),
+      thumbnailImageUrl: brandThumbnailImageUrl,
+      createdTime: widget.productModel!.createdTime,
+    );
+    if (widget.productModel != null && widget.index != null && widget.isEdit == true) {
       MyPrint.printOnConsole("test model edit this with index: ${widget.index} edit: ${widget.isEdit}");
+
       ProductModel productModel = ProductModel(
         id: widget.productModel!.id,
-        name:  nameController.text.trim(),
-        brandName:  brandNameController.text.trim(),
+        name: nameController.text.trim(),
+        brand: brandModel,
         price: double.tryParse(priceController.text) ?? 0,
         sizeInML: double.tryParse(priceController.text) ?? 0,
-        brandThumbnailImageUrl: brandThumbnailImageUrl,
         thumbnailImageUrl: thumbnailImageUrl,
         createdTime: widget.productModel!.createdTime,
         updatedTime: Timestamp.now(),
@@ -104,16 +100,14 @@ class _AddProductState extends State<AddProduct> {
 
       // await productController.AddProductToFirebase(productModel);
       MyToast.showSuccess(context: context, msg: 'Product Edited successfully');
-
-    }else{
+    } else {
       MyPrint.printOnConsole("test model new duplicate");
       ProductModel productModel = ProductModel(
         id: MyUtils.getNewId(isFromUUuid: false),
-        name:  nameController.text.trim(),
-        brandName:  brandNameController.text.trim(),
+        name: nameController.text.trim(),
+        brand: brandModel,
         price: double.tryParse(priceController.text) ?? 0,
         sizeInML: double.tryParse(priceController.text) ?? 0,
-        brandThumbnailImageUrl: brandThumbnailImageUrl,
         thumbnailImageUrl: thumbnailImageUrl,
         createdTime: Timestamp.now(),
         updatedTime: Timestamp.now(),
@@ -128,7 +122,6 @@ class _AddProductState extends State<AddProduct> {
     });
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -141,8 +134,8 @@ class _AddProductState extends State<AddProduct> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: futureGetData,
-        builder: (context,snapshot) {
-          if(snapshot.connectionState == ConnectionState.done) {
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
             return ModalProgressHUD(
               inAsyncCall: isLoading,
               progressIndicator: const Center(child: LoadingWidget()),
@@ -154,12 +147,21 @@ class _AddProductState extends State<AddProduct> {
                     Row(
                       children: [
                         InkWell(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                             },
-                            child: const Icon(Icons.arrow_back_ios_rounded,size: 28,color: Styles.bgSideMenu,)),
-                        const SizedBox(width: 10,),
-                        Expanded(child: HeaderWidget(title: "Add Product",)),
+                            child: const Icon(
+                              Icons.arrow_back_ios_rounded,
+                              size: 28,
+                              color: Styles.bgSideMenu,
+                            )),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                            child: HeaderWidget(
+                          title: "Add Product",
+                        )),
                       ],
                     ),
                     getMainBody(),
@@ -170,46 +172,59 @@ class _AddProductState extends State<AddProduct> {
           } else {
             return const Center(child: LoadingWidget());
           }
-        }
-    );
+        });
   }
 
-  Widget getMainBody(){
-    return  Expanded(
+  Widget getMainBody() {
+    return Expanded(
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 30,),
-            CommonText(text: " Product Basic Information",
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                color: Styles.bgSideMenu.withOpacity(.6)),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 30,
+            ),
+            CommonText(text: " Product Basic Information", fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu.withOpacity(.6)),
+            const SizedBox(
+              height: 20,
+            ),
             getNameAndBrandName(),
-            const SizedBox(height: 30,),
+            const SizedBox(
+              height: 30,
+            ),
             getPricingRow(),
-            const SizedBox(height: 30,),
+            const SizedBox(
+              height: 30,
+            ),
             CommonText(text: " Images", fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu.withOpacity(.6)),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             getAddImageRow(),
-            const SizedBox(height: 40,),
+            const SizedBox(
+              height: 40,
+            ),
             getAddProductButton(),
-            const SizedBox(height: 40,)
+            const SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget getTitle({required String title}){
+  Widget getTitle({required String title}) {
     return CommonText(
-      text: "  $title",fontWeight: FontWeight.bold,fontSize: 15,textAlign: TextAlign.start,
+      text: "  $title",
+      fontWeight: FontWeight.bold,
+      fontSize: 15,
+      textAlign: TextAlign.start,
       color: Styles.bgSideMenu,
     );
   }
 
-  Widget getNameAndBrandName(){
+  Widget getNameAndBrandName() {
     return Row(
       children: [
         Expanded(
@@ -221,148 +236,152 @@ class _AddProductState extends State<AddProduct> {
               CommonTextFormField(
                 controller: nameController,
                 hintText: "Enter Name",
-                validator: (value){
-                  if(value == null || value.isEmpty){
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
                     return "  Please enter a Test Name";
                   }
                   return null;
                 },
               ),
-
             ],
           ),
         ),
-        const SizedBox(width: 20,),
-        Expanded(child:Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            getTitle(title: "Enter Brand Name*"),
-            CommonTextFormField(
-              controller: brandNameController,
-              hintText: "Enter Brand Name",
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "  Please enter a Brand Name";
-                }
-                return null;
-              },
-            ),
-
-          ],
-        ),),
+        const SizedBox(
+          width: 20,
+        ),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              getTitle(title: "Enter Brand Name*"),
+              CommonTextFormField(
+                controller: brandNameController,
+                hintText: "Enter Brand Name",
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "  Please enter a Brand Name";
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
   Widget getPricingRow() {
     return Row(
-         children: [
-           Expanded(
-             child: Column(
-               mainAxisSize: MainAxisSize.min,
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                 getTitle(title: "Price*"),
-                 AddPriceWidget(controller: priceController,
-                   onChanged: (value){
-                     priceController.text = value;
-                   },
-                   validator: (value){
-                     if(value == null || value.isEmpty || value == "0"){
-                       return "  Please enter a Price";
-                     }
-                     return null;
-                   },
-
-                 )
-               ],
-             ),
-           ),
-           const SizedBox(width: 20,),
-           Expanded(
-             child: Column(
-               mainAxisSize: MainAxisSize.min,
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                 getTitle(title: "Size(ml)"),
-                 AddPriceWidget(controller: sizeInMLController ,
-
-                   validator: (value){
-                     if(value == null || value.isEmpty){
-                       return "  Please enter a Discounted Price";
-                     }
-                     return null;
-                   },
-                 )
-
-
-               ],
-             ),
-           ),
-         ],
-       );
-  }
-
-  Widget getAddImageRow(){
-    return Row(
       children: [
-        Expanded(
-        child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GetTitle(title: "Choose Product Thumbnail Image*"),
-          thumbnailImage == null
-              ? InkWell(
-              onTap: () async {
-                await addThumbnailImage();
-              },
-              child: const EmptyImageViewBox())
-              : CommonImageViewBox(
-            imageAsBytes: thumbnailImage,
-            rightOnTap: () {
-              thumbnailImage = null;
-              setState(() {});
-            },
-          ),
-        ],
-    ),
-      ),
-        const SizedBox(width: 20,),
         Expanded(
           child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-          GetTitle(title: "Choose Brand Thumbnail Image*"),
-          brandThumbnailImage == null
-              ? InkWell(
-              onTap: () async {
-                await addBrandThumbnailImage();
-              },
-              child: const EmptyImageViewBox())
-              : CommonImageViewBox(
-            imageAsBytes: brandThumbnailImage,
-            rightOnTap: () {
-              brandThumbnailImage = null;
-              setState(() {});
-            },
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              getTitle(title: "Price*"),
+              AddPriceWidget(
+                controller: priceController,
+                onChanged: (value) {
+                  priceController.text = value;
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty || value == "0") {
+                    return "  Please enter a Price";
+                  }
+                  return null;
+                },
+              )
+            ],
           ),
-      ],
-    ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              getTitle(title: "Size(ml)"),
+              AddPriceWidget(
+                controller: sizeInMLController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "  Please enter a Discounted Price";
+                  }
+                  return null;
+                },
+              )
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget getAddProductButton(){
+  Widget getAddImageRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GetTitle(title: "Choose Product Thumbnail Image*"),
+              thumbnailImage == null
+                  ? InkWell(
+                      onTap: () async {
+                        await addThumbnailImage();
+                      },
+                      child: const EmptyImageViewBox())
+                  : CommonImageViewBox(
+                      imageAsBytes: thumbnailImage,
+                      rightOnTap: () {
+                        thumbnailImage = null;
+                        setState(() {});
+                      },
+                    ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GetTitle(title: "Choose Brand Thumbnail Image*"),
+              brandThumbnailImage == null
+                  ? InkWell(
+                      onTap: () async {
+                        await addBrandThumbnailImage();
+                      },
+                      child: const EmptyImageViewBox())
+                  : CommonImageViewBox(
+                      imageAsBytes: brandThumbnailImage,
+                      rightOnTap: () {
+                        brandThumbnailImage = null;
+                        setState(() {});
+                      },
+                    ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget getAddProductButton() {
     return CommonButton(
-        onTap: ()async{
-          if(_formKey.currentState!.validate()){
-            if(thumbnailImage == null){
+        onTap: () async {
+          if (_formKey.currentState!.validate()) {
+            if (thumbnailImage == null) {
               MyToast.showError(context: context, msg: 'Please upload a product thumbnail image');
               return;
             }
-            if(brandThumbnailImage == null){
+            if (brandThumbnailImage == null) {
               MyToast.showError(context: context, msg: 'Please upload a product brand thumbnail image');
               return;
             }
@@ -371,8 +390,4 @@ class _AddProductState extends State<AddProduct> {
         },
         text: "+ Add Product");
   }
-
-
-
 }
-

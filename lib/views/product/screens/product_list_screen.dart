@@ -152,7 +152,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 ),
                 SizedBox(height: 5),
                 CommonText(
-                  text: productModel.brandName.isNotEmpty?'by ${productModel.brandName}':'',
+                  text: (productModel.brand?.name ?? "").isNotEmpty?'by ${productModel.brand?.name}':'',
                   fontSize: 16,
                   fontWeight: FontWeight.normal,
                 ),
