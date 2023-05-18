@@ -26,7 +26,7 @@ class _SideBarState extends State<SideBar> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CommonText(
-                    text: "OKOTO",
+                    text: "Club App",
                     color: Styles.yellow,
                     fontSize: 25,
                     fontWeight: FontWeight.bold,

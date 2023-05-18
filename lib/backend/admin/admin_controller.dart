@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'package:club_app_admin/backend/admin/admin_provider.dart';
 import 'package:club_app_admin/backend/admin/admin_repository.dart';
 import 'package:club_model/club_model.dart';
-import '../../models/admin/property_model.dart';
 
 class AdminController{
   late AdminProvider _adminProvider;

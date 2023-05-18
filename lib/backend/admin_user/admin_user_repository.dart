@@ -1,5 +1,4 @@
 import 'package:club_model/club_model.dart';
-import '../../models/admin/admin_user_model.dart';
 
 class AdminUserRepository{
   Future<AdminUserModel?>  checkLoginAdminMethod({required String adminId,required String password}) async {

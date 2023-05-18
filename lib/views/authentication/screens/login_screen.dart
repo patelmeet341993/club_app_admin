@@ -11,7 +11,6 @@ import '../../../backend/admin_user/admin_user_repository.dart';
 import '../../../backend/authentication/authentication_provider.dart';
 import '../../../backend/navigation/navigation_controller.dart';
 import '../../../configs/constants.dart';
-import '../../../models/admin/admin_user_model.dart';
 import '../../common/components/common_text_form_field.dart';
 
 

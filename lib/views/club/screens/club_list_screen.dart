@@ -1,5 +1,5 @@
-import 'package:club_app_admin/backend/products_backend/product_controller.dart';
-import 'package:club_app_admin/backend/products_backend/product_provider.dart';
+import 'package:club_app_admin/backend/club_backend/club_controller.dart';
+import 'package:club_app_admin/backend/club_backend/club_provider.dart';
 import 'package:club_app_admin/views/common/components/header_widget.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
@@ -10,45 +10,48 @@ import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
 
 
-class ProductScreenNavigator extends StatefulWidget {
-  const ProductScreenNavigator({Key? key}) : super(key: key);
+class ClubScreenNavigator extends StatefulWidget {
+  const ClubScreenNavigator({Key? key}) : super(key: key);
 
   @override
-  _ProductScreenNavigatorState createState() => _ProductScreenNavigatorState();
+  _ClubScreenNavigatorState createState() => _ClubScreenNavigatorState();
 }
 
-class _ProductScreenNavigatorState extends State<ProductScreenNavigator> {
+class _ClubScreenNavigatorState extends State<ClubScreenNavigator> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: NavigationController.productScreenNavigator,
-      onGenerateRoute: NavigationController.onProductGeneratedRoutes,
+      key: NavigationController.clubScreenNavigator,
+      onGenerateRoute: NavigationController.onClubGeneratedRoutes,
     );
   }
 }
 
-class ProductListScreen extends StatefulWidget {
-  const ProductListScreen({Key? key}) : super(key: key);
+class ClubListScreen extends StatefulWidget {
+  const ClubListScreen({Key? key}) : super(key: key);
 
   @override
-  State<ProductListScreen> createState() => _ProductListScreenState();
+  State<ClubListScreen> createState() => _ClubListScreenState();
 }
 
-class _ProductListScreenState extends State<ProductListScreen> {
-  late ProductProvider productProvider;
-  late ProductController productController;
+class _ClubListScreenState extends State<ClubListScreen> {
+  late ClubProvider clubProvider;
+  late ClubController clubController;
   late Future<void> futureGetData;
   bool isLoading = false;
 
   Future<void> getData() async {
-    await productController.getProductList();
+
+    await clubController.getClubList();
+
+
   }
 
   @override
   void initState() {
     super.initState();
-    productProvider = Provider.of<ProductProvider>(context, listen: false);
-    productController = ProductController(productProvider: productProvider);
+    clubProvider = Provider.of<ClubProvider>(context, listen: false);
+    clubController = ClubController(clubProvider: clubProvider);
     futureGetData = getData();
   }
 
@@ -64,37 +67,36 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 inAsyncCall: isLoading,
                 child: Column(
                   children: [
-                    HeaderWidget(title: "Products",suffixWidget: CommonButton(text: "Add Product",
+                    HeaderWidget(title: "Clubs",suffixWidget: CommonButton(text: "Add Club",
                         icon: Icon(Icons.add,color: Styles.white,),
                         onTap: (){
-                          NavigationController.navigateToAddProductScreen(navigationOperationParameters:
+                          NavigationController.navigateToAddClubScreen(navigationOperationParameters:
                           NavigationOperationParameters(
                             navigationType: NavigationType.pushNamed,
                             context: context,
-
                           ));
                         }),),
-                    const SizedBox(
+                    SizedBox(
                       height: 20,
                     ),
-                    Expanded(child: getProductsList()),
+                    Expanded(child: getClubsList()),
                   ],
                 ),
               ),
             );
           } else {
-            return const Center(child: LoadingWidget());
+            return const LoadingWidget();
           }
         });
   }
 
-  Widget getProductsList() {
+  Widget getClubsList() {
     return Consumer(builder:
-        (BuildContext context, ProductProvider productProvider, Widget? child) {
-      if (productProvider.productsList.isEmpty) {
+        (BuildContext context, ClubProvider clubProvider, Widget? child) {
+      if (clubProvider.clubsList.isEmpty) {
         return Center(
           child: CommonText(
-            text: "No Products Available",
+            text: "No Clubs Available",
             fontWeight: FontWeight.bold,
             fontSize: 30,
           ),
@@ -103,17 +105,20 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
       //List<NewsFeedModel> newsList = newsProvider.newsList;
       return ListView.builder(
-        itemCount: productProvider.productsList.length,
+        itemCount: clubProvider.clubsList.length,
         //shrinkWrap: true,
         itemBuilder: (context, index) {
-          return SingleProduct(productProvider.productsList[index], index);
+          return SingleGame(clubProvider.clubsList[index], index);
         },
       );
     });
   }
 
+  Widget SingleGame(ClubModel gameModel, index){
+    return Container()
+    ;  }
 
-  Widget SingleProduct(ProductModel productModel, index) {
+/*  Widget SingleProduct(GameModel gameModel, index) {
     return InkWell(
       onTap: (){
 
@@ -134,36 +139,29 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
                 ),
                 child: CommonCachedNetworkImage(
-                  imageUrl: productModel.thumbnailImageUrl,
+                  imageUrl: gameModel.thumbnailImage,
                   height: 80,
                   width: 80,
                   borderRadius: 4,
                 )),
             SizedBox(
-              width: 30,
+              width: 20,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CommonText(
-                  text: productModel.name,
+                  text: gameModel.name,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
-                SizedBox(height: 5),
+                SizedBox(height: 10),
                 CommonText(
-                  text: productModel.brandName.isNotEmpty?'by ${productModel.brandName}':'',
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ),
-                SizedBox(height: 3),
-                CommonText(
-                  text: productModel.createdTime == null
+                  text: gameModel.createdTime == null
                       ? 'Created Date: No Data'
-                      : 'Created Date: ${DateFormat("dd-MMM-yyyy").format(productModel.createdTime!.toDate())}',
+                      : 'Created Date: ${DateFormat("dd-MMM-yyyy").format(gameModel.createdTime!.toDate())}',
                   textAlign: TextAlign.center,
                   maxLines: 2,
-                  fontSize: 14,
                   textOverFlow: TextOverflow.ellipsis,
                 ),
               ],
@@ -172,33 +170,34 @@ class _ProductListScreenState extends State<ProductListScreen> {
               width: 20,
             ),
             Spacer(),
-            Column(
-              children: [
-                CommonText(
-                  text: 'Price :  ${productModel.price} ₹',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                SizedBox(height: 3),
-                CommonText(
-                  text: 'Size(ml) :  ${productModel.sizeInML} ml',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ],
-            ),
-
+            // InkWell(
+            //   onTap: (){},
+            //   child: Tooltip(
+            //     message: 'Copy New Game',
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(5.0),
+            //       child: Icon(Icons.copy,color: AppColor.bgSideMenu),
+            //     ),
+            //   ),
+            // ),
             SizedBox(
               width: 20,
             ),
-
+            getTestEnableSwitch(
+                value: gameModel.enabled,
+                onChanged: (val) {
+                  Map<String, dynamic> data = {
+                    "enabled": val,
+                  };
+                  productController.EnableDisableGameInFirebase(
+                      editableData: data, id: gameModel.id, listIndex: index);
+                })
           ],
         ),
       ),
     );
   }
 
-  /*
   Widget getTestEnableSwitch(
       {required bool value, void Function(bool?)? onChanged}) {
     return Tooltip(
@@ -209,17 +208,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         activeColor: Styles.bgSideMenu,
       ),
     );
-  }
-
-  getTestEnableSwitch(
-  value: productModel.enabled,
-  onChanged: (val) {
-  Map<String, dynamic> data = {
-  "enabled": val,
-  };
-  productController.EnableDisableGameInFirebase(
-  editableData: data, id: productModel.id, listIndex: index);
-  })*/
+  }*/
 
 
 }

@@ -14,7 +14,7 @@ dependencies:
   club_model:
     git:
       url: https://github.com/patelmeet341993/club_model
-      ref: master
+      ref: viren
 
 dev_dependencies:
   flutter_test:

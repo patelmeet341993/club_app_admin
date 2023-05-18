@@ -1,3 +1,5 @@
+import 'package:club_app_admin/views/club/screens/add_club.dart';
+import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
 import 'package:club_model/backend/navigation/navigation_operation.dart';
 import 'package:club_model/backend/navigation/navigation_operation_parameters.dart';
 import 'package:club_model/utils/my_print.dart';
@@ -26,6 +28,7 @@ class NavigationController {
 
   static final GlobalKey<NavigatorState> mainScreenNavigator = GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> productScreenNavigator = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> clubScreenNavigator = GlobalKey<NavigatorState>();
 
   static final GlobalKey<NavigatorState> pharmaDashboardScreenNavigator = GlobalKey<NavigatorState>();
   static GlobalKey<NavigatorState> historyScreenNavigator = GlobalKey<NavigatorState>();
@@ -105,7 +108,7 @@ class NavigationController {
   }
 
   static Route? onProductGeneratedRoutes(RouteSettings settings) {
-    MyPrint.printOnConsole("Game Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
+    MyPrint.printOnConsole("Product Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
 
     if(kIsWeb) {
       if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
@@ -141,6 +144,42 @@ class NavigationController {
     return null;
   }
 
+ static Route? onClubGeneratedRoutes(RouteSettings settings) {
+    MyPrint.printOnConsole("Club Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
+
+    if(kIsWeb) {
+      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
+        return null;
+      }
+    }
+
+    MyPrint.printOnConsole("First Page:$isFirst");
+    Widget? page;
+
+    switch (settings.name) {
+      case "/": {
+        page = const ClubListScreen();
+        break;
+      }
+
+      case AddClub.routeName: {
+        page = parseAddClubScreen(settings: settings);
+        break;
+      }
+    }
+
+    if (page != null) {
+      return PageRouteBuilder(
+        pageBuilder: (c, a1, a2) => page!,
+        //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+        transitionsBuilder: (c, anim, a2, child) => SizeTransition(sizeFactor: anim, child: child),
+        transitionDuration: const Duration(milliseconds: 0),
+        settings: settings,
+      );
+    }
+    return null;
+  }
+
 
   //region Parse Page From RouteSettings
   static Widget? parseLoginScreen({required RouteSettings settings}) {
@@ -152,7 +191,11 @@ class NavigationController {
   }
 
   static Widget? parseAddProductScreen({required RouteSettings settings}) {
-    return  const AddProduct();
+    return AddProduct();
+  }
+
+  static Widget? parseAddClubScreen({required RouteSettings settings}) {
+    return  const AddClub();
   }
   //endregion
 
@@ -171,6 +214,12 @@ class NavigationController {
   static Future<dynamic> navigateToAddProductScreen({required NavigationOperationParameters navigationOperationParameters}) {
     return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: AddProduct.routeName,
+    ));
+  }
+
+  static Future<dynamic> navigateToAddClubScreen({required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
+      routeName: AddClub.routeName,
     ));
   }
 

@@ -1,8 +1,8 @@
 
 
 import 'package:club_model/backend/common/common_provider.dart';
+import 'package:club_model/club_model.dart';
 
-import '../../models/admin/property_model.dart';
 
 class AdminProvider extends CommonProvider{
   PropertyModel _propertyModel = PropertyModel();

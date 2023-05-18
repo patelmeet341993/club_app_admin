@@ -1,5 +1,6 @@
 import 'package:club_app_admin/backend/admin/admin_provider.dart';
 import 'package:club_app_admin/backend/authentication/authentication_provider.dart';
+import 'package:club_app_admin/backend/club_backend/club_provider.dart';
 import 'package:club_app_admin/backend/common/menu_provider.dart';
 import 'package:club_app_admin/backend/products_backend/product_provider.dart';
 import 'package:club_model/club_model.dart';
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AuthenticationProvider>(create: (_) => AuthenticationProvider(), lazy: false),
         ChangeNotifierProvider<MenuProvider>(create: (_) => MenuProvider(), lazy: false),
         ChangeNotifierProvider<ProductProvider>(create: (_) => ProductProvider(), lazy: false),
+        ChangeNotifierProvider<ClubProvider>(create: (_) => ClubProvider(), lazy: false),
       ],
       child: MainApp(),
     );

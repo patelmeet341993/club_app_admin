@@ -1,3 +1,4 @@
+import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
 import 'package:club_app_admin/views/product/screens/product_list_screen.dart';
 import 'package:club_model/club_model.dart';
 import 'package:flutter/material.dart';
@@ -107,15 +108,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         });
                       },
                     ),
-                    // DrawerListTile(
-                    //   title: "Devices",
-                    //   icon: Icons.view_in_ar_outlined,
-                    //   press: () {
-                    //     setState(() {
-                    //       tabNumber=1;
-                    //     });
-                    //   },
-                    // ),
+                    DrawerListTile(
+                      title: "Clubs",
+                      icon: Icons.view_in_ar_outlined,
+                      press: () {
+                        setState(() {
+                          tabNumber=1;
+                        });
+                      },
+                    ),
                     // DrawerListTile(
                     //   title: "Games",
                     //   icon: Icons.videogame_asset_outlined,
@@ -144,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     //   },
                     // ),
                     DrawerListTile(
-                      title: "Club",
+                      title: "System",
                       icon: Icons.library_books_outlined,
                       press: () {
                         setState(() {
@@ -177,10 +178,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget getPageWidget(int number){
     switch(number){
       case 0:{
-        return const ProductListScreen();
+        return const ProductScreenNavigator();
       }
       case 1:{
-        return const ProductListScreen();
+        return const ClubScreenNavigator();
       }
       // case 2:{
       //   return const GameScreenNavigator();
@@ -195,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
       //   return const OkotoProfileScreenNavigator();
       // }
       default : {
-        return  const ProductListScreen();
+        return  const ProductScreenNavigator();
 
       }
 

@@ -1,7 +1,8 @@
+
+
 import 'package:club_app_admin/backend/products_backend/product_provider.dart';
 import 'package:club_app_admin/backend/products_backend/product_repository.dart';
-import 'package:club_app_admin/models/product/product_model.dart';
-import 'package:club_model/utils/my_print.dart';
+import 'package:club_model/club_model.dart';
 
 class ProductController {
 
@@ -12,12 +13,12 @@ class ProductController {
     productRepository =  repository ??  ProductRepository();
   }
 
-  Future<void> getGameList() async {
-    // List<ProductModel> productList = [];
-    // productList = await gameRepository.getGamesListRepo();
-    // if(productList.isNotEmpty){
-    //   gameProvider.setGamesList(productList);
-    // }
+  Future<void> getProductList() async {
+    List<ProductModel> productList = [];
+    productList = await productRepository.getProductListRepo();
+    if(productList.isNotEmpty){
+      productProvider.setProductsList(productList);
+    }
   }
 
 
@@ -36,13 +37,13 @@ class ProductController {
     }
   }
 
-  Future<void> AddGameToFirebase(ProductModel productModel) async {
+  Future<void> AddProductToFirebase(ProductModel productModel) async {
     try{
-      await productRepository.AddGameRepo(productModel);
-      productProvider.addGameModelInGameList(productModel);
+      await productRepository.AddProductRepo(productModel);
+      productProvider.addProductModelInGameList(productModel);
 
     }catch(e,s){
-      MyPrint.printOnConsole('Error in Add Game to Firebase in Game Controller $e');
+      MyPrint.printOnConsole('Error in Add Product to Firebase in Product Controller $e');
       MyPrint.printOnConsole(s);
     }
 

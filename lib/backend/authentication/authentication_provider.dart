@@ -1,8 +1,7 @@
-
+import 'package:club_model/club_model.dart';
 import 'package:club_model/utils/my_print.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../../models/admin/admin_user_model.dart';
 
 class AuthenticationProvider extends ChangeNotifier{
   AdminUserModel? _adminModel;

@@ -1,9 +1,8 @@
 
 import 'package:club_model/configs/constants.dart';
 import 'package:club_model/configs/typedefs.dart';
+import 'package:club_model/models/common/data_model/property_model.dart';
 import 'package:club_model/utils/my_print.dart';
-
-import '../../models/admin/property_model.dart';
 
 class AdminRepository {
   Future<PropertyModel?> getPropertyData() async {
