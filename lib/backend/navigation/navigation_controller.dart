@@ -195,7 +195,7 @@ class NavigationController {
   }
 
   static Widget? parseAddClubScreen({required RouteSettings settings}) {
-    return  const AddClub();
+    return  AddClub();
   }
   //endregion
 

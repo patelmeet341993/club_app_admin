@@ -24,11 +24,11 @@ class ClubController {
       required String id,
       required int listIndex}) async {
     try {
-      // await FirebaseNodes.gameDocumentReference(gameId: id)
-      //     .update(editableData).then((value) {
-      //   MyPrint.printOnConsole("user data: ${editableData["enabled"]}");
-      //   gameProvider.updateEnableDisableOfList(editableData["enabled"] , listIndex);
-      // });
+      await FirebaseNodes.clubDocumentReference(clubId: id)
+          .update(editableData).then((value) {
+        MyPrint.printOnConsole("user data: ${editableData["enabled"]}");
+        clubProvider.updateEnableDisableOfList(editableData["enabled"] , listIndex);
+      });
     } catch (e, s) {
       MyPrint.printOnConsole(
           "Error in Enable Disable Club in firebase in Club Controller $e");

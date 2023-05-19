@@ -27,7 +27,7 @@ class CommonTextFormField extends StatelessWidget {
         this.validator,
         this.maxLength,
         this.obscureText=false,
-        this.verticalPadding=21,
+        this.verticalPadding=12,
         this.horizontalPadding=12,
         this.fontSize=18
       })

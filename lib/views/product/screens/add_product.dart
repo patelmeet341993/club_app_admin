@@ -93,10 +93,14 @@ class _AddProductState extends State<AddProduct> {
       ProductModel productModel = ProductModel(
         id: widget.productModel!.id,
         name:  nameController.text.trim(),
-        brandName:  brandNameController.text.trim(),
+        brand: BrandModel(
+          name: brandNameController.text.trim(),
+          thumbnailImageUrl: brandThumbnailImageUrl,
+
+
+        ),
         price: double.tryParse(priceController.text) ?? 0,
         sizeInML: double.tryParse(priceController.text) ?? 0,
-        brandThumbnailImageUrl: brandThumbnailImageUrl,
         thumbnailImageUrl: thumbnailImageUrl,
         createdTime: widget.productModel!.createdTime,
         updatedTime: Timestamp.now(),
@@ -110,10 +114,14 @@ class _AddProductState extends State<AddProduct> {
       ProductModel productModel = ProductModel(
         id: MyUtils.getNewId(isFromUUuid: false),
         name:  nameController.text.trim(),
-        brandName:  brandNameController.text.trim(),
+        brand: BrandModel(
+          name: brandNameController.text.trim(),
+          thumbnailImageUrl: brandThumbnailImageUrl,
+
+
+        ),
         price: double.tryParse(priceController.text) ?? 0,
         sizeInML: double.tryParse(priceController.text) ?? 0,
-        brandThumbnailImageUrl: brandThumbnailImageUrl,
         thumbnailImageUrl: thumbnailImageUrl,
         createdTime: Timestamp.now(),
         updatedTime: Timestamp.now(),

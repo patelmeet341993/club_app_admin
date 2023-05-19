@@ -41,10 +41,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
   bool isLoading = false;
 
   Future<void> getData() async {
-
     await clubController.getClubList();
-
-
   }
 
   @override
@@ -85,7 +82,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
               ),
             );
           } else {
-            return const LoadingWidget();
+            return Center(child: const LoadingWidget());
           }
         });
   }
@@ -108,23 +105,19 @@ class _ClubListScreenState extends State<ClubListScreen> {
         itemCount: clubProvider.clubsList.length,
         //shrinkWrap: true,
         itemBuilder: (context, index) {
-          return SingleGame(clubProvider.clubsList[index], index);
+          return SingleClub(clubProvider.clubsList[index], index);
         },
       );
     });
   }
 
-  Widget SingleGame(ClubModel gameModel, index){
-    return Container()
-    ;  }
-
-/*  Widget SingleProduct(GameModel gameModel, index) {
+  Widget SingleClub(ClubModel clubModel, index) {
     return InkWell(
       onTap: (){
 
       },
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10).copyWith(bottom: 15),
+        margin: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Styles.white,
@@ -139,29 +132,36 @@ class _ClubListScreenState extends State<ClubListScreen> {
                   border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
                 ),
                 child: CommonCachedNetworkImage(
-                  imageUrl: gameModel.thumbnailImage,
+                  imageUrl: clubModel.thumbnailImageUrl,
                   height: 80,
                   width: 80,
                   borderRadius: 4,
                 )),
             SizedBox(
-              width: 20,
+              width: 30,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CommonText(
-                  text: gameModel.name,
+                  text: clubModel.name,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 5),
                 CommonText(
-                  text: gameModel.createdTime == null
+                  text: 'Mobile Number: ${clubModel.mobileNumber}',
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                ),
+                SizedBox(height: 3),
+                CommonText(
+                  text: clubModel.createdTime == null
                       ? 'Created Date: No Data'
-                      : 'Created Date: ${DateFormat("dd-MMM-yyyy").format(gameModel.createdTime!.toDate())}',
+                      : 'Created Date: ${DateFormat("dd-MMM-yyyy").format(clubModel.createdTime!.toDate())}',
                   textAlign: TextAlign.center,
                   maxLines: 2,
+                  fontSize: 14,
                   textOverFlow: TextOverflow.ellipsis,
                 ),
               ],
@@ -170,45 +170,47 @@ class _ClubListScreenState extends State<ClubListScreen> {
               width: 20,
             ),
             Spacer(),
-            // InkWell(
-            //   onTap: (){},
-            //   child: Tooltip(
-            //     message: 'Copy New Game',
-            //     child: Padding(
-            //       padding: const EdgeInsets.all(5.0),
-            //       child: Icon(Icons.copy,color: AppColor.bgSideMenu),
-            //     ),
-            //   ),
-            // ),
+            Row(
+              children: [
+                Column(
+                  children: [
+                    CommonText(text: 'Admin'),
+                    SizedBox(height: 3,),
+                    getEnableSwitch(value: clubModel.adminEnabled,onChanged: (val){}),
+                  ],
+                ),
+                SizedBox(height: 3),
+                Column(
+                  children: [
+                    CommonText(text: 'Club'),
+                    SizedBox(height: 3,),
+                    getEnableSwitch(value: clubModel.clubEnabled,onChanged: (val){}),
+                  ],
+                ),
+              ],
+            ),
+
             SizedBox(
               width: 20,
             ),
-            getTestEnableSwitch(
-                value: gameModel.enabled,
-                onChanged: (val) {
-                  Map<String, dynamic> data = {
-                    "enabled": val,
-                  };
-                  productController.EnableDisableGameInFirebase(
-                      editableData: data, id: gameModel.id, listIndex: index);
-                })
+
           ],
         ),
       ),
     );
   }
 
-  Widget getTestEnableSwitch(
-      {required bool value, void Function(bool?)? onChanged}) {
-    return Tooltip(
-      message: value ?'Enabled' : 'Disabled',
-      child: CupertinoSwitch(
-        value: value,
-        onChanged: onChanged,
-        activeColor: Styles.bgSideMenu,
-      ),
+  Widget getEnableSwitch({
+    required bool value,
+    void Function(bool?)? onChanged,
+  }) {
+    return CupertinoSwitch(
+      value: value,
+      onChanged: onChanged,
+      activeColor: Styles.bgSideMenu,
     );
-  }*/
+  }
+
 
 
 }
