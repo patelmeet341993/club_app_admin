@@ -177,10 +177,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget getPageWidget(int number){
     switch(number){
-      case 0:{
+      case 1:{
         return const ProductScreenNavigator();
       }
-      case 1:{
+      case 0:{
         return const ClubScreenNavigator();
       }
       // case 2:{

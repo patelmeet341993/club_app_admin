@@ -7,7 +7,9 @@ class MySharePreferenceKeys {
 }
 
 class MyAppConstants {
+   static const String cClubEnabled = "clubEnabled";
 
+   static const String cAdminEnabled = "adminEnabled";
 }
 
 class AppUIConfiguration {

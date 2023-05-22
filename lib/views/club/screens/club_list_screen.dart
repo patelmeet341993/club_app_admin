@@ -1,5 +1,6 @@
 import 'package:club_app_admin/backend/club_backend/club_controller.dart';
 import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_app_admin/configs/constants.dart';
 import 'package:club_app_admin/views/common/components/header_widget.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
@@ -176,7 +177,17 @@ class _ClubListScreenState extends State<ClubListScreen> {
                   children: [
                     CommonText(text: 'Admin'),
                     SizedBox(height: 3,),
-                    getEnableSwitch(value: clubModel.adminEnabled,onChanged: (val){}),
+                    getEnableSwitch(value: clubModel.adminEnabled,onChanged: (val){
+                      Map<String, dynamic> data = {
+                        MyAppConstants.cAdminEnabled : val,
+                      };
+                      clubController.EnableDisableClubInFirebase(
+                          editableData: data, id: clubModel.id, listIndex: index,
+                        isAdminEnabled: true
+
+                      );
+                    }
+                    ),
                   ],
                 ),
                 SizedBox(height: 3),
@@ -184,7 +195,15 @@ class _ClubListScreenState extends State<ClubListScreen> {
                   children: [
                     CommonText(text: 'Club'),
                     SizedBox(height: 3,),
-                    getEnableSwitch(value: clubModel.clubEnabled,onChanged: (val){}),
+                    getEnableSwitch(value: clubModel.clubEnabled,onChanged: (val){
+                      Map<String, dynamic> data = {
+                        MyAppConstants.cClubEnabled: val,
+                      };
+                      clubController.EnableDisableClubInFirebase(
+                          editableData: data, id: clubModel.id, listIndex: index,
+                          isAdminEnabled: false
+                      );
+                    }),
                   ],
                 ),
               ],

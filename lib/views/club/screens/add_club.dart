@@ -170,7 +170,7 @@ class _AddClubState extends State<AddClub> {
                             },
                             child: const Icon(Icons.arrow_back_ios_rounded,size: 28,color: Styles.bgSideMenu,)),
                         const SizedBox(width: 10,),
-                        Expanded(child: HeaderWidget(title: "Add Product",)),
+                        Expanded(child: HeaderWidget(title: "Add Club",)),
                       ],
                     ),
                     getMainBody(),

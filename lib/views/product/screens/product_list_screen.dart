@@ -71,7 +71,6 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           NavigationOperationParameters(
                             navigationType: NavigationType.pushNamed,
                             context: context,
-
                           ));
                         }),),
                     const SizedBox(
@@ -119,7 +118,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
       },
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10).copyWith(bottom: 15),
+        margin: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Styles.white,
@@ -151,11 +150,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   fontWeight: FontWeight.bold,
                 ),
                 SizedBox(height: 5),
-                CommonText(
-                  text: (productModel.brand?.name ?? '').isNotEmpty ? 'by ${productModel.brand?.name}':'',
+                (productModel.brand?.name.isNotEmpty ?? false)?CommonText(
+                  text: 'by ${productModel.brand!.name}',
                   fontSize: 16,
                   fontWeight: FontWeight.normal,
-                ),
+                ):SizedBox.shrink(),
                 SizedBox(height: 3),
                 CommonText(
                   text: productModel.createdTime == null
