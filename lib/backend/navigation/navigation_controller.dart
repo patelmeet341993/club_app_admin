@@ -28,20 +28,26 @@ class NavigationController {
 
   NavigationController._();
 
-  static final GlobalKey<NavigatorState> mainScreenNavigator = GlobalKey<NavigatorState>();
-  static final GlobalKey<NavigatorState> productScreenNavigator = GlobalKey<NavigatorState>();
-  static final GlobalKey<NavigatorState> clubScreenNavigator = GlobalKey<NavigatorState>();
-  static final GlobalKey<NavigatorState> userScreenNavigator = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> mainScreenNavigator =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> productScreenNavigator =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> clubScreenNavigator =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> userScreenNavigator =
+      GlobalKey<NavigatorState>();
 
   static bool isUserProfileTabInitialized = false;
 
   static bool checkDataAndNavigateToSplashScreen() {
-    MyPrint.printOnConsole("checkDataAndNavigateToSplashScreen called, isFirst:$isFirst");
+    MyPrint.printOnConsole(
+        "checkDataAndNavigateToSplashScreen called, isFirst:$isFirst");
 
-    if(isFirst) {
+    if (isFirst) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         isFirst = false;
-        Navigator.pushNamedAndRemoveUntil(mainScreenNavigator.currentContext!, SplashScreen.routeName, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(mainScreenNavigator.currentContext!,
+            SplashScreen.routeName, (route) => false);
       });
     }
 
@@ -49,14 +55,16 @@ class NavigationController {
   }
 
   static Route? onMainAppGeneratedRoutes(RouteSettings settings) {
-    MyPrint.printOnConsole("onAdminMainGeneratedRoutes called for ${settings.name} with arguments:${settings.arguments}");
+    MyPrint.printOnConsole(
+        "onAdminMainGeneratedRoutes called for ${settings.name} with arguments:${settings.arguments}");
 
     // if(navigationCount == 2 && Uri.base.hasFragment && Uri.base.fragment != "/") {
     //   return null;
     // }
 
-    if(kIsWeb) {
-      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) &&
+          NavigationController.checkDataAndNavigateToSplashScreen()) {
         return null;
       }
     }
@@ -77,29 +85,34 @@ class NavigationController {
     Widget? page;
 
     switch (settings.name) {
-      case "/": {
-        page = const SplashScreen();
-        break;
-      }
-      case SplashScreen.routeName: {
-        page = const SplashScreen();
-        break;
-      }
-      case LoginScreen.routeName: {
-        page = parseLoginScreen(settings: settings);
-        break;
-      }
-      case HomeScreen.routeName: {
-        page = parseHomeScreen(settings: settings);
-        break;
-      }
+      case "/":
+        {
+          page = const SplashScreen();
+          break;
+        }
+      case SplashScreen.routeName:
+        {
+          page = const SplashScreen();
+          break;
+        }
+      case LoginScreen.routeName:
+        {
+          page = parseLoginScreen(settings: settings);
+          break;
+        }
+      case HomeScreen.routeName:
+        {
+          page = parseHomeScreen(settings: settings);
+          break;
+        }
     }
 
     if (page != null) {
       return PageRouteBuilder(
         pageBuilder: (c, a1, a2) => page!,
         //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-        transitionsBuilder: (c, anim, a2, child) => SizeTransition(sizeFactor: anim, child: child),
+        transitionsBuilder: (c, anim, a2, child) =>
+            SizeTransition(sizeFactor: anim, child: child),
         transitionDuration: const Duration(milliseconds: 0),
         settings: settings,
       );
@@ -108,47 +121,12 @@ class NavigationController {
   }
 
   static Route? onProductGeneratedRoutes(RouteSettings settings) {
-    MyPrint.printOnConsole("Product Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
+    MyPrint.printOnConsole(
+        "Product Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
 
-    if(kIsWeb) {
-      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
-        return null;
-      }
-    }
-
-
-    MyPrint.printOnConsole("First Page:$isFirst");
-    Widget? page;
-
-    switch (settings.name) {
-      case "/": {
-        page = const ProductListScreen();
-        break;
-      }
-
-      case AddProduct.routeName: {
-        page = parseAddProductScreen(settings: settings);
-        break;
-      }
-    }
-
-    if (page != null) {
-      return PageRouteBuilder(
-        pageBuilder: (c, a1, a2) => page!,
-        //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-        transitionsBuilder: (c, anim, a2, child) => SizeTransition(sizeFactor: anim, child: child),
-        transitionDuration: const Duration(milliseconds: 0),
-        settings: settings,
-      );
-    }
-    return null;
-  }
-
- static Route? onClubGeneratedRoutes(RouteSettings settings) {
-    MyPrint.printOnConsole("Club Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
-
-    if(kIsWeb) {
-      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) &&
+          NavigationController.checkDataAndNavigateToSplashScreen()) {
         return null;
       }
     }
@@ -157,22 +135,25 @@ class NavigationController {
     Widget? page;
 
     switch (settings.name) {
-      case "/": {
-        page = const ClubListScreen();
-        break;
-      }
+      case "/":
+        {
+          page = const ProductListScreen();
+          break;
+        }
 
-      case AddClub.routeName: {
-        page = parseAddClubScreen(settings: settings);
-        break;
-      }
+      case AddProduct.routeName:
+        {
+          page = parseAddProductScreen(settings: settings);
+          break;
+        }
     }
 
     if (page != null) {
       return PageRouteBuilder(
         pageBuilder: (c, a1, a2) => page!,
         //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-        transitionsBuilder: (c, anim, a2, child) => SizeTransition(sizeFactor: anim, child: child),
+        transitionsBuilder: (c, anim, a2, child) =>
+            SizeTransition(sizeFactor: anim, child: child),
         transitionDuration: const Duration(milliseconds: 0),
         settings: settings,
       );
@@ -180,11 +161,13 @@ class NavigationController {
     return null;
   }
 
-static Route? onUserGeneratedRoutes(RouteSettings settings) {
-    MyPrint.printOnConsole("User Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
+  static Route? onClubGeneratedRoutes(RouteSettings settings) {
+    MyPrint.printOnConsole(
+        "Club Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
 
-    if(kIsWeb) {
-      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) &&
+          NavigationController.checkDataAndNavigateToSplashScreen()) {
         return null;
       }
     }
@@ -193,23 +176,25 @@ static Route? onUserGeneratedRoutes(RouteSettings settings) {
     Widget? page;
 
     switch (settings.name) {
-      case "/": {
-        page = const UserListScreen();
-        break;
-      }
+      case "/":
+        {
+          page = const ClubListScreen();
+          break;
+        }
 
-      case DisabledUsersList.routeName: {
-        page = parseDisabledUsersScreen(settings: settings);
-        break;
-      }
-
+      case AddClub.routeName:
+        {
+          page = parseAddClubScreen(settings: settings);
+          break;
+        }
     }
 
     if (page != null) {
       return PageRouteBuilder(
         pageBuilder: (c, a1, a2) => page!,
         //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-        transitionsBuilder: (c, anim, a2, child) => SizeTransition(sizeFactor: anim, child: child),
+        transitionsBuilder: (c, anim, a2, child) =>
+            SizeTransition(sizeFactor: anim, child: child),
         transitionDuration: const Duration(milliseconds: 0),
         settings: settings,
       );
@@ -217,6 +202,46 @@ static Route? onUserGeneratedRoutes(RouteSettings settings) {
     return null;
   }
 
+  static Route? onUserGeneratedRoutes(RouteSettings settings) {
+    MyPrint.printOnConsole(
+        "User Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
+
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) &&
+          NavigationController.checkDataAndNavigateToSplashScreen()) {
+        return null;
+      }
+    }
+
+    MyPrint.printOnConsole("First Page:$isFirst");
+    Widget? page;
+
+    switch (settings.name) {
+      case "/":
+        {
+          page = const UserListScreen();
+          break;
+        }
+
+      case DisabledUsersList.routeName:
+        {
+          page = parseDisabledUsersScreen(settings: settings);
+          break;
+        }
+    }
+
+    if (page != null) {
+      return PageRouteBuilder(
+        pageBuilder: (c, a1, a2) => page!,
+        //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+        transitionsBuilder: (c, anim, a2, child) =>
+            SizeTransition(sizeFactor: anim, child: child),
+        transitionDuration: const Duration(milliseconds: 0),
+        settings: settings,
+      );
+    }
+    return null;
+  }
 
   //region Parse Page From RouteSettings
   static Widget? parseLoginScreen({required RouteSettings settings}) {
@@ -224,7 +249,7 @@ static Route? onUserGeneratedRoutes(RouteSettings settings) {
   }
 
   static Widget? parseHomeScreen({required RouteSettings settings}) {
-    return  HomeScreen();
+    return HomeScreen();
   }
 
   static Widget? parseAddProductScreen({required RouteSettings settings}) {
@@ -232,42 +257,51 @@ static Route? onUserGeneratedRoutes(RouteSettings settings) {
   }
 
   static Widget? parseAddClubScreen({required RouteSettings settings}) {
-    return  AddClub();
+    return AddClub();
   }
 
   static Widget? parseDisabledUsersScreen({required RouteSettings settings}) {
-    return  DisabledUsersList();
+    return DisabledUsersList();
   }
   //endregion
 
-  static Future<dynamic> navigateToLoginScreen({required NavigationOperationParameters navigationOperationParameters}) {
-    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
+  static Future<dynamic> navigateToLoginScreen(
+      {required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: LoginScreen.routeName,
     ));
   }
 
-  static Future<dynamic> navigateToHomeScreen({required NavigationOperationParameters navigationOperationParameters}) {
-    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
+  static Future<dynamic> navigateToHomeScreen(
+      {required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: HomeScreen.routeName,
     ));
   }
 
-  static Future<dynamic> navigateToAddProductScreen({required NavigationOperationParameters navigationOperationParameters}) {
-    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
+  static Future<dynamic> navigateToAddProductScreen(
+      {required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: AddProduct.routeName,
     ));
   }
 
-  static Future<dynamic> navigateToAddClubScreen({required NavigationOperationParameters navigationOperationParameters}) {
-    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
+  static Future<dynamic> navigateToAddClubScreen(
+      {required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: AddClub.routeName,
     ));
   }
 
-  static Future<dynamic> navigateToDisabledUsersScreen({required NavigationOperationParameters navigationOperationParameters}) {
-    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
+  static Future<dynamic> navigateToDisabledUsersScreen(
+      {required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: DisabledUsersList.routeName,
     ));
   }
-
 }

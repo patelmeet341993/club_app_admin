@@ -10,7 +10,6 @@ import 'package:provider/provider.dart';
 import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
 
-
 class ClubScreenNavigator extends StatefulWidget {
   const ClubScreenNavigator({Key? key}) : super(key: key);
 
@@ -65,15 +64,23 @@ class _ClubListScreenState extends State<ClubListScreen> {
                 inAsyncCall: isLoading,
                 child: Column(
                   children: [
-                    HeaderWidget(title: "Clubs",suffixWidget: CommonButton(text: "Add Club",
-                        icon: Icon(Icons.add,color: Styles.white,),
-                        onTap: (){
-                          NavigationController.navigateToAddClubScreen(navigationOperationParameters:
-                          NavigationOperationParameters(
-                            navigationType: NavigationType.pushNamed,
-                            context: context,
-                          ));
-                        }),),
+                    HeaderWidget(
+                      title: "Clubs",
+                      suffixWidget: CommonButton(
+                          text: "Add Club",
+                          icon: Icon(
+                            Icons.add,
+                            color: Styles.white,
+                          ),
+                          onTap: () {
+                            NavigationController.navigateToAddClubScreen(
+                                navigationOperationParameters:
+                                    NavigationOperationParameters(
+                              navigationType: NavigationType.pushNamed,
+                              context: context,
+                            ));
+                          }),
+                    ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -114,11 +121,9 @@ class _ClubListScreenState extends State<ClubListScreen> {
 
   Widget SingleClub(ClubModel clubModel, index) {
     return InkWell(
-      onTap: (){
-
-      },
+      onTap: () {},
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Styles.white,
@@ -176,43 +181,49 @@ class _ClubListScreenState extends State<ClubListScreen> {
                 Column(
                   children: [
                     CommonText(text: 'Admin'),
-                    const SizedBox(height: 3,),
-                    getEnableSwitch(value: clubModel.adminEnabled,onChanged: (val){
-                      Map<String, dynamic> data = {
-                        MyAppConstants.cAdminEnabled : val,
-                      };
-                      clubController.EnableDisableClubInFirebase(
-                          editableData: data, id: clubModel.id, listIndex: index,
-                        isAdminEnabled: true
-
-                      );
-                    }
+                    const SizedBox(
+                      height: 3,
                     ),
+                    getEnableSwitch(
+                        value: clubModel.adminEnabled,
+                        onChanged: (val) {
+                          Map<String, dynamic> data = {
+                            MyAppConstants.cAdminEnabled: val,
+                          };
+                          clubController.EnableDisableClubInFirebase(
+                              editableData: data,
+                              id: clubModel.id,
+                              listIndex: index,
+                              isAdminEnabled: true);
+                        }),
                   ],
                 ),
                 const SizedBox(height: 3),
                 Column(
                   children: [
                     CommonText(text: 'Club'),
-                    const SizedBox(height: 3,),
-                    getEnableSwitch(value: clubModel.clubEnabled,onChanged: (val){
-                      Map<String, dynamic> data = {
-                        MyAppConstants.cClubEnabled: val,
-                      };
-                      clubController.EnableDisableClubInFirebase(
-                          editableData: data, id: clubModel.id, listIndex: index,
-                          isAdminEnabled: false
-                      );
-                    }),
+                    const SizedBox(
+                      height: 3,
+                    ),
+                    getEnableSwitch(
+                        value: clubModel.clubEnabled,
+                        onChanged: (val) {
+                          Map<String, dynamic> data = {
+                            MyAppConstants.cClubEnabled: val,
+                          };
+                          clubController.EnableDisableClubInFirebase(
+                              editableData: data,
+                              id: clubModel.id,
+                              listIndex: index,
+                              isAdminEnabled: false);
+                        }),
                   ],
                 ),
               ],
             ),
-
             const SizedBox(
               width: 20,
             ),
-
           ],
         ),
       ),
@@ -229,7 +240,4 @@ class _ClubListScreenState extends State<ClubListScreen> {
       activeColor: Styles.bgSideMenu,
     );
   }
-
-
-
 }

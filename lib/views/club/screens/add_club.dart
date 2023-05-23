@@ -21,14 +21,13 @@ class AddClub extends StatefulWidget {
   ClubModel? clubModel;
   bool isEdit = false;
   int? index;
-  AddClub({this.clubModel,this.isEdit = false,this.index});
+  AddClub({this.clubModel, this.isEdit = false, this.index});
 
   @override
   State<AddClub> createState() => _AddClubState();
 }
 
 class _AddClubState extends State<AddClub> {
-
   final _formKey = GlobalKey<FormState>();
   late Future<void> futureGetData;
   bool isLoading = false;
@@ -49,7 +48,6 @@ class _AddClubState extends State<AddClub> {
   bool isAdminEnabled = true;
 
   Future<void> addThumbnailImage() async {
-
     setState(() {});
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -58,13 +56,12 @@ class _AddClubState extends State<AddClub> {
       allowCompression: true,
     );
 
-    if(result?.files.firstElement != null) {
+    if (result?.files.firstElement != null) {
       PlatformFile platformFile = result!.files.firstElement!;
       thumbnailImage = platformFile.bytes;
 
       if (mounted) setState(() {});
     }
-
   }
 
   Future<void> addClub() async {
@@ -72,15 +69,16 @@ class _AddClubState extends State<AddClub> {
       isLoading = true;
     });
 
-
-
-    if(widget.clubModel != null && widget.index != null && widget.isEdit == true ){
-      MyPrint.printOnConsole("test model edit this with index: ${widget.index} edit: ${widget.isEdit}");
+    if (widget.clubModel != null &&
+        widget.index != null &&
+        widget.isEdit == true) {
+      MyPrint.printOnConsole(
+          "test model edit this with index: ${widget.index} edit: ${widget.isEdit}");
       ClubModel clubModel = ClubModel(
         id: widget.clubModel!.id,
-        name:  clubNameController.text.trim(),
-        address:  clubAddressController.text.trim(),
-        mobileNumber:  mobileNumberController.text.trim(),
+        name: clubNameController.text.trim(),
+        address: clubAddressController.text.trim(),
+        mobileNumber: mobileNumberController.text.trim(),
         thumbnailImageUrl: thumbnailImageUrl,
         createdTime: widget.clubModel!.createdTime,
         adminEnabled: isAdminEnabled,
@@ -89,16 +87,15 @@ class _AddClubState extends State<AddClub> {
         updatedTime: Timestamp.now(),
       );
 
-      // await productController.AddProductToFirebase(productModel);
+      await clubController.AddClubToFirebase(clubModel);
       MyToast.showSuccess(context: context, msg: 'Product Edited successfully');
-
-    }else{
+    } else {
       MyPrint.printOnConsole("club model new duplicate");
       ClubModel clubModel = ClubModel(
         id: MyUtils.getNewId(isFromUUuid: false),
-        name:  clubNameController.text.trim(),
-        address:  clubAddressController.text.trim(),
-        mobileNumber:  mobileNumberController.text.trim(),
+        name: clubNameController.text.trim(),
+        address: clubAddressController.text.trim(),
+        mobileNumber: mobileNumberController.text.trim(),
         thumbnailImageUrl: thumbnailImageUrl,
         adminEnabled: isAdminEnabled,
         clubEnabled: isClubEnabled,
@@ -113,11 +110,9 @@ class _AddClubState extends State<AddClub> {
     setState(() {
       isLoading = false;
     });
-
   }
 
   Future<void> chooseClubImagesMethod() async {
-
     setState(() {});
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -126,7 +121,7 @@ class _AddClubState extends State<AddClub> {
       allowCompression: true,
     );
 
-    if(result?.files.firstElement != null) {
+    if (result?.files.firstElement != null) {
       PlatformFile platformFile = result!.files.firstElement!;
 
       if (platformFile.bytes != null) {
@@ -136,24 +131,22 @@ class _AddClubState extends State<AddClub> {
     }
   }
 
-  Future<void> getData() async {
-
-  }
+  Future<void> getData() async {}
 
   @override
   void initState() {
     super.initState();
     clubProvider = Provider.of<ClubProvider>(context, listen: false);
     clubController = ClubController(clubProvider: clubProvider);
-    futureGetData  = getData();
+    futureGetData = getData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return  FutureBuilder(
+    return FutureBuilder(
         future: futureGetData,
-        builder: (context,snapshot) {
-          if(snapshot.connectionState == ConnectionState.done) {
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
             return ModalProgressHUD(
               inAsyncCall: isLoading,
               progressIndicator: const Center(child: LoadingWidget()),
@@ -165,12 +158,21 @@ class _AddClubState extends State<AddClub> {
                     Row(
                       children: [
                         InkWell(
-                            onTap: (){
+                            onTap: () {
                               Navigator.pop(context);
                             },
-                            child: const Icon(Icons.arrow_back_ios_rounded,size: 28,color: Styles.bgSideMenu,)),
-                        const SizedBox(width: 10,),
-                        Expanded(child: HeaderWidget(title: "Add Club",)),
+                            child: const Icon(
+                              Icons.arrow_back_ios_rounded,
+                              size: 28,
+                              color: Styles.bgSideMenu,
+                            )),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                            child: HeaderWidget(
+                          title: "Add Club",
+                        )),
                       ],
                     ),
                     getMainBody(),
@@ -181,53 +183,78 @@ class _AddClubState extends State<AddClub> {
           } else {
             return const Center(child: LoadingWidget());
           }
-        }
-    );
+        });
   }
 
-  Widget getMainBody(){
-    return  Expanded(
+  Widget getMainBody() {
+    return Expanded(
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 30,),
-            CommonText(text: " Product Basic Information",
+            const SizedBox(
+              height: 30,
+            ),
+            CommonText(
+                text: " Product Basic Information",
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
                 color: Styles.bgSideMenu.withOpacity(.6)),
-            const SizedBox(height: 20,),
+            const SizedBox(
+              height: 20,
+            ),
             getNameAndMobileNumber(),
-            const SizedBox(height: 30,),
+            const SizedBox(
+              height: 30,
+            ),
             getDescriptionTextField(),
-            const SizedBox(height: 30,),
+            const SizedBox(
+              height: 30,
+            ),
             getEnabledRow(),
-            const SizedBox(height: 30,),
-            CommonText(text: " Images", fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu.withOpacity(.6)),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 30,
+            ),
+            CommonText(
+                text: " Images",
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                color: Styles.bgSideMenu.withOpacity(.6)),
+            const SizedBox(
+              height: 10,
+            ),
             getAddImageRow(),
-            const SizedBox(height: 30,),
+            const SizedBox(
+              height: 30,
+            ),
             getClubImages(),
-            const SizedBox(height: 40,),
-             getAddClubButton(),
-            const SizedBox(height: 40,)
+            const SizedBox(
+              height: 40,
+            ),
+            getAddClubButton(),
+            const SizedBox(
+              height: 40,
+            )
           ],
         ),
       ),
     );
   }
 
-  Widget getTitle({required String title}){
+  Widget getTitle({required String title}) {
     return Container(
       padding: const EdgeInsets.only(bottom: 5),
       child: CommonText(
-        text: " $title",fontWeight: FontWeight.bold,fontSize: 16,textAlign: TextAlign.start,
+        text: " $title",
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        textAlign: TextAlign.start,
         color: Styles.bgSideMenu,
       ),
     );
   }
 
-  Widget getNameAndMobileNumber(){
+  Widget getNameAndMobileNumber() {
     return Row(
       children: [
         Expanded(
@@ -239,46 +266,48 @@ class _AddClubState extends State<AddClub> {
               CommonTextFormField(
                 controller: clubNameController,
                 hintText: "Enter Name",
-                validator: (value){
-                  if(value == null || value.isEmpty){
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
                     return "  Please enter a Test Name";
                   }
                   return null;
                 },
               ),
-
             ],
           ),
         ),
-        const SizedBox(width: 20,),
-        Expanded(child:Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            getTitle(title: "Enter Mobile Number*"),
-            CommonTextFormField(
-              controller: mobileNumberController,
-              hintText: "Enter Mobile Number",
-              validator: (val) {
-                if (val == null || val.isEmpty) {
-                  return "Mobile Number Cannot be empty";
-                } else {
-                  if (RegExp(r"^\d{10}").hasMatch(val)) {
-                    return null;
+        const SizedBox(
+          width: 20,
+        ),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              getTitle(title: "Enter Mobile Number*"),
+              CommonTextFormField(
+                controller: mobileNumberController,
+                hintText: "Enter Mobile Number",
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return "Mobile Number Cannot be empty";
                   } else {
-                    return "Invalid Mobile Number";
+                    if (RegExp(r"^\d{10}").hasMatch(val)) {
+                      return null;
+                    } else {
+                      return "Invalid Mobile Number";
+                    }
                   }
-                }
-              },
-              keyboardType: TextInputType.number,
-              textInputFormatter: [
-                LengthLimitingTextInputFormatter(10),
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-            ),
-
-          ],
-        ),),
+                },
+                keyboardType: TextInputType.number,
+                textInputFormatter: [
+                  LengthLimitingTextInputFormatter(10),
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -310,7 +339,9 @@ class _AddClubState extends State<AddClub> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              getTitle(title: 'Admin Enabled :    ',),
+              getTitle(
+                title: 'Admin Enabled :    ',
+              ),
               getTestEnableSwitch(
                 value: isAdminEnabled,
                 onChanged: (val) {
@@ -327,7 +358,9 @@ class _AddClubState extends State<AddClub> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              getTitle(title: 'Club Enabled :    ',),
+              getTitle(
+                title: 'Club Enabled :    ',
+              ),
               getTestEnableSwitch(
                 value: isClubEnabled,
                 onChanged: (val) {
@@ -354,24 +387,24 @@ class _AddClubState extends State<AddClub> {
     );
   }
 
-  Widget getAddImageRow(){
-   return Column(
+  Widget getAddImageRow() {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         getTitle(title: "Choose Club Thumbnail Image*"),
         thumbnailImage == null
             ? InkWell(
-            onTap: () async {
-              await addThumbnailImage();
-            },
-            child: const EmptyImageViewBox())
+                onTap: () async {
+                  await addThumbnailImage();
+                },
+                child: const EmptyImageViewBox())
             : CommonImageViewBox(
-          imageAsBytes: thumbnailImage,
-          rightOnTap: () {
-            thumbnailImage = null;
-            setState(() {});
-          },
-        ),
+                imageAsBytes: thumbnailImage,
+                rightOnTap: () {
+                  thumbnailImage = null;
+                  setState(() {});
+                },
+              ),
       ],
     );
   }
@@ -385,35 +418,36 @@ class _AddClubState extends State<AddClub> {
           children: [
             clubImagesInBytes.isNotEmpty
                 ? Flexible(
-              child: Container(
-                padding: EdgeInsets.zero,
-                height: 80,
-                child: ListView.builder(
-                    itemCount: clubImagesInBytes.length,
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      dynamic image = clubImagesInBytes[index];
-                      MyPrint.printOnConsole(
-                          "image type : ${image.runtimeType.toString()}");
-                      return CommonImageViewBox(
-                        imageAsBytes: clubImagesInBytes[index],
-                        rightOnTap: (){
-                          clubImagesInBytes.removeAt(index);
-                          MyPrint.printOnConsole('Game List Length in bytes is " ${clubImagesInBytes.length}');
-                          setState(() {});
-                        },
-                      );
-                    }),
-              ),
-            )
+                    child: Container(
+                      padding: EdgeInsets.zero,
+                      height: 80,
+                      child: ListView.builder(
+                          itemCount: clubImagesInBytes.length,
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int index) {
+                            dynamic image = clubImagesInBytes[index];
+                            MyPrint.printOnConsole(
+                                "image type : ${image.runtimeType.toString()}");
+                            return CommonImageViewBox(
+                              imageAsBytes: clubImagesInBytes[index],
+                              rightOnTap: () {
+                                clubImagesInBytes.removeAt(index);
+                                MyPrint.printOnConsole(
+                                    'Game List Length in bytes is " ${clubImagesInBytes.length}');
+                                setState(() {});
+                              },
+                            );
+                          }),
+                    ),
+                  )
                 : const SizedBox.shrink(),
             clubImagesInBytes.length < 10
                 ? InkWell(
-                onTap: (){
-                  chooseClubImagesMethod();
-                },
-                child: const EmptyImageViewBox())
+                    onTap: () {
+                      chooseClubImagesMethod();
+                    },
+                    child: const EmptyImageViewBox())
                 : const SizedBox.shrink()
           ],
         )
@@ -421,13 +455,14 @@ class _AddClubState extends State<AddClub> {
     );
   }
 
-
-  Widget getAddClubButton(){
+  Widget getAddClubButton() {
     return CommonButton(
-        onTap: ()async{
-          if(_formKey.currentState!.validate()){
-            if(thumbnailImage == null){
-              MyToast.showError(context: context, msg: 'Please upload a club thumbnail image');
+        onTap: () async {
+          if (_formKey.currentState!.validate()) {
+            if (thumbnailImage == null) {
+              MyToast.showError(
+                  context: context,
+                  msg: 'Please upload a club thumbnail image');
               return;
             }
             await addClub();
@@ -435,9 +470,4 @@ class _AddClubState extends State<AddClub> {
         },
         text: "+ Add Club");
   }
-
-
-
-
 }
-

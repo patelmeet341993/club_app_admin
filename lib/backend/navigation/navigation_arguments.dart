@@ -1,5 +1,3 @@
-
-
 /*
 class LoginScreenNavigationArguments extends NavigationArguments{
   final AdminUserProvider adminUserProvider;

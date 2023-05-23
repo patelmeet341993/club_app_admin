@@ -28,9 +28,14 @@ class AppTheme {
 
     Color finalColor;
     if (color == null) {
-      finalColor = (xMuted ? textStyle.color?.withAlpha(160) : (muted ? textStyle.color?.withAlpha(200) : textStyle.color)) ?? Colors.black;
+      finalColor = (xMuted
+              ? textStyle.color?.withAlpha(160)
+              : (muted ? textStyle.color?.withAlpha(200) : textStyle.color)) ??
+          Colors.black;
     } else {
-      finalColor = xMuted ? color.withAlpha(160) : (muted ? color.withAlpha(200) : color);
+      finalColor = xMuted
+          ? color.withAlpha(160)
+          : (muted ? color.withAlpha(200) : color);
     }
 
     return getTextStyleWithFontFamily(
@@ -53,21 +58,36 @@ class AppTheme {
 
   static TextTheme getTextTheme({required Color color}) {
     return TextTheme(
-      displayLarge: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 102, color: color)),
-      displayMedium: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 64, color: color)),
-      displaySmall: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 51, color: color)),
-      headlineLarge: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 43, color: color)),
-      headlineMedium: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 36, color: color)),
-      headlineSmall: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 25, color: color)),
-      titleLarge: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 18, color: color)),
-      titleMedium: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 17, color: color)),
-      titleSmall: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 15, color: color)),
-      bodyLarge: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 16, color: color)),
-      bodyMedium: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 14, color: color)),
-      bodySmall: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 12, color: color)),
-      labelLarge: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 15, color: color)),
-      labelMedium: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 13, color: color)),
-      labelSmall: getTextStyleWithFontFamily(textStyle: TextStyle(fontSize: 11, color: color, letterSpacing: 0)),
+      displayLarge: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 102, color: color)),
+      displayMedium: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 64, color: color)),
+      displaySmall: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 51, color: color)),
+      headlineLarge: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 43, color: color)),
+      headlineMedium: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 36, color: color)),
+      headlineSmall: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 25, color: color)),
+      titleLarge: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 18, color: color)),
+      titleMedium: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 17, color: color)),
+      titleSmall: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 15, color: color)),
+      bodyLarge: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 16, color: color)),
+      bodyMedium: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 14, color: color)),
+      bodySmall: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 12, color: color)),
+      labelLarge: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 15, color: color)),
+      labelMedium: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 13, color: color)),
+      labelSmall: getTextStyleWithFontFamily(
+          textStyle: TextStyle(fontSize: 11, color: color, letterSpacing: 0)),
     );
   }
 
@@ -206,9 +226,11 @@ class AppTheme {
       cardColor: Colors.white,
       popupMenuTheme: PopupMenuThemeData(
         color: styles.lightBackgroundColor,
-        textStyle: lightTextTheme.bodyMedium?.merge(TextStyle(color: styles.lightTextColor)),
+        textStyle: lightTextTheme.bodyMedium
+            ?.merge(TextStyle(color: styles.lightTextColor)),
       ),
-      bottomAppBarTheme: BottomAppBarTheme(color: styles.lightBackgroundColor, elevation: 2),
+      bottomAppBarTheme:
+          BottomAppBarTheme(color: styles.lightBackgroundColor, elevation: 2),
       tabBarTheme: TabBarTheme(
         unselectedLabelColor: styles.lightTextColor,
         labelColor: styles.lightPrimaryColor,
@@ -292,8 +314,10 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
       ),
       navigationRailTheme: NavigationRailThemeData(
-        selectedIconTheme: IconThemeData(color: styles.darkPrimaryColor, opacity: 1, size: 24),
-        unselectedIconTheme: IconThemeData(color: styles.darkTextColor, opacity: 1, size: 24),
+        selectedIconTheme:
+            IconThemeData(color: styles.darkPrimaryColor, opacity: 1, size: 24),
+        unselectedIconTheme:
+            IconThemeData(color: styles.darkTextColor, opacity: 1, size: 24),
         backgroundColor: styles.darkBackgroundColor,
         elevation: 3,
         selectedLabelTextStyle: TextStyle(color: styles.darkPrimaryColor),
@@ -341,9 +365,11 @@ class AppTheme {
       ),
       popupMenuTheme: PopupMenuThemeData(
         color: const Color(0xff37404a),
-        textStyle: darkTextTheme.bodyMedium?.merge(TextStyle(color: styles.darkTextColor)),
+        textStyle: darkTextTheme.bodyMedium
+            ?.merge(TextStyle(color: styles.darkTextColor)),
       ),
-      bottomAppBarTheme: const BottomAppBarTheme(color: Color(0xff292929), elevation: 2),
+      bottomAppBarTheme:
+          const BottomAppBarTheme(color: Color(0xff292929), elevation: 2),
       tabBarTheme: TabBarTheme(
         unselectedLabelColor: styles.lightTextColor,
         labelColor: const Color(0xff10bbf0),
@@ -395,7 +421,21 @@ class AppTheme {
 }
 
 class CustomAppTheme {
-  final Color bgLayer1, bgLayer2, bgLayer3, bgLayer4, disabledColor, onDisabled, colorInfo, colorWarning, colorSuccess, colorError, shadowColor, onInfo, onWarning, onSuccess, onError;
+  final Color bgLayer1,
+      bgLayer2,
+      bgLayer3,
+      bgLayer4,
+      disabledColor,
+      onDisabled,
+      colorInfo,
+      colorWarning,
+      colorSuccess,
+      colorError,
+      shadowColor,
+      onInfo,
+      onWarning,
+      onSuccess,
+      onError;
 
   CustomAppTheme({
     this.bgLayer1 = const Color(0xffffffff),
@@ -417,5 +457,12 @@ class CustomAppTheme {
 }
 
 class NavigationBarTheme {
-  Color? backgroundColor, selectedItemIconColor, selectedItemTextColor, selectedItemColor, selectedOverlayColor, unselectedItemIconColor, unselectedItemTextColor, unselectedItemColor;
+  Color? backgroundColor,
+      selectedItemIconColor,
+      selectedItemTextColor,
+      selectedItemColor,
+      selectedOverlayColor,
+      unselectedItemIconColor,
+      unselectedItemTextColor,
+      unselectedItemColor;
 }

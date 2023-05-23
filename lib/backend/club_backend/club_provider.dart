@@ -2,7 +2,6 @@ import 'package:club_model/utils/my_print.dart';
 import 'package:flutter/foundation.dart';
 import 'package:club_model/club_model.dart';
 
-
 class ClubProvider extends ChangeNotifier {
   List<ClubModel> _clubsList = [];
 

@@ -1,4 +1,3 @@
-
 import 'package:club_app_admin/backend/admin/admin_controller.dart';
 import 'package:club_app_admin/backend/admin/admin_provider.dart';
 import 'package:club_model/club_model.dart';
@@ -23,18 +22,17 @@ class _SplashScreenState extends State<SplashScreen> {
   late AdminController adminController;
   late AdminProvider adminProvider;
 
-
-  void loginCheckMethod(BuildContext context)  async {
+  void loginCheckMethod(BuildContext context) async {
     NavigationController.isFirst = false;
 
-
-    await Future.delayed(const Duration(milliseconds:600));
+    await Future.delayed(const Duration(milliseconds: 600));
     MyPrint.printOnConsole("In loginCheckMethod");
-    bool userLoggedIn = await AuthenticationController().checkUserLoginForFirstTime();
+    bool userLoggedIn =
+        await AuthenticationController().checkUserLoginForFirstTime();
 
-    if(userLoggedIn)  {
+    if (userLoggedIn) {
       MyPrint.printOnConsole("User logged in");
-      if(context.mounted) {
+      if (context.mounted) {
         NavigationController.navigateToHomeScreen(
           navigationOperationParameters: NavigationOperationParameters(
             context: context,
@@ -42,10 +40,9 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
         );
       }
-    }
-    else{
+    } else {
       MyPrint.printOnConsole("user not logged in");
-      if(context.mounted) {
+      if (context.mounted) {
         NavigationController.navigateToLoginScreen(
           navigationOperationParameters: NavigationOperationParameters(
             context: context,
@@ -65,7 +62,8 @@ class _SplashScreenState extends State<SplashScreen> {
     ]);
 
     DateTime end = DateTime.now();
-    MyPrint.printOnConsole("getAppRelatedData finished in ${start.difference(end).inMilliseconds} Milliseconds");
+    MyPrint.printOnConsole(
+        "getAppRelatedData finished in ${start.difference(end).inMilliseconds} Milliseconds");
   }
 
   @override
@@ -77,8 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    if(isFirst) {
+    if (isFirst) {
       isFirst = false;
       loginCheckMethod(context);
     }

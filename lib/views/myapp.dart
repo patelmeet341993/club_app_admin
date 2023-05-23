@@ -18,13 +18,20 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AppThemeProvider>(create: (_) => AppThemeProvider(), lazy: false),
-        ChangeNotifierProvider<AdminProvider>(create: (_) => AdminProvider(), lazy: false),
-        ChangeNotifierProvider<AuthenticationProvider>(create: (_) => AuthenticationProvider(), lazy: false),
-        ChangeNotifierProvider<MenuProvider>(create: (_) => MenuProvider(), lazy: false),
-        ChangeNotifierProvider<ProductProvider>(create: (_) => ProductProvider(), lazy: false),
-        ChangeNotifierProvider<ClubProvider>(create: (_) => ClubProvider(), lazy: false),
-        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider(), lazy: false),
+        ChangeNotifierProvider<AppThemeProvider>(
+            create: (_) => AppThemeProvider(), lazy: false),
+        ChangeNotifierProvider<AdminProvider>(
+            create: (_) => AdminProvider(), lazy: false),
+        ChangeNotifierProvider<AuthenticationProvider>(
+            create: (_) => AuthenticationProvider(), lazy: false),
+        ChangeNotifierProvider<MenuProvider>(
+            create: (_) => MenuProvider(), lazy: false),
+        ChangeNotifierProvider<ProductProvider>(
+            create: (_) => ProductProvider(), lazy: false),
+        ChangeNotifierProvider<ClubProvider>(
+            create: (_) => ClubProvider(), lazy: false),
+        ChangeNotifierProvider<UserProvider>(
+            create: (_) => UserProvider(), lazy: false),
       ],
       child: MainApp(),
     );
@@ -40,7 +47,8 @@ class MainApp extends StatelessWidget {
     MyPrint.printOnConsole("MainApp Build Called");
 
     return Consumer<AppThemeProvider>(
-      builder: (BuildContext context, AppThemeProvider appThemeProvider, Widget? child) {
+      builder: (BuildContext context, AppThemeProvider appThemeProvider,
+          Widget? child) {
         //MyPrint.printOnConsole("ThemeMode:${appThemeProvider.themeMode}");
 
         return MaterialApp(

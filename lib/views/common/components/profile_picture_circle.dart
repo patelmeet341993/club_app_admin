@@ -6,7 +6,9 @@ class ProfilePictureCircle extends StatelessWidget {
   final double height;
   final double width;
 
-  const ProfilePictureCircle({Key? key,required this.imageUrl,this.width=50,this.height=50}) : super(key: key);
+  const ProfilePictureCircle(
+      {Key? key, required this.imageUrl, this.width = 50, this.height = 50})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,7 @@ class ProfilePictureCircle extends StatelessWidget {
             );
           },
         ),
-        ),
+      ),
     );
   }
 }

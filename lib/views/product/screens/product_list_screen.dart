@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
 
-
 class ProductScreenNavigator extends StatefulWidget {
   const ProductScreenNavigator({Key? key}) : super(key: key);
 
@@ -64,15 +63,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 inAsyncCall: isLoading,
                 child: Column(
                   children: [
-                    HeaderWidget(title: "Products",suffixWidget: CommonButton(text: "Add Product",
-                        icon: Icon(Icons.add,color: Styles.white,),
-                        onTap: (){
-                          NavigationController.navigateToAddProductScreen(navigationOperationParameters:
-                          NavigationOperationParameters(
-                            navigationType: NavigationType.pushNamed,
-                            context: context,
-                          ));
-                        }),),
+                    HeaderWidget(
+                      title: "Products",
+                      suffixWidget: CommonButton(
+                          text: "Add Product",
+                          icon: Icon(
+                            Icons.add,
+                            color: Styles.white,
+                          ),
+                          onTap: () {
+                            NavigationController.navigateToAddProductScreen(
+                                navigationOperationParameters:
+                                    NavigationOperationParameters(
+                              navigationType: NavigationType.pushNamed,
+                              context: context,
+                            ));
+                          }),
+                    ),
                     const SizedBox(
                       height: 20,
                     ),
@@ -111,14 +118,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
     });
   }
 
-
   Widget SingleProduct(ProductModel productModel, index) {
     return InkWell(
-      onTap: (){
-
-      },
+      onTap: () {},
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Styles.white,
@@ -150,11 +154,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   fontWeight: FontWeight.bold,
                 ),
                 SizedBox(height: 5),
-                (productModel.brand?.name.isNotEmpty ?? false)?CommonText(
-                  text: 'by ${productModel.brand!.name}',
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ):SizedBox.shrink(),
+                (productModel.brand?.name.isNotEmpty ?? false)
+                    ? CommonText(
+                        text: 'by ${productModel.brand!.name}',
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      )
+                    : SizedBox.shrink(),
                 SizedBox(height: 3),
                 CommonText(
                   text: productModel.createdTime == null
@@ -186,11 +192,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 ),
               ],
             ),
-
             SizedBox(
               width: 20,
             ),
-
           ],
         ),
       ),
@@ -219,6 +223,4 @@ class _ProductListScreenState extends State<ProductListScreen> {
   productController.EnableDisableGameInFirebase(
   editableData: data, id: productModel.id, listIndex: index);
   })*/
-
-
 }

@@ -20,18 +20,23 @@ class ClubController {
     }
   }
 
-  Future<void> EnableDisableClubInFirebase(
-      {required Map<String, dynamic> editableData,
-      required String id,
-      required int listIndex,
-        required bool isAdminEnabled,
-      }) async {
+  Future<void> EnableDisableClubInFirebase({
+    required Map<String, dynamic> editableData,
+    required String id,
+    required int listIndex,
+    required bool isAdminEnabled,
+  }) async {
     try {
       await FirebaseNodes.clubDocumentReference(clubId: id)
-          .update(editableData).then((value) {
-        MyPrint.printOnConsole("user data: ${(isAdminEnabled ? editableData[MyAppConstants.cAdminEnabled] : editableData[MyAppConstants.cClubEnabled])}");
-        isAdminEnabled ? clubProvider.updateEnableDisableOfAdminInList(editableData[MyAppConstants.cAdminEnabled] , listIndex)
-                       : clubProvider.updateEnableDisableOfClubInList(editableData[MyAppConstants.cClubEnabled] , listIndex);
+          .update(editableData)
+          .then((value) {
+        MyPrint.printOnConsole(
+            "user data: ${(isAdminEnabled ? editableData[MyAppConstants.cAdminEnabled] : editableData[MyAppConstants.cClubEnabled])}");
+        isAdminEnabled
+            ? clubProvider.updateEnableDisableOfAdminInList(
+                editableData[MyAppConstants.cAdminEnabled], listIndex)
+            : clubProvider.updateEnableDisableOfClubInList(
+                editableData[MyAppConstants.cClubEnabled], listIndex);
       });
     } catch (e, s) {
       MyPrint.printOnConsole(

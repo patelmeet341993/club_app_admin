@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 import '../../../backend/common/menu_provider.dart';
 import 'app_response.dart';
 
-
 class HeaderWidget extends StatefulWidget {
   String title;
   Widget? suffixWidget;
   bool isBackArrow = false;
-  HeaderWidget({required this.title,this.suffixWidget,this.isBackArrow = false});
+  HeaderWidget(
+      {required this.title, this.suffixWidget, this.isBackArrow = false});
   @override
   _HeaderWidgetState createState() => _HeaderWidgetState();
 }
@@ -27,18 +27,22 @@ class _HeaderWidgetState extends State<HeaderWidget> {
                 Icons.menu,
                 color: Styles.black,
               ),
-              onPressed: Provider.of<MenuProvider>(context, listen: false).controlMenu,
+              onPressed:
+                  Provider.of<MenuProvider>(context, listen: false).controlMenu,
             ),
-          if(widget.isBackArrow)
-             Padding(
-               padding: EdgeInsets.only(right: 10.0),
-               child: InkWell(
+          if (widget.isBackArrow)
+            Padding(
+              padding: EdgeInsets.only(right: 10.0),
+              child: InkWell(
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: const Icon(Icons.arrow_back_ios_rounded, size: 28,
-                    color: Styles.bgSideMenu,)),
-             ),
+                  child: const Icon(
+                    Icons.arrow_back_ios_rounded,
+                    size: 28,
+                    color: Styles.bgSideMenu,
+                  )),
+            ),
           Expanded(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,9 +55,6 @@ class _HeaderWidgetState extends State<HeaderWidget> {
                   ),
                 ),
                 widget.suffixWidget != null ? widget.suffixWidget! : Container()
-
-
-
               ],
             ),
           ),

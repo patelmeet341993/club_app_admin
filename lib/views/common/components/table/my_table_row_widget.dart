@@ -22,12 +22,13 @@ class MyTableRowWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
 
-    if(cells.isEmpty) {
+    if (cells.isEmpty) {
       return const SizedBox();
     }
     return Container(
       margin: margin,
-      padding: padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      padding:
+          padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       decoration: BoxDecoration(
         color: backgroundColor ?? themeData.cardColor,
         borderRadius: BorderRadius.circular(borderRadius),

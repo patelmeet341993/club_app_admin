@@ -16,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int tabNumber = 0;
 
   @override
@@ -24,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     MyPrint.printOnConsole('On Main Home Page');
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.account_box_outlined,
           press: () {
             setState(() {
-              tabNumber=0;
+              tabNumber = 0;
             });
           },
         ),
@@ -49,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.view_in_ar_outlined,
           press: () {
             setState(() {
-              tabNumber=1;
+              tabNumber = 1;
             });
           },
         ),
@@ -58,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.person_outline,
           press: () {
             setState(() {
-              tabNumber=2;
+              tabNumber = 2;
             });
           },
         ),
@@ -67,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.library_books_outlined,
           press: () {
             setState(() {
-              tabNumber=5;
+              tabNumber = 5;
             });
           },
         ),
@@ -87,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.account_box_outlined,
                       press: () {
                         setState(() {
-                          tabNumber=0;
+                          tabNumber = 0;
                         });
                       },
                     ),
@@ -96,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.view_in_ar_outlined,
                       press: () {
                         setState(() {
-                          tabNumber=1;
+                          tabNumber = 1;
                         });
                       },
                     ),
@@ -105,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.person_outline,
                       press: () {
                         setState(() {
-                          tabNumber=2;
+                          tabNumber = 2;
                         });
                       },
                     ),
@@ -132,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.library_books_outlined,
                       press: () {
                         setState(() {
-                          tabNumber=5;
+                          tabNumber = 5;
                         });
                       },
                     ),
@@ -158,17 +156,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget getPageWidget(int number){
-    switch(number){
-      case 0:{
-        return const ProductScreenNavigator();
-      }
-      case 1:{
-        return const ClubScreenNavigator();
-      }
-      case 2:{
-        return const UserScreenNavigator();
-      }
+  Widget getPageWidget(int number) {
+    switch (number) {
+      case 0:
+        {
+          return const ProductScreenNavigator();
+        }
+      case 1:
+        {
+          return const ClubScreenNavigator();
+        }
+      case 2:
+        {
+          return const UserScreenNavigator();
+        }
       // case 3:{
       //   return  OrderListScreen();
       // }
@@ -178,12 +179,10 @@ class _HomeScreenState extends State<HomeScreen> {
       // case 5:{
       //   return const OkotoProfileScreenNavigator();
       // }
-      default : {
-        return  const ProductScreenNavigator();
-
-      }
-
+      default:
+        {
+          return const ProductScreenNavigator();
+        }
     }
   }
-
 }

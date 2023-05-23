@@ -1,4 +1,3 @@
-
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/material.dart';
@@ -32,20 +31,24 @@ class _SideBarState extends State<SideBar> {
                     fontWeight: FontWeight.bold,
                   ),
                   InkWell(
-                      onTap: (){
+                      onTap: () {
                         // showDialog(context: context, builder: (context){
                         //   return NotificationDialog();
                         // });
                       },
                       child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
-                          child: Icon(Icons.notifications,color: Colors.white,))),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                          child: Icon(
+                            Icons.notifications,
+                            color: Colors.white,
+                          ))),
                 ],
               ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children:widget.drawerListTile,
+              children: widget.drawerListTile,
             ),
             Spacer(),
             Image.asset("assets/sidebar_image.png")
@@ -62,7 +65,8 @@ class DrawerListTile extends StatelessWidget {
 
   final VoidCallback press;
 
-  DrawerListTile({required this.title,required this.icon, required this.press});
+  DrawerListTile(
+      {required this.title, required this.icon, required this.press});
   @override
   Widget build(BuildContext context) {
     return ListTile(
