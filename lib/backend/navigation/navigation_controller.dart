@@ -1,5 +1,7 @@
 import 'package:club_app_admin/views/club/screens/add_club.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
+import 'package:club_app_admin/views/users/screens/disabled_users_list.dart';
+import 'package:club_app_admin/views/users/screens/user_list_screen.dart';
 import 'package:club_model/backend/navigation/navigation_operation.dart';
 import 'package:club_model/backend/navigation/navigation_operation_parameters.dart';
 import 'package:club_model/utils/my_print.dart';
@@ -29,9 +31,7 @@ class NavigationController {
   static final GlobalKey<NavigatorState> mainScreenNavigator = GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> productScreenNavigator = GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> clubScreenNavigator = GlobalKey<NavigatorState>();
-
-  static final GlobalKey<NavigatorState> pharmaDashboardScreenNavigator = GlobalKey<NavigatorState>();
-  static GlobalKey<NavigatorState> historyScreenNavigator = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> userScreenNavigator = GlobalKey<NavigatorState>();
 
   static bool isUserProfileTabInitialized = false;
 
@@ -180,6 +180,43 @@ class NavigationController {
     return null;
   }
 
+static Route? onUserGeneratedRoutes(RouteSettings settings) {
+    MyPrint.printOnConsole("User Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
+
+    if(kIsWeb) {
+      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
+        return null;
+      }
+    }
+
+    MyPrint.printOnConsole("First Page:$isFirst");
+    Widget? page;
+
+    switch (settings.name) {
+      case "/": {
+        page = const UserListScreen();
+        break;
+      }
+
+      case DisabledUsersList.routeName: {
+        page = parseDisabledUsersScreen(settings: settings);
+        break;
+      }
+
+    }
+
+    if (page != null) {
+      return PageRouteBuilder(
+        pageBuilder: (c, a1, a2) => page!,
+        //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+        transitionsBuilder: (c, anim, a2, child) => SizeTransition(sizeFactor: anim, child: child),
+        transitionDuration: const Duration(milliseconds: 0),
+        settings: settings,
+      );
+    }
+    return null;
+  }
+
 
   //region Parse Page From RouteSettings
   static Widget? parseLoginScreen({required RouteSettings settings}) {
@@ -196,6 +233,10 @@ class NavigationController {
 
   static Widget? parseAddClubScreen({required RouteSettings settings}) {
     return  AddClub();
+  }
+
+  static Widget? parseDisabledUsersScreen({required RouteSettings settings}) {
+    return  DisabledUsersList();
   }
   //endregion
 
@@ -220,6 +261,12 @@ class NavigationController {
   static Future<dynamic> navigateToAddClubScreen({required NavigationOperationParameters navigationOperationParameters}) {
     return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: AddClub.routeName,
+    ));
+  }
+
+  static Future<dynamic> navigateToDisabledUsersScreen({required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
+      routeName: DisabledUsersList.routeName,
     ));
   }
 

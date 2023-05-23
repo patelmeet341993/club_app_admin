@@ -74,7 +74,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
                             context: context,
                           ));
                         }),),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Expanded(child: getClubsList()),
@@ -83,7 +83,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
               ),
             );
           } else {
-            return Center(child: const LoadingWidget());
+            return const Center(child: LoadingWidget());
           }
         });
   }
@@ -118,8 +118,8 @@ class _ClubListScreenState extends State<ClubListScreen> {
 
       },
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-        padding: EdgeInsets.all(10),
+        margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Styles.white,
           border: Border.all(color: Styles.yellow, width: 1),
@@ -138,7 +138,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
                   width: 80,
                   borderRadius: 4,
                 )),
-            SizedBox(
+            const SizedBox(
               width: 30,
             ),
             Column(
@@ -149,13 +149,13 @@ class _ClubListScreenState extends State<ClubListScreen> {
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 CommonText(
                   text: 'Mobile Number: ${clubModel.mobileNumber}',
                   fontSize: 16,
                   fontWeight: FontWeight.normal,
                 ),
-                SizedBox(height: 3),
+                const SizedBox(height: 3),
                 CommonText(
                   text: clubModel.createdTime == null
                       ? 'Created Date: No Data'
@@ -167,16 +167,16 @@ class _ClubListScreenState extends State<ClubListScreen> {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
-            Spacer(),
+            const Spacer(),
             Row(
               children: [
                 Column(
                   children: [
                     CommonText(text: 'Admin'),
-                    SizedBox(height: 3,),
+                    const SizedBox(height: 3,),
                     getEnableSwitch(value: clubModel.adminEnabled,onChanged: (val){
                       Map<String, dynamic> data = {
                         MyAppConstants.cAdminEnabled : val,
@@ -190,11 +190,11 @@ class _ClubListScreenState extends State<ClubListScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 3),
+                const SizedBox(height: 3),
                 Column(
                   children: [
                     CommonText(text: 'Club'),
-                    SizedBox(height: 3,),
+                    const SizedBox(height: 3,),
                     getEnableSwitch(value: clubModel.clubEnabled,onChanged: (val){
                       Map<String, dynamic> data = {
                         MyAppConstants.cClubEnabled: val,
@@ -209,7 +209,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
               ],
             ),
 
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
 

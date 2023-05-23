@@ -1,5 +1,6 @@
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
 import 'package:club_app_admin/views/product/screens/product_list_screen.dart';
+import 'package:club_app_admin/views/users/screens/user_list_screen.dart';
 import 'package:club_model/club_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: SideBar(drawerListTile: [
         DrawerListTile(
-          title: "Users",
+          title: "Products",
           icon: Icons.account_box_outlined,
           press: () {
             setState(() {
@@ -44,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         DrawerListTile(
-          title: "Devices",
+          title: "Clubs",
           icon: Icons.view_in_ar_outlined,
           press: () {
             setState(() {
@@ -53,29 +54,11 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         DrawerListTile(
-          title: "Games",
-          icon: Icons.videogame_asset_outlined,
+          title: "Users",
+          icon: Icons.person_outline,
           press: () {
             setState(() {
               tabNumber=2;
-            });
-          },
-        ),
-        DrawerListTile(
-          title: "Orders",
-          icon: Icons.auto_graph,
-          press: () {
-            setState(() {
-              tabNumber=3;
-            });
-          },
-        ),
-        DrawerListTile(
-          title: "Subscriptions",
-          icon: Icons.dashboard,
-          press: () {
-            setState(() {
-              tabNumber=4;
             });
           },
         ),
@@ -117,15 +100,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         });
                       },
                     ),
-                    // DrawerListTile(
-                    //   title: "Games",
-                    //   icon: Icons.videogame_asset_outlined,
-                    //   press: () {
-                    //     setState(() {
-                    //       tabNumber=2;
-                    //     });
-                    //   },
-                    // ),
+                    DrawerListTile(
+                      title: "Users",
+                      icon: Icons.person_outline,
+                      press: () {
+                        setState(() {
+                          tabNumber=2;
+                        });
+                      },
+                    ),
                     // DrawerListTile(
                     //   title: "Orders",
                     //   icon: Icons.auto_graph,
@@ -177,15 +160,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget getPageWidget(int number){
     switch(number){
-      case 1:{
+      case 0:{
         return const ProductScreenNavigator();
       }
-      case 0:{
+      case 1:{
         return const ClubScreenNavigator();
       }
-      // case 2:{
-      //   return const GameScreenNavigator();
-      // }
+      case 2:{
+        return const UserScreenNavigator();
+      }
       // case 3:{
       //   return  OrderListScreen();
       // }
