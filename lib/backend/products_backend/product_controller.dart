@@ -36,10 +36,10 @@ class ProductController {
     }
   }
 
-  Future<void> AddProductToFirebase(ProductModel productModel) async {
+  Future<void> AddProductToFirebase(ProductModel productModel,{bool isAdInProvider = false}) async {
     try {
       await productRepository.AddProductRepo(productModel);
-      productProvider.addProductModelInGameList(productModel);
+      if(isAdInProvider) productProvider.addProductModelInGameList(productModel);
     } catch (e, s) {
       MyPrint.printOnConsole(
           'Error in Add Product to Firebase in Product Controller $e');

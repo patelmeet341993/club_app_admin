@@ -7,6 +7,7 @@ import 'package:club_app_admin/backend/users_backend/user_provider.dart';
 import 'package:club_model/club_model.dart';
 import 'package:flutter/material.dart';
 
+import '../backend/brands_backend/brand_provider.dart';
 import '../backend/navigation/navigation_controller.dart';
 
 class MyApp extends StatelessWidget {
@@ -32,6 +33,8 @@ class MyApp extends StatelessWidget {
             create: (_) => ClubProvider(), lazy: false),
         ChangeNotifierProvider<UserProvider>(
             create: (_) => UserProvider(), lazy: false),
+        ChangeNotifierProvider<BrandProvider>(
+            create: (_) => BrandProvider(), lazy: false),
       ],
       child: MainApp(),
     );

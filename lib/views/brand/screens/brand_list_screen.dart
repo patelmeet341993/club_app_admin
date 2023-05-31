@@ -1,54 +1,58 @@
-import 'package:club_app_admin/backend/products_backend/product_controller.dart';
-import 'package:club_app_admin/backend/products_backend/product_provider.dart';
+import 'dart:typed_data';
+
+import 'package:club_app_admin/backend/brands_backend/brand_provider.dart';
 import 'package:club_app_admin/views/common/components/header_widget.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/material.dart';
 
+import '../../../backend/brands_backend/brand_controller.dart';
 import '../../../backend/navigation/navigation_arguments.dart';
 import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
 import '../../common/components/common_popup.dart';
 
-class ProductScreenNavigator extends StatefulWidget {
-  const ProductScreenNavigator({Key? key}) : super(key: key);
+class BrandListScreenNavigator extends StatefulWidget {
+  const BrandListScreenNavigator({Key? key}) : super(key: key);
 
   @override
-  _ProductScreenNavigatorState createState() => _ProductScreenNavigatorState();
+  _BrandListScreenNavigatorState createState() => _BrandListScreenNavigatorState();
 }
 
-class _ProductScreenNavigatorState extends State<ProductScreenNavigator> {
+class _BrandListScreenNavigatorState extends State<BrandListScreenNavigator> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: NavigationController.productScreenNavigator,
-      onGenerateRoute: NavigationController.onProductGeneratedRoutes,
+      key: NavigationController.brandScreenNavigator,
+      onGenerateRoute: NavigationController.onBrandGeneratedRoutes,
     );
   }
 }
 
-class ProductListScreen extends StatefulWidget {
-  const ProductListScreen({Key? key}) : super(key: key);
+class BrandListScreen extends StatefulWidget {
+  const BrandListScreen({Key? key}) : super(key: key);
 
   @override
-  State<ProductListScreen> createState() => _ProductListScreenState();
+  State<BrandListScreen> createState() => _BrandListScreenState();
 }
 
-class _ProductListScreenState extends State<ProductListScreen> {
-  late ProductProvider productProvider;
-  late ProductController productController;
+class _BrandListScreenState extends State<BrandListScreen> {
+
+  late BrandProvider brandProvider;
+  late BrandController brandController;
   late Future<void> futureGetData;
   bool isLoading = false;
 
+
   Future<void> getData() async {
-    await productController.getProductList();
+    await brandController.getBrandList();
   }
 
   @override
   void initState() {
     super.initState();
-    productProvider = Provider.of<ProductProvider>(context, listen: false);
-    productController = ProductController(productProvider: productProvider);
+    brandProvider = Provider.of<BrandProvider>(context, listen: false);
+    brandController = BrandController(brandProvider: brandProvider);
     futureGetData = getData();
   }
 
@@ -65,28 +69,28 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 child: Column(
                   children: [
                     HeaderWidget(
-                      title: "Products",
+                      title: "Brands",
                       suffixWidget: CommonButton(
-                          text: "Add Product",
+                          text: "Add Brand",
                           icon: Icon(
                             Icons.add,
                             color: Styles.white,
                           ),
                           onTap: () {
-                            NavigationController.navigateToAddProductScreen(
+                            NavigationController.navigateToAddBrandScreen(
                                 navigationOperationParameters:
-                                    NavigationOperationParameters(
-                              navigationType: NavigationType.pushNamed,
-                              context: context,
-                            ),
-                              addProductScreenNavigationArguments: AddProductScreenNavigationArguments()
+                                NavigationOperationParameters(
+                                  navigationType: NavigationType.pushNamed,
+                                  context: context,
+                                ),
+                                addBrandScreenNavigationArguments: AddBrandScreenNavigationArguments()
                             );
                           }),
                     ),
                     const SizedBox(
                       height: 20,
                     ),
-                    Expanded(child: getProductsList()),
+                    Expanded(child: getBrandList()),
                   ],
                 ),
               ),
@@ -97,13 +101,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
         });
   }
 
-  Widget getProductsList() {
+  Widget getBrandList() {
     return Consumer(builder:
-        (BuildContext context, ProductProvider productProvider, Widget? child) {
-      if (productProvider.productsList.isEmpty) {
+        (BuildContext context, BrandProvider brandProvider, Widget? child) {
+      if (brandProvider.brandsList.isEmpty) {
         return Center(
           child: CommonText(
-            text: "No Products Available",
+            text: "No Brands Available",
             fontWeight: FontWeight.bold,
             fontSize: 30,
           ),
@@ -112,16 +116,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
       //List<NewsFeedModel> newsList = newsProvider.newsList;
       return ListView.builder(
-        itemCount: productProvider.productsList.length,
+        itemCount: brandProvider.brandsList.length,
         //shrinkWrap: true,
         itemBuilder: (context, index) {
-          return SingleProduct(productProvider.productsList[index], index);
+          return SingleBrand(brandProvider.brandsList[index], index);
         },
       );
     });
   }
 
-  Widget SingleProduct(ProductModel productModel, index) {
+  Widget SingleBrand(BrandModel brandModel, index) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -140,7 +144,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
                 ),
                 child: CommonCachedNetworkImage(
-                  imageUrl: productModel.thumbnailImageUrl,
+                  imageUrl: brandModel.thumbnailImageUrl,
                   height: 80,
                   width: 80,
                   borderRadius: 4,
@@ -152,23 +156,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CommonText(
-                  text: productModel.name,
+                  text: brandModel.name,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
                 const SizedBox(height: 5),
-                (productModel.brand?.name.isNotEmpty ?? false)
-                    ? CommonText(
-                        text: 'by ${productModel.brand!.name}',
-                        fontSize: 16,
-                        fontWeight: FontWeight.normal,
-                      )
-                    : const SizedBox.shrink(),
                 const SizedBox(height: 3),
                 CommonText(
-                  text: productModel.createdTime == null
+                  text: brandModel.createdTime == null
                       ? 'Created Date: No Data'
-                      : 'Created Date: ${DateFormat("dd-MMM-yyyy").format(productModel.createdTime!.toDate())}',
+                      : 'Created Date: ${DateFormat("dd-MMM-yyyy").format(brandModel.createdTime!.toDate())}',
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   fontSize: 14,
@@ -180,42 +177,27 @@ class _ProductListScreenState extends State<ProductListScreen> {
               width: 20,
             ),
             const Spacer(),
-            Column(
-              children: [
-                CommonText(
-                  text: 'Price :  ${productModel.price} ₹',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                const SizedBox(height: 3),
-                CommonText(
-                  text: 'Size(ml) :  ${productModel.sizeInML} ml',
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ],
-            ),
             const SizedBox(
               width: 10,
             ),
             Tooltip(
-              message: 'Edit Product',
+              message: 'Edit Brand',
               child: InkWell(
                 onTap: () {
                   showDialog(
                     context: context,
                     builder: (context) {
                       return CommonPopup(
-                        text: "Want to Edit product?",
+                        text: "Want to Edit brand?",
                         rightText: "Yes",
                         rightOnTap: () async {
-                          NavigationController.navigateToAddProductScreen(
+                          NavigationController.navigateToAddBrandScreen(
                             navigationOperationParameters: NavigationOperationParameters(
                               navigationType: NavigationType.pushNamed,
-                              context: NavigationController.productScreenNavigator.currentContext!,
+                              context: NavigationController.brandScreenNavigator.currentContext!,
                             ),
-                            addProductScreenNavigationArguments: AddProductScreenNavigationArguments(
-                              productModel: productModel,
+                            addBrandScreenNavigationArguments: AddBrandScreenNavigationArguments(
+                              brandModel: brandModel,
                               index: index,
                               isEdit: true,
                             ),
@@ -244,7 +226,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 
-  /*
+/*
   Widget getTestEnableSwitch(
       {required bool value, void Function(bool?)? onChanged}) {
     return Tooltip(

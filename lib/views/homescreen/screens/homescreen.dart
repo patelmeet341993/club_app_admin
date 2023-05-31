@@ -1,5 +1,7 @@
+import 'package:club_app_admin/views/brand/screens/brand_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
 import 'package:club_app_admin/views/product/screens/product_list_screen.dart';
+import 'package:club_app_admin/views/system/screens/system_main_screen.dart';
 import 'package:club_app_admin/views/users/screens/user_list_screen.dart';
 import 'package:club_model/club_model.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,7 @@ import '../../common/components/side_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/HomeScreen';
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -26,50 +29,56 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // if(NavigationController.isFirst) {
-    //   MyPrint.printOnConsole("isFirst called");
-    //   return const SizedBox();
-    // }
-
     return Scaffold(
-      drawer: SideBar(drawerListTile: [
-        DrawerListTile(
-          title: "Products",
-          icon: Icons.account_box_outlined,
-          press: () {
-            setState(() {
-              tabNumber = 0;
-            });
-          },
-        ),
-        DrawerListTile(
-          title: "Clubs",
-          icon: Icons.view_in_ar_outlined,
-          press: () {
-            setState(() {
-              tabNumber = 1;
-            });
-          },
-        ),
-        DrawerListTile(
-          title: "Users",
-          icon: Icons.person_outline,
-          press: () {
-            setState(() {
-              tabNumber = 2;
-            });
-          },
-        ),
-        DrawerListTile(
-          title: "OKOTO",
-          icon: Icons.library_books_outlined,
-          press: () {
-            setState(() {
-              tabNumber = 5;
-            });
-          },
-        ),
-      ]),
+      drawer: SideBar(
+        drawerListTile: [
+          DrawerListTile(
+            title: "Products",
+            icon: Icons.account_box_outlined,
+            press: () {
+              setState(() {
+                tabNumber = 0;
+              });
+            },
+          ),
+          DrawerListTile(
+            title: "Clubs",
+            icon: Icons.view_in_ar_outlined,
+            press: () {
+              setState(() {
+                tabNumber = 1;
+              });
+            },
+          ),
+          DrawerListTile(
+            title: "Brands",
+            icon: Icons.branding_watermark,
+            press: () {
+              setState(() {
+                tabNumber = 2;
+              });
+            },
+          ),
+          DrawerListTile(
+            title: "Users",
+            icon: Icons.person_outline,
+            press: () {
+              setState(() {
+                tabNumber = 3;
+              });
+            },
+          ),
+          DrawerListTile(
+            title: "System",
+            icon: Icons.library_books_outlined,
+            press: () {
+              setState(() {
+                tabNumber = 4;
+              });
+            },
+          ),
+        ],
+      ),
       key: Provider.of<MenuProvider>(context, listen: false).scaffoldKey,
       backgroundColor: Styles.bgSideMenu,
       body: SafeArea(
@@ -99,38 +108,29 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     DrawerListTile(
-                      title: "Users",
-                      icon: Icons.person_outline,
+                      title: "Brands",
+                      icon: Icons.branding_watermark,
                       press: () {
                         setState(() {
                           tabNumber = 2;
                         });
                       },
                     ),
-                    // DrawerListTile(
-                    //   title: "Orders",
-                    //   icon: Icons.auto_graph,
-                    //   press: () {
-                    //     setState(() {
-                    //       tabNumber=3;
-                    //     });
-                    //   },
-                    // ),
-                    // DrawerListTile(
-                    //   title: "Subscriptions",
-                    //   icon: Icons.dashboard,
-                    //   press: () {
-                    //     setState(() {
-                    //       tabNumber=4;
-                    //     });
-                    //   },
-                    // ),
+                    DrawerListTile(
+                      title: "Users",
+                      icon: Icons.person_outline,
+                      press: () {
+                        setState(() {
+                          tabNumber = 3;
+                        });
+                      },
+                    ),
                     DrawerListTile(
                       title: "System",
                       icon: Icons.library_books_outlined,
                       press: () {
                         setState(() {
-                          tabNumber = 5;
+                          tabNumber = 4;
                         });
                       },
                     ),
@@ -168,17 +168,16 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       case 2:
         {
+          return const BrandListScreenNavigator();
+        }
+      case 3:
+        {
           return const UserScreenNavigator();
         }
-      // case 3:{
-      //   return  OrderListScreen();
-      // }
-      // case 4:{
-      //   return const SubscriptionPlanNavigator();
-      // }
-      // case 5:{
-      //   return const OkotoProfileScreenNavigator();
-      // }
+      case 4:
+        {
+          return const SystemScreenNavigator();
+        }
       default:
         {
           return const ProductScreenNavigator();

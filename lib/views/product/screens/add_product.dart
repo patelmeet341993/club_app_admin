@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:club_app_admin/backend/navigation/navigation_arguments.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +16,8 @@ import '../../common/components/header_widget.dart';
 
 class AddProduct extends StatefulWidget {
   static const String routeName = "/AddProduct";
-  ProductModel? productModel;
-  bool isEdit = false;
-  int? index;
-  AddProduct({this.productModel, this.isEdit = false, this.index});
+  final AddProductScreenNavigationArguments arguments;
+  AddProduct({required this.arguments});
 
   @override
   State<AddProduct> createState() => _AddProductState();
@@ -26,6 +25,9 @@ class AddProduct extends StatefulWidget {
 
 class _AddProductState extends State<AddProduct> {
   final _formKey = GlobalKey<FormState>();
+
+  ProductModel? pageProductModel;
+
   late ProductProvider productProvider;
   late ProductController productController;
   late Future<void> futureGetData;
@@ -72,58 +74,70 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-  Future<void> getData() async {}
+  Future<void> getData() async {
+    MyPrint.printOnConsole('is edit is ${widget.arguments.isEdit}');
+    if (widget.arguments.productModel != null) {
+      pageProductModel = widget.arguments.productModel;
+    }
+
+    if (pageProductModel != null) {
+      if(pageProductModel!.brand != null){
+        print("insisde");
+        brandNameController.text = pageProductModel!.brand!.name;
+        brandThumbnailImageUrl = pageProductModel!.brand!.thumbnailImageUrl;
+      }
+      nameController.text = pageProductModel!.name;
+      priceController.text = ParsingHelper.parseStringMethod(pageProductModel!.price);
+      sizeInMLController.text = ParsingHelper.parseStringMethod(pageProductModel!.sizeInML);
+      thumbnailImageUrl = pageProductModel!.thumbnailImageUrl;
+    }
+  }
 
   Future<void> submitProduct() async {
     setState(() {
       isLoading = true;
     });
 
-    if (widget.productModel != null &&
-        widget.index != null &&
-        widget.isEdit == true) {
-      MyPrint.printOnConsole(
-          "test model edit this with index: ${widget.index} edit: ${widget.isEdit}");
-      ProductModel productModel = ProductModel(
-        id: widget.productModel!.id,
-        name: nameController.text.trim(),
-        brand: BrandModel(
-          name: brandNameController.text.trim(),
-          thumbnailImageUrl: brandThumbnailImageUrl,
-        ),
-        price: double.tryParse(priceController.text) ?? 0,
-        sizeInML: double.tryParse(priceController.text) ?? 0,
-        thumbnailImageUrl: thumbnailImageUrl,
-        createdTime: widget.productModel!.createdTime,
-        updatedTime: Timestamp.now(),
-      );
-      await productController.AddProductToFirebase(productModel);
+    String productId = pageProductModel?.id ?? "";
+    if (productId.isEmpty) {
+      productId = MyUtils.getNewId(isFromUUuid: false);
+    }
 
-      // await productController.AddProductToFirebase(productModel);
-      MyToast.showSuccess(context: context, msg: 'Product Edited successfully');
-    } else {
-      MyPrint.printOnConsole("test model new duplicate");
-      ProductModel productModel = ProductModel(
-        id: MyUtils.getNewId(isFromUUuid: false),
-        name: nameController.text.trim(),
-        brand: BrandModel(
-          name: brandNameController.text.trim(),
-          thumbnailImageUrl: brandThumbnailImageUrl,
-        ),
-        price: double.tryParse(priceController.text) ?? 0,
-        sizeInML: double.tryParse(priceController.text) ?? 0,
-        thumbnailImageUrl: thumbnailImageUrl,
-        createdTime: Timestamp.now(),
-        updatedTime: Timestamp.now(),
-      );
+    ProductModel productModel = ProductModel(
+      id: MyUtils.getNewId(isFromUUuid: false),
+      name: nameController.text.trim(),
+      brand: BrandModel(
+        name: brandNameController.text.trim(),
+        thumbnailImageUrl: brandThumbnailImageUrl,
+      ),
+      price: double.tryParse(priceController.text) ?? 0,
+      sizeInML: double.tryParse(priceController.text) ?? 0,
+      thumbnailImageUrl: thumbnailImageUrl,
+      createdTime: pageProductModel?.createdTime ?? Timestamp.now(),
+      updatedTime: pageProductModel != null ? Timestamp.now() : null,
+    );
 
-      await productController.AddProductToFirebase(productModel);
-      MyToast.showSuccess(context: context, msg: 'Product added successfully');
+    await productController.AddProductToFirebase(productModel,
+      isAdInProvider: pageProductModel == null
+    );
+
+    if(pageProductModel != null) {
+      ProductModel model = productModel;
+      model.name = productModel.name;
+      model.sizeInML = productModel.sizeInML;
+      model.brand = productModel.brand;
+      model.price = productModel.price;
+      model.createdTime = productModel.createdTime;
+      model.updatedTime = productModel.updatedTime;
+      model.thumbnailImageUrl = productModel.thumbnailImageUrl;
     }
 
     setState(() {
       isLoading = false;
     });
+
+    MyToast.showSuccess(context: context, msg: pageProductModel == null ? 'Product Added Successfully' : 'Product Edited Successfully');
+
   }
 
   @override
@@ -389,7 +403,7 @@ class _AddProductState extends State<AddProduct> {
     return CommonButton(
         onTap: () async {
           if (_formKey.currentState!.validate()) {
-            if (thumbnailImage == null) {
+            if (thumbnailImage == null && thumbnailImageUrl.checkEmpty) {
               MyToast.showError(
                   context: context,
                   msg: 'Please upload a product thumbnail image');
@@ -402,6 +416,7 @@ class _AddProductState extends State<AddProduct> {
               return;
             }
             await submitProduct();
+            Navigator.pop(context);
           }
         },
         text: "+ Add Product");

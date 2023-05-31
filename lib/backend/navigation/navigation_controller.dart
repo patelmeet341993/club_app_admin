@@ -1,5 +1,10 @@
+import 'package:club_app_admin/backend/navigation/navigation_arguments.dart';
+import 'package:club_app_admin/views/brand/screens/add_brand_screen.dart';
+import 'package:club_app_admin/views/brand/screens/brand_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/add_club.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
+import 'package:club_app_admin/views/system/screens/offer_list_screen.dart';
+import 'package:club_app_admin/views/system/screens/system_main_screen.dart';
 import 'package:club_app_admin/views/users/screens/disabled_users_list.dart';
 import 'package:club_app_admin/views/users/screens/user_list_screen.dart';
 import 'package:club_model/backend/navigation/navigation_operation.dart';
@@ -35,6 +40,10 @@ class NavigationController {
   static final GlobalKey<NavigatorState> clubScreenNavigator =
       GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> userScreenNavigator =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> systemProfileNavigator =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> brandScreenNavigator =
       GlobalKey<NavigatorState>();
 
   static bool isUserProfileTabInitialized = false;
@@ -202,6 +211,47 @@ class NavigationController {
     return null;
   }
 
+  static Route? onBrandGeneratedRoutes(RouteSettings settings) {
+    MyPrint.printOnConsole(
+        "Brand Routes called for ${settings.name} with arguments:${settings.arguments}");
+
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) &&
+          NavigationController.checkDataAndNavigateToSplashScreen()) {
+        return null;
+      }
+    }
+
+    MyPrint.printOnConsole("First Page:$isFirst");
+    Widget? page;
+
+    switch (settings.name) {
+      case "/":
+        {
+          page = const BrandListScreen();
+          break;
+        }
+
+      case AddBrand.routeName:
+        {
+          page = parseAddBrandScreen(settings: settings);
+          break;
+        }
+    }
+
+    if (page != null) {
+      return PageRouteBuilder(
+        pageBuilder: (c, a1, a2) => page!,
+        //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+        transitionsBuilder: (c, anim, a2, child) =>
+            SizeTransition(sizeFactor: anim, child: child),
+        transitionDuration: const Duration(milliseconds: 0),
+        settings: settings,
+      );
+    }
+    return null;
+  }
+
   static Route? onUserGeneratedRoutes(RouteSettings settings) {
     MyPrint.printOnConsole(
         "User Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
@@ -243,6 +293,47 @@ class NavigationController {
     return null;
   }
 
+  static Route? onSystemProfileGeneratedRoutes(RouteSettings settings) {
+    MyPrint.printOnConsole(
+        "User Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
+
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) &&
+          NavigationController.checkDataAndNavigateToSplashScreen()) {
+        return null;
+      }
+    }
+
+    MyPrint.printOnConsole("First Page:$isFirst");
+    Widget? page;
+
+    switch (settings.name) {
+      case "/":
+        {
+          page = const SystemMainScreen();
+          break;
+        }
+
+      case OfferListScreen.routeName:
+        {
+          page = parseOffersListScreen(settings: settings);
+          break;
+        }
+    }
+
+    if (page != null) {
+      return PageRouteBuilder(
+        pageBuilder: (c, a1, a2) => page!,
+        //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+        transitionsBuilder: (c, anim, a2, child) =>
+            SizeTransition(sizeFactor: anim, child: child),
+        transitionDuration: const Duration(milliseconds: 0),
+        settings: settings,
+      );
+    }
+    return null;
+  }
+
   //region Parse Page From RouteSettings
   static Widget? parseLoginScreen({required RouteSettings settings}) {
     return const LoginScreen();
@@ -253,7 +344,27 @@ class NavigationController {
   }
 
   static Widget? parseAddProductScreen({required RouteSettings settings}) {
-    return AddProduct();
+    if (settings.arguments is AddProductScreenNavigationArguments) {
+      AddProductScreenNavigationArguments arguments =
+      settings.arguments as AddProductScreenNavigationArguments;
+      return AddProduct(
+        arguments: arguments,
+      );
+    } else {
+      return null;
+    }
+  }
+
+  static Widget? parseAddBrandScreen({required RouteSettings settings}) {
+    if (settings.arguments is AddBrandScreenNavigationArguments) {
+      AddBrandScreenNavigationArguments arguments =
+      settings.arguments as AddBrandScreenNavigationArguments;
+      return AddBrand(
+        arguments: arguments,
+      );
+    } else {
+      return null;
+    }
   }
 
   static Widget? parseAddClubScreen({required RouteSettings settings}) {
@@ -262,6 +373,10 @@ class NavigationController {
 
   static Widget? parseDisabledUsersScreen({required RouteSettings settings}) {
     return DisabledUsersList();
+  }
+
+  static Widget? parseOffersListScreen({required RouteSettings settings}) {
+    return OfferListScreen();
   }
   //endregion
 
@@ -282,10 +397,20 @@ class NavigationController {
   }
 
   static Future<dynamic> navigateToAddProductScreen(
-      {required NavigationOperationParameters navigationOperationParameters}) {
+      {required NavigationOperationParameters navigationOperationParameters,required AddProductScreenNavigationArguments addProductScreenNavigationArguments}) {
     return NavigationOperation.navigate(
         navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: AddProduct.routeName,
+          arguments: addProductScreenNavigationArguments,
+    ));
+  }
+
+  static Future<dynamic> navigateToAddBrandScreen(
+      {required NavigationOperationParameters navigationOperationParameters,required AddBrandScreenNavigationArguments addBrandScreenNavigationArguments}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
+      routeName: AddBrand.routeName,
+          arguments: addBrandScreenNavigationArguments,
     ));
   }
 
@@ -302,6 +427,14 @@ class NavigationController {
     return NavigationOperation.navigate(
         navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: DisabledUsersList.routeName,
+    ));
+  }
+
+  static Future<dynamic> navigateToOfferListScreen(
+      {required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
+      routeName: OfferListScreen.routeName,
     ));
   }
 }
