@@ -9,7 +9,7 @@ class AdminUserRepository{
       final query = await FirebaseNodes.adminUsersCollectionReference
           .where('adminId',isEqualTo: adminId).where('password',isEqualTo: password).get();
 
-      MyPrint.printOnConsole("quert data: $query");
+      MyPrint.printOnConsole("quert data: ${query.docs}");
 
       if(query.docs.isNotEmpty) {
         MyPrint.printOnConsole("doc is Not Empty");

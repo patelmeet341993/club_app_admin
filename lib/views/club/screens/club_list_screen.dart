@@ -1,5 +1,6 @@
 import 'package:club_app_admin/backend/club_backend/club_controller.dart';
 import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_app_admin/configs/constants.dart';
 import 'package:club_app_admin/views/common/components/header_widget.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
@@ -8,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
-
 
 class ClubScreenNavigator extends StatefulWidget {
   const ClubScreenNavigator({Key? key}) : super(key: key);
@@ -41,10 +41,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
   bool isLoading = false;
 
   Future<void> getData() async {
-
     await clubController.getClubList();
-
-
   }
 
   @override
@@ -67,15 +64,42 @@ class _ClubListScreenState extends State<ClubListScreen> {
                 inAsyncCall: isLoading,
                 child: Column(
                   children: [
-                    HeaderWidget(title: "Clubs",suffixWidget: CommonButton(text: "Add Club",
-                        icon: Icon(Icons.add,color: Styles.white,),
-                        onTap: (){
-                          NavigationController.navigateToAddClubScreen(navigationOperationParameters:
-                          NavigationOperationParameters(
-                            navigationType: NavigationType.pushNamed,
-                            context: context,
-                          ));
-                        }),),
+                    HeaderWidget(
+                      title: "Clubs",
+                      suffixWidget: CommonButton(
+                          text: "Add Club",
+                          icon: Icon(
+                            Icons.add,
+                            color: Styles.white,
+                          ),
+                          onTap: () async {
+                            // String newId = MyUtils.getNewId();
+                            // ClubModel clubModel = ClubModel(
+                            //     thumbnailImageUrl: "https://picsum.photos/200/300?grayscale",
+                            //     name: "Waves Club",
+                            //     address: "Kedar Bumiya Marg, opp. Narayan Essenza, Bhayli, Vadodara, Gujarat 391410",
+                            //     clubEnabled: true,
+                            //     createdTime: Timestamp.now(),
+                            //     images: ["https://picsum.photos/200/300/?blur", "https://picsum.photos/200/300/?blur=2"],
+                            //     location: LocationModel(
+                            //       address: "Kedar Bumiya Marg, opp. Narayan Essenza, Bhayli, Vadodara, Gujarat 391410",
+                            //       city: "Vadodara",
+                            //       state: "Gujarat",
+                            //       timestamp: Timestamp.now(),
+                            //     ),
+                            //   mobileNumber: "7621855610",
+                            //   adminEnabled: true,
+                            //   id: newId,
+                            // );
+                            // await FirestoreController.firestore.collection('clubs')
+                            //     .doc(newId).set(clubModel.toMap());
+                            // NavigationController.navigateToAddClubScreen(navigationOperationParameters:
+                            // NavigationOperationParameters(
+                            //   navigationType: NavigationType.pushNamed,
+                            //   context: context,
+                            // ));
+                          }),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
@@ -91,8 +115,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
   }
 
   Widget getClubsList() {
-    return Consumer(builder:
-        (BuildContext context, ClubProvider clubProvider, Widget? child) {
+    return Consumer(builder: (BuildContext context, ClubProvider clubProvider, Widget? child) {
       if (clubProvider.clubsList.isEmpty) {
         return Center(
           child: CommonText(
@@ -114,9 +137,9 @@ class _ClubListScreenState extends State<ClubListScreen> {
     });
   }
 
-  Widget SingleGame(ClubModel gameModel, index){
-    return Container()
-    ;  }
+  Widget SingleGame(ClubModel gameModel, index) {
+    return Container();
+  }
 
 /*  Widget SingleProduct(GameModel gameModel, index) {
     return InkWell(
@@ -209,6 +232,4 @@ class _ClubListScreenState extends State<ClubListScreen> {
       ),
     );
   }*/
-
-
 }

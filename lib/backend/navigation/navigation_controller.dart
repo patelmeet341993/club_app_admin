@@ -1,5 +1,6 @@
 import 'package:club_app_admin/views/club/screens/add_club.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
+import 'package:club_app_admin/views/club_profile/club_profile_screen.dart';
 import 'package:club_model/backend/navigation/navigation_operation.dart';
 import 'package:club_model/backend/navigation/navigation_operation_parameters.dart';
 import 'package:club_model/utils/my_print.dart';
@@ -29,6 +30,7 @@ class NavigationController {
   static final GlobalKey<NavigatorState> mainScreenNavigator = GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> productScreenNavigator = GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> clubScreenNavigator = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> clubProfileNavigator = GlobalKey<NavigatorState>();
 
   static final GlobalKey<NavigatorState> pharmaDashboardScreenNavigator = GlobalKey<NavigatorState>();
   static GlobalKey<NavigatorState> historyScreenNavigator = GlobalKey<NavigatorState>();
@@ -159,6 +161,42 @@ class NavigationController {
     switch (settings.name) {
       case "/": {
         page = const ClubListScreen();
+        break;
+      }
+
+      case AddClub.routeName: {
+        page = parseAddClubScreen(settings: settings);
+        break;
+      }
+    }
+
+    if (page != null) {
+      return PageRouteBuilder(
+        pageBuilder: (c, a1, a2) => page!,
+        //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+        transitionsBuilder: (c, anim, a2, child) => SizeTransition(sizeFactor: anim, child: child),
+        transitionDuration: const Duration(milliseconds: 0),
+        settings: settings,
+      );
+    }
+    return null;
+  }
+
+  static Route? onClubProfileGeneratedRoutes(RouteSettings settings) {
+    MyPrint.printOnConsole("Club Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
+
+    if(kIsWeb) {
+      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
+        return null;
+      }
+    }
+
+    MyPrint.printOnConsole("First Page:$isFirst");
+    Widget? page;
+
+    switch (settings.name) {
+      case "/": {
+        page = const ClubProfileScreen();
         break;
       }
 
