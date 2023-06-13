@@ -5,32 +5,31 @@ import 'package:flutter/services.dart';
 class CommonTextFormField extends StatelessWidget {
   CommonTextFormField(
       {Key? key,
-        this.enabled = true,
-        this.onTap,
-        this.keyboardType,
-        this.inputAction,
-        this.controller,
-        this.hintText,
-        this.width,
-        this.fillColor,
-        this.textInputFormatter=const [],
-        //this.contentPadding = const EdgeInsets.symmetric(horizontal: MySize.getScaledSizeHeight(10), vertical: MySize.getScaledSizeHeight(18)),
-        this.maxLines=1,
-        this.minLines=1,
-        this.prefixIcon,
-        this.onChanged,
-        this.suffixIcon,
-        this.textCapitalization=TextCapitalization.none,
-        this.focusNode,
-        this.cursorColor=Colors.black,
-        this.onFieldSubmitted,
-        this.validator,
-        this.maxLength,
-        this.obscureText=false,
-        this.verticalPadding=21,
-        this.horizontalPadding=12,
-        this.fontSize=18
-      })
+      this.enabled = true,
+      this.onTap,
+      this.keyboardType,
+      this.inputAction,
+      this.controller,
+      this.hintText,
+      this.width,
+      this.fillColor,
+      this.textInputFormatter = const [],
+      //this.contentPadding = const EdgeInsets.symmetric(horizontal: MySize.getScaledSizeHeight(10), vertical: MySize.getScaledSizeHeight(18)),
+      this.maxLines = 1,
+      this.minLines = 1,
+      this.prefixIcon,
+      this.onChanged,
+      this.suffixIcon,
+      this.textCapitalization = TextCapitalization.none,
+      this.focusNode,
+      this.cursorColor = Colors.black,
+      this.onFieldSubmitted,
+      this.validator,
+      this.maxLength,
+      this.obscureText = false,
+      this.verticalPadding = 12,
+      this.horizontalPadding = 12,
+      this.fontSize = 18})
       : super(key: key);
   double? width;
   String? hintText;
@@ -50,9 +49,9 @@ class CommonTextFormField extends StatelessWidget {
   double verticalPadding;
   int? maxLength;
   double horizontalPadding;
-  bool obscureText =false;
-  void Function(String)? onFieldSubmitted=(String s){};
-  String? Function(String?)? validator=(String? s){};
+  bool obscureText = false;
+  void Function(String)? onFieldSubmitted = (String s) {};
+  String? Function(String?)? validator = (String? s) {};
 
   bool? enabled = true;
   double fontSize;
@@ -63,10 +62,10 @@ class CommonTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         color: Colors.grey[50],
-        shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(4)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         elevation: 2,
         child: Container(
-          width: width ,
+          width: width,
           child: TextFormField(
             validator: validator,
             enabled: enabled,
@@ -74,9 +73,10 @@ class CommonTextFormField extends StatelessWidget {
             obscureText: obscureText,
             onChanged: onChanged,
             controller: controller,
-            focusNode: focusNode ,
-            onFieldSubmitted:onFieldSubmitted,
-            textInputAction: inputAction,textCapitalization: textCapitalization!,
+            focusNode: focusNode,
+            onFieldSubmitted: onFieldSubmitted,
+            textInputAction: inputAction,
+            textCapitalization: textCapitalization!,
             maxLines: maxLines,
             minLines: minLines,
             cursorColor: cursorColor,
@@ -91,10 +91,11 @@ class CommonTextFormField extends StatelessWidget {
               hintText: '$hintText',
               hintStyle: TextStyle(
                 color: Colors.grey,
-                fontSize:15, ),
-              contentPadding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
+                fontSize: 15,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding, vertical: verticalPadding),
               enabledBorder: OutlineInputBorder(
-
                   borderSide: BorderSide(
                     color: Colors.transparent,
                   ),
@@ -121,7 +122,6 @@ class CommonTextFormField extends StatelessWidget {
               fontSize: fontSize,
             ),
           ),
-        )
-    );
+        ));
   }
 }

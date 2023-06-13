@@ -49,12 +49,12 @@ Future<void> initApp({bool isDev = false}) async {
         DeviceOrientation.landscapeLeft,
       ]),
     ]);
-  }
-  else {
-    if(Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+  } else {
+    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
       HttpOverrides.global = MyHttpOverrides();
       HttpClient httpClient = HttpClient();
-      httpClient.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
+      httpClient.badCertificateCallback =
+          ((X509Certificate cert, String host, int port) => true);
 
       futures.addAll([
         Firebase.initializeApp(),
@@ -67,7 +67,7 @@ Future<void> initApp({bool isDev = false}) async {
 
   await Future.wait(futures);
 
-  if(!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
+  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
     try {
       await Future.wait([
         FirebaseMessaging.instance.requestPermission(),
@@ -77,8 +77,7 @@ Future<void> initApp({bool isDev = false}) async {
           sound: true,
         ),
       ]);
-    }
-    catch(e, s) {
+    } catch (e, s) {
       MyPrint.printOnConsole("Error in Requesting Notifications Permission:$e");
       MyPrint.printOnConsole(s);
     }

@@ -2,7 +2,6 @@ import 'package:club_model/utils/my_print.dart';
 import 'package:flutter/foundation.dart';
 import 'package:club_model/club_model.dart';
 
-
 class ClubProvider extends ChangeNotifier {
   List<ClubModel> _clubsList = [];
 
@@ -17,15 +16,26 @@ class ClubProvider extends ChangeNotifier {
     }
   }
 
-  void updateEnableDisableOfList(bool value, int index,
+  void updateEnableDisableOfClubInList(bool value, int index,
       {bool isNotify = true}) {
-    // if (index < _clubsList.length) {
-    //   _clubsList[index].enabled = value;
-    // }
-    //
-    // if (isNotify) {
-    //   notifyListeners();
-    // }
+    if (index < _clubsList.length) {
+      _clubsList[index].clubEnabled = value;
+    }
+
+    if (isNotify) {
+      notifyListeners();
+    }
+  }
+
+  void updateEnableDisableOfAdminInList(bool value, int index,
+      {bool isNotify = true}) {
+    if (index < _clubsList.length) {
+      _clubsList[index].adminEnabled = value;
+    }
+
+    if (isNotify) {
+      notifyListeners();
+    }
   }
 
   void addClubModelInClubList(ClubModel value, {bool isNotify = true}) {

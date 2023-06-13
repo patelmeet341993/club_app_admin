@@ -6,7 +6,10 @@ class AppResponsive extends StatelessWidget {
   final Widget desktop;
 
   const AppResponsive(
-      {Key? key, required this.mobile, required this.tablet, required this.desktop})
+      {Key? key,
+      required this.mobile,
+      required this.tablet,
+      required this.desktop})
       : super(key: key);
 
   /// This size work for my design, maybe you need some changes depend on your design
@@ -14,21 +17,19 @@ class AppResponsive extends StatelessWidget {
   static bool isMobile(context) => MediaQuery.of(context).size.width < 900;
   static bool isTablet(context) =>
       MediaQuery.of(context).size.width < 1100 &&
-          MediaQuery.of(context).size.width >= 900;
+      MediaQuery.of(context).size.width >= 900;
   static bool isDesktop(context) => MediaQuery.of(context).size.width >= 1100;
 
   @override
   Widget build(BuildContext context) {
-    final Size _size = MediaQuery.of(context).size;
 
     if (isDesktop(context)) {
       return desktop;
-    } else if (isTablet(context) && tablet != null) {
+    } else if (isTablet(context)) {
       return tablet;
     } else {
       return mobile;
     }
 
-    return Container();
   }
 }

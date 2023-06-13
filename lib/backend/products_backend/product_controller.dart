@@ -10,34 +10,35 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProductController {
-
   late ProductProvider productProvider;
   late ProductRepository productRepository;
 
-  ProductController({required this.productProvider,ProductRepository?  repository}){
-    productRepository =  repository ??  ProductRepository();
+  ProductController(
+      {required this.productProvider, ProductRepository? repository}) {
+    productRepository = repository ?? ProductRepository();
   }
 
   Future<void> getProductList() async {
     List<ProductModel> productList = [];
     productList = await productRepository.getProductListRepo();
-    if(productList.isNotEmpty){
+    if (productList.isNotEmpty) {
       productProvider.setProductsList(productList);
     }
   }
 
-
-  Future<void> EnableDisableGameInFirebase({required Map<String,dynamic> editableData,required String id,required int listIndex}) async {
-
-    try{
-
+  Future<void> EnableDisableGameInFirebase(
+      {required Map<String, dynamic> editableData,
+      required String id,
+      required int listIndex}) async {
+    try {
       // await FirebaseNodes.gameDocumentReference(gameId: id)
       //     .update(editableData).then((value) {
       //   MyPrint.printOnConsole("user data: ${editableData["enabled"]}");
       //   gameProvider.updateEnableDisableOfList(editableData["enabled"] , listIndex);
       // });
-    }catch(e,s){
-      MyPrint.printOnConsole("Error in Enable Disable User in firebase in User Controller $e");
+    } catch (e, s) {
+      MyPrint.printOnConsole(
+          "Error in Enable Disable User in firebase in User Controller $e");
       MyPrint.printOnConsole(s);
     }
   }
@@ -45,10 +46,10 @@ class ProductController {
   Future<void> addProductToFirebase(ProductModel productModel) async {
     try{
       await productRepository.AddProductRepo(productModel);
-      productProvider.addProductModelInGameList(productModel);
-
-    }catch(e,s){
-      MyPrint.printOnConsole('Error in Add Product to Firebase in Product Controller $e');
+      if(isAdInProvider) productProvider.addProductModelInGameList(productModel);
+    } catch (e, s) {
+      MyPrint.printOnConsole(
+          'Error in Add Product to Firebase in Product Controller $e');
       MyPrint.printOnConsole(s);
     }
   }
@@ -62,6 +63,7 @@ class ProductController {
       MyPrint.printOnConsole(s);
     }
   }
+}
 
   Future<String> uploadImageToFirebase(XFile imageFile, ) async {
     String imageUrl = "";

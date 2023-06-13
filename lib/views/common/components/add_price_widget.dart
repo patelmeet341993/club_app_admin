@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AddPriceWidget extends StatefulWidget {
-  TextEditingController controller =  TextEditingController();
-  String? Function(String?)? validator = (String? s){};
+  TextEditingController controller = TextEditingController();
+  String? Function(String?)? validator = (String? s) {};
   void Function(String)? onChanged = (String s) {};
-  AddPriceWidget({required this.controller,this.validator,this.onChanged}) ;
+  AddPriceWidget({required this.controller, this.validator, this.onChanged});
 
   @override
   _AddPriceWidgetState createState() => _AddPriceWidgetState();
 }
 
 class _AddPriceWidgetState extends State<AddPriceWidget> {
-
   late TextEditingController controller;
 
   @override
@@ -27,14 +26,12 @@ class _AddPriceWidgetState extends State<AddPriceWidget> {
     return Card(
       elevation: 2,
       color: Colors.grey[50],
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4)
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
-           // color: AppColor.white,
-            borderRadius: BorderRadius.circular(4),
+          // color: AppColor.white,
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
           children: [
@@ -44,9 +41,7 @@ class _AddPriceWidgetState extends State<AddPriceWidget> {
                 textAlign: TextAlign.center,
                 validator: widget.validator,
                 onChanged: widget.onChanged,
-                style: TextStyle(
-                  fontSize: 15,
-                    color: Colors.black),
+                style: TextStyle(fontSize: 15, color: Colors.black),
                 decoration: InputDecoration(
                     focusedBorder: InputBorder.none,
                     enabledBorder: InputBorder.none),
@@ -64,7 +59,8 @@ class _AddPriceWidgetState extends State<AddPriceWidget> {
               children: [
                 InkWell(
                   onTap: () {
-                    double currentValue = ParsingHelper.parseDoubleMethod(controller.text);
+                    double currentValue =
+                        ParsingHelper.parseDoubleMethod(controller.text);
                     setState(() {
                       currentValue = currentValue + 100.0;
                       controller.text = (currentValue).toString();
@@ -74,13 +70,13 @@ class _AddPriceWidgetState extends State<AddPriceWidget> {
                     child: Icon(
                       Icons.arrow_drop_up,
                       color: Styles.bgSideMenu,
-
                     ),
                   ),
                 ),
                 InkWell(
                   onTap: () {
-                    double currentValue = ParsingHelper.parseDoubleMethod(controller.text);
+                    double currentValue =
+                        ParsingHelper.parseDoubleMethod(controller.text);
                     setState(() {
                       if (currentValue >= 100) {
                         currentValue = currentValue - 100.0;

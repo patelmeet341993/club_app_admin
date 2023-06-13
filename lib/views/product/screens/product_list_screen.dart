@@ -3,12 +3,13 @@ import 'package:club_app_admin/backend/products_backend/product_provider.dart';
 import 'package:club_app_admin/views/common/components/header_widget.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import '../../../backend/navigation/navigation_arguments.dart';
+
 import '../../../backend/navigation/navigation_arguments.dart';
 import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
+import '../../common/components/common_popup.dart';
 
 class ProductScreenNavigator extends StatefulWidget {
   const ProductScreenNavigator({Key? key}) : super(key: key);
@@ -55,47 +56,46 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: futureGetData,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return Scaffold(
-            backgroundColor: Styles.bgColor,
-            body: ModalProgressHUD(
-              inAsyncCall: isLoading,
-              child: Column(
-                children: [
-                  HeaderWidget(
-                    title: "Products",
-                    suffixWidget: CommonButton(
-                      text: "Add Product",
-                      icon: Icon(
-                        Icons.add,
-                        color: Styles.white,
-                      ),
-                      onTap: () {
-                        NavigationController.navigateToAddProductScreen(
-                          navigationOperationParameters: NavigationOperationParameters(
-                            navigationType: NavigationType.pushNamed,
-                            context: context,
+        future: futureGetData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Scaffold(
+              backgroundColor: Styles.bgColor,
+              body: ModalProgressHUD(
+                inAsyncCall: isLoading,
+                child: Column(
+                  children: [
+                    HeaderWidget(
+                      title: "Products",
+                      suffixWidget: CommonButton(
+                          text: "Add Product",
+                          icon: Icon(
+                            Icons.add,
+                            color: Styles.white,
                           ),
-                          navigationArgument: AddEditProductNavigationArgument(),
-                        );
-                      },
+                          onTap: () {
+                            NavigationController.navigateToAddProductScreen(
+                                navigationOperationParameters:
+                                    NavigationOperationParameters(
+                              navigationType: NavigationType.pushNamed,
+                              context: context,
+                            ),
+                              addProductScreenNavigationArguments: AddProductScreenNavigationArguments()
+                            );
+                          }),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Expanded(child: getProductsList()),
-                ],
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Expanded(child: getProductsList()),
+                  ],
+                ),
               ),
-            ),
-          );
-        } else {
-          return const Center(child: LoadingWidget());
-        }
-      },
-    );
+            );
+          } else {
+            return const Center(child: LoadingWidget());
+          }
+        });
   }
 
   Widget getProductsList() {
@@ -126,7 +126,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     return InkWell(
       onTap: () {},
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10).copyWith(bottom: 15),
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Styles.white,
@@ -136,17 +136,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
         child: Row(
           children: [
             Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
-              ),
-              child: CommonCachedNetworkImage(
-                imageUrl: productModel.thumbnailImageUrl,
-                height: 80,
-                width: 80,
-                borderRadius: 4,
-              ),
-            ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
+                ),
+                child: CommonCachedNetworkImage(
+                  imageUrl: productModel.thumbnailImageUrl,
+                  height: 80,
+                  width: 80,
+                  borderRadius: 4,
+                )),
             const SizedBox(
               width: 30,
             ),
@@ -159,11 +158,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   fontWeight: FontWeight.bold,
                 ),
                 const SizedBox(height: 5),
-                CommonText(
-                  text: (productModel.brand?.name ?? "").isNotEmpty ? 'by ${productModel.brand?.name}' : '',
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ),
+                (productModel.brand?.name.isNotEmpty ?? false)
+                    ? CommonText(
+                        text: 'by ${productModel.brand!.name}',
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      )
+                    : const SizedBox.shrink(),
                 const SizedBox(height: 3),
                 CommonText(
                   text: productModel.createdTime == null
@@ -196,24 +197,48 @@ class _ProductListScreenState extends State<ProductListScreen> {
               ],
             ),
             const SizedBox(
-              width: 20,
+              width: 10,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [InkWell(onTap: () {
-                NavigationController.navigateToAddProductScreen(
-                  navigationOperationParameters: NavigationOperationParameters(
-                    navigationType: NavigationType.pushNamed,
+            Tooltip(
+              message: 'Edit Product',
+              child: InkWell(
+                onTap: () {
+                  showDialog(
                     context: context,
-                  ),
-                  navigationArgument: AddEditProductNavigationArgument(
-                    isEdit: true,
-                    productModel: productModel
-                  ),
-                );
-              }, child: const Icon(Icons.edit))],
-            )
+                    builder: (context) {
+                      return CommonPopup(
+                        text: "Want to Edit product?",
+                        rightText: "Yes",
+                        rightOnTap: () async {
+                          NavigationController.navigateToAddProductScreen(
+                            navigationOperationParameters: NavigationOperationParameters(
+                              navigationType: NavigationType.pushNamed,
+                              context: NavigationController.productScreenNavigator.currentContext!,
+                            ),
+                            addProductScreenNavigationArguments: AddProductScreenNavigationArguments(
+                              productModel: productModel,
+                              index: index,
+                              isEdit: true,
+                            ),
+                          );
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  );
+                },
+                child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    child: const Icon(
+                      Icons.edit,
+                      color: Styles.bgSideMenu,
+                      size: 22,
+                    )),
+              ),
+            ),
+            const SizedBox(
+              width: 0,
+            ),
           ],
         ),
       ),

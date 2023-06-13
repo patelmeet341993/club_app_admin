@@ -17,7 +17,8 @@ class AdminController {
   AdminRepository get adminRepository => _adminRepository;
 
   Future<void> getPropertyDataAndSetInProvider() async {
-    MyPrint.printOnConsole("AdminController().getPropertyDataAndSetInProvider() called");
+    MyPrint.printOnConsole(
+        "AdminController().getPropertyDataAndSetInProvider() called");
 
     try {
       PropertyModel? propertyModel = await adminRepository.getPropertyData();
@@ -34,16 +35,19 @@ class AdminController {
     );
   }
 
-  Future<void> addBannersToFirebaseAndCloudinary({required Uint8List image}) async {
+  Future<void> addBannersToFirebaseAndCloudinary(
+      {required Uint8List image}) async {
     try {
       await getPropertyDataAndSetInProvider();
     } catch (e, s) {
-      MyPrint.printOnConsole('Error in Admin Controller Add Images to the Firebase Method $e');
+      MyPrint.printOnConsole(
+          'Error in Admin Controller Add Images to the Firebase Method $e');
       MyPrint.printOnConsole(s);
     }
   }
 
-  Future<void> deleteBannersFromFirebaseAndCloudinary({required String imageUrl}) async {
+  Future<void> deleteBannersFromFirebaseAndCloudinary(
+      {required String imageUrl}) async {
     try {
       await FirebaseNodes.adminPropertyDocumentReference.update({
         'bannerImages': FieldValue.arrayRemove([imageUrl])
@@ -51,7 +55,8 @@ class AdminController {
 
       await getPropertyDataAndSetInProvider();
     } catch (e, s) {
-      MyPrint.printOnConsole('Error in Admin Controller Remove Images from the Firebase Method $e');
+      MyPrint.printOnConsole(
+          'Error in Admin Controller Remove Images from the Firebase Method $e');
       MyPrint.printOnConsole(s);
     }
   }

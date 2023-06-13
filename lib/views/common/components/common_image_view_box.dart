@@ -6,20 +6,18 @@ import 'package:club_model/club_model.dart';
 import 'package:flutter/material.dart';
 import 'common_popup.dart';
 
-
 class CommonImageViewBox extends StatefulWidget {
   File? file;
   String? url;
   Uint8List? imageAsBytes;
   Function()? rightOnTap;
-  CommonImageViewBox({this.url,this.file,this.imageAsBytes,this.rightOnTap});
+  CommonImageViewBox({this.url, this.file, this.imageAsBytes, this.rightOnTap});
 
   @override
   State<CommonImageViewBox> createState() => _CommonImageViewBoxState();
 }
 
 class _CommonImageViewBoxState extends State<CommonImageViewBox> {
-
   File? methodFile;
   String? methodUrl;
   Uint8List? methodImageAsBytes;
@@ -34,7 +32,7 @@ class _CommonImageViewBoxState extends State<CommonImageViewBox> {
 
   @override
   Widget build(BuildContext context) {
-    if(methodImageAsBytes != null){
+    if (methodImageAsBytes != null) {
       return Container(
         height: 80,
         width: 80,
@@ -67,15 +65,14 @@ class _CommonImageViewBoxState extends State<CommonImageViewBox> {
                       return CommonPopup(
                         text: "Are you sure you want to Delete Image?",
                         rightText: "Delete",
-                        rightOnTap: (){
-                          if(widget.rightOnTap == null){
+                        rightOnTap: () {
+                          if (widget.rightOnTap == null) {
                             Navigator.pop(context);
-                          }else{
+                          } else {
                             Navigator.pop(context);
                             widget.rightOnTap!();
                           }
                         },
-
                       );
                     },
                   );
@@ -98,8 +95,7 @@ class _CommonImageViewBoxState extends State<CommonImageViewBox> {
           ],
         ),
       );
-    }
-    else {
+    } else {
       if (methodFile != null) {
         return Stack(
           // fit: StackFit.expand,
@@ -107,8 +103,7 @@ class _CommonImageViewBoxState extends State<CommonImageViewBox> {
             Container(
               height: 80,
               width: 80,
-              padding:
-              const EdgeInsets.only(top: 10, right: 10),
+              padding: const EdgeInsets.only(top: 10, right: 10),
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(6)),
               ),
@@ -132,15 +127,14 @@ class _CommonImageViewBoxState extends State<CommonImageViewBox> {
                       return CommonPopup(
                         text: "Are you sure you want to Delete Image?",
                         rightText: "Delete",
-                        rightOnTap: (){
-                          if(widget.rightOnTap == null){
+                        rightOnTap: () {
+                          if (widget.rightOnTap == null) {
                             Navigator.pop(context);
-                          }else{
+                          } else {
                             Navigator.pop(context);
                             widget.rightOnTap!();
                           }
                         },
-
                       );
                     },
                   );
@@ -172,8 +166,7 @@ class _CommonImageViewBoxState extends State<CommonImageViewBox> {
             ),
           ],
         );
-      }
-      else {
+      } else {
         MyPrint.printOnConsole('yaha pe with $methodUrl');
         return Stack(
           // fit: StackFit.expand,
@@ -181,8 +174,7 @@ class _CommonImageViewBoxState extends State<CommonImageViewBox> {
             Container(
               height: 80,
               width: 80,
-              margin:
-              const EdgeInsets.only(top: 10, right: 10),
+              margin: const EdgeInsets.only(top: 10, right: 10),
               decoration: const BoxDecoration(
                 color: Colors.red,
                 borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -192,15 +184,14 @@ class _CommonImageViewBoxState extends State<CommonImageViewBox> {
                 child: CachedNetworkImage(
                   imageUrl: getSecureUrl(methodUrl ?? ""),
                   fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) =>
-                      Container(
-                        color: Colors.grey[200],
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: Colors.grey[400],
-                          size: 100,
-                        ),
-                      ),
+                  errorWidget: (_, __, ___) => Container(
+                    color: Colors.grey[200],
+                    child: Icon(
+                      Icons.image_outlined,
+                      color: Colors.grey[400],
+                      size: 100,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -215,10 +206,10 @@ class _CommonImageViewBoxState extends State<CommonImageViewBox> {
                       return CommonPopup(
                         text: "Are you sure you want to Delete Image?",
                         rightText: "Delete",
-                        rightOnTap: (){
-                          if(widget.rightOnTap == null){
+                        rightOnTap: () {
+                          if (widget.rightOnTap == null) {
                             Navigator.pop(context);
-                          }else{
+                          } else {
                             Navigator.pop(context);
                             widget.rightOnTap!();
                           }
@@ -249,21 +240,19 @@ class _CommonImageViewBoxState extends State<CommonImageViewBox> {
   }
 }
 
-
-
 class EmptyImageViewBox extends StatelessWidget {
   const EmptyImageViewBox({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       height: 80,
       width: 80,
       decoration: BoxDecoration(
         color: Colors.grey.shade300,
         borderRadius: BorderRadius.circular(5),
       ),
-      child: const Icon(Icons.add,color: Styles.bgSideMenu,size: 25),
+      child: const Icon(Icons.add, color: Styles.bgSideMenu, size: 25),
     );
   }
 }

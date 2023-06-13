@@ -1,225 +1,54 @@
+import 'dart:typed_data';
+
+import 'package:club_app_admin/backend/club_backend/club_controller.dart';
+import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_model/club_model.dart';
+import 'package:club_model/configs/styles.dart';
 import 'package:club_model/view/common/components/common_text.dart';
+import 'package:club_model/view/common/components/loading_widget.dart';
+import 'package:club_model/view/common/components/modal_progress_hud.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../../common/components/common_button.dart';
+import '../../common/components/common_image_view_box.dart';
+import '../../common/components/common_text_form_field.dart';
+import '../../common/components/header_widget.dart';
 
 class AddClub extends StatefulWidget {
   static const String routeName = "/AddClub";
-
-  const AddClub({Key? key}) : super(key: key);
+  ClubModel? clubModel;
+  bool isEdit = false;
+  int? index;
+  AddClub({this.clubModel, this.isEdit = false, this.index});
 
   @override
   State<AddClub> createState() => _AddClubState();
 }
 
 class _AddClubState extends State<AddClub> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: CommonText(
-          text: 'Add Club',
-          color: Colors.black,
-          fontSize: 25,
-        ),
-      ),
-    );
-  }
-
-/*Widget getNameAndEnabledRow() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GetTitle(title: "Enter Game Name*"),
-              CommonTextFormField(
-                controller: gameNameController,
-                hintText: "Enter Game Name",
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "  Please enter Game Name";
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(
-          width: 20,
-        ),
-        Expanded(child: Container()),
-      ],
-    );
-  }
-
-  Widget getDescriptionTextField() {
-    return  Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GetTitle(title: "Enter Description Of Game"),
-        CommonTextFormField(
-          controller: descriptionController,
-          hintText: "Enter Description of Game",
-          minLines: 3,
-          maxLines: 10,
-          validator: (value){
-            return null;
-          },
-        ),
-      ],
-    );
-
-  }
-
-  Widget getAdminEnabled() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        GetTitle(title: 'Admin Enabled :    ', bottomPadding: 0),
-        getTestEnableSwitch(
-            value: isAdminEnabled,
-            onChanged: (val) {
-              setState(() {
-                isAdminEnabled = val ?? true;
-              });
-            })
-      ],
-    );
-  }
-
-  Widget chooseThumbnailImage() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GetTitle(title: "Choose Game Thumbnail Image*"),
-        thumbnailImage == null
-            ? InkWell(
-            onTap: () async {
-              await addThumbnailImage();
-            },
-            child: const EmptyImageViewBox())
-            : CommonImageViewBox(
-          imageAsBytes: thumbnailImage,
-          rightOnTap: () {
-            thumbnailImage = null;
-            setState(() {});
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget getTestEnableSwitch(
-      {required bool value, void Function(bool?)? onChanged}) {
-    return CupertinoSwitch(
-      value: value,
-      onChanged: onChanged,
-      activeColor: AppColor.bgSideMenu,
-    );
-  }
-
-  Widget getGameImages() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GetTitle(title: "Choose Game Images"),
-        Row(
-          children: [
-            gameImagesInBytes.isNotEmpty
-                ? Flexible(
-              child: Container(
-                padding: EdgeInsets.zero,
-                height: 80,
-                child: ListView.builder(
-                    itemCount: gameImagesInBytes.length,
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      dynamic image = gameImagesInBytes[index];
-                      MyPrint.printOnConsole(
-                          "image type : ${image.runtimeType.toString()}");
-                      return CommonImageViewBox(
-                        imageAsBytes: gameImagesInBytes[index],
-                        rightOnTap: (){
-                          gameImagesInBytes.removeAt(index);
-                          MyPrint.printOnConsole('Game List Length in bytes is " ${gameImagesInBytes.length}');
-                          setState(() {});
-                        },
-                      );
-                    }),
-              ),
-            )
-                : const SizedBox.shrink(),
-            gameImagesInBytes.length < 10
-                ? InkWell(
-                onTap: (){
-                  chooseGameImagesMethod();
-                },
-                child: const EmptyImageViewBox())
-                : const SizedBox.shrink()
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget submitButton() {
-    return CommonButton(
-      onTap: () async {
-        if (_formkey.currentState!.validate()) {
-          if(gameImagesInBytes.length > 10){
-            MyToast.showError(context: context, msg: 'You can Upload up to 10 images');
-            return;
-          }
-          if(thumbnailImage == null){
-            MyToast.showError(context: context, msg: 'Please upload a game thumbnail image');
-            return;
-          }
-          await addGameToFirebase();
-          Navigator.pop(context);
-        }
-      },
-      verticalPadding: 15,
-      text: '+   Add Game',
-      fontSize: 17,
-    );
-  }*/
-
-}
-
-
-/*class _AddProductState extends State<AddProduct> {
-  final _formkey = GlobalKey<FormState>();
-  bool isLoading = false;
-  late GameProvider gameProvider;
-  late GameController gameController;
+  final _formKey = GlobalKey<FormState>();
   late Future<void> futureGetData;
-  TextEditingController gameNameController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  bool isAdminEnabled = true;
+  bool isLoading = false;
+
+  late ClubProvider clubProvider;
+  late ClubController clubController;
+
+  TextEditingController clubNameController = TextEditingController();
+  TextEditingController mobileNumberController = TextEditingController();
+  TextEditingController clubAddressController = TextEditingController();
   String thumbnailImageUrl = '';
   Uint8List? thumbnailImage;
-  List<Uint8List> gameImagesInBytes = [];
-  List<String> gameImageListInString = [];
 
-  Future<void> getData() async {}
+  List<Uint8List> clubImagesInBytes = [];
+  List<String> clubImageListInString = [];
+
+  bool isClubEnabled = true;
+  bool isAdminEnabled = true;
 
   Future<void> addThumbnailImage() async {
     setState(() {});
-
-    // thumbnailImage = await ImagePickerWeb.getImageAsBytes();
-
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowMultiple: false,
@@ -227,7 +56,7 @@ class _AddClubState extends State<AddClub> {
       allowCompression: true,
     );
 
-    if(result?.files.firstElement != null) {
+    if (result?.files.firstElement != null) {
       PlatformFile platformFile = result!.files.firstElement!;
       thumbnailImage = platformFile.bytes;
 
@@ -235,11 +64,56 @@ class _AddClubState extends State<AddClub> {
     }
   }
 
-  Future<void> chooseGameImagesMethod() async {
+  Future<void> addClub() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    if (widget.clubModel != null &&
+        widget.index != null &&
+        widget.isEdit == true) {
+      MyPrint.printOnConsole(
+          "test model edit this with index: ${widget.index} edit: ${widget.isEdit}");
+      ClubModel clubModel = ClubModel(
+        id: widget.clubModel!.id,
+        name: clubNameController.text.trim(),
+        address: clubAddressController.text.trim(),
+        mobileNumber: mobileNumberController.text.trim(),
+        thumbnailImageUrl: thumbnailImageUrl,
+        createdTime: widget.clubModel!.createdTime,
+        adminEnabled: isAdminEnabled,
+        clubEnabled: isClubEnabled,
+        images: clubImageListInString,
+        updatedTime: Timestamp.now(),
+      );
+
+      await clubController.AddClubToFirebase(clubModel);
+      MyToast.showSuccess(context: context, msg: 'Product Edited successfully');
+    } else {
+      MyPrint.printOnConsole("club model new duplicate");
+      ClubModel clubModel = ClubModel(
+        id: MyUtils.getNewId(isFromUUuid: false),
+        name: clubNameController.text.trim(),
+        address: clubAddressController.text.trim(),
+        mobileNumber: mobileNumberController.text.trim(),
+        thumbnailImageUrl: thumbnailImageUrl,
+        adminEnabled: isAdminEnabled,
+        clubEnabled: isClubEnabled,
+        images: clubImageListInString,
+        createdTime: Timestamp.now(),
+      );
+
+      await clubController.AddClubToFirebase(clubModel);
+      MyToast.showSuccess(context: context, msg: 'Club added successfully');
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> chooseClubImagesMethod() async {
     setState(() {});
-
-    // Uint8List? methodImage = await ImagePickerWeb.getImageAsBytes();
-
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowMultiple: false,
@@ -247,68 +121,23 @@ class _AddClubState extends State<AddClub> {
       allowCompression: true,
     );
 
-    if(result?.files.firstElement != null) {
+    if (result?.files.firstElement != null) {
       PlatformFile platformFile = result!.files.firstElement!;
 
       if (platformFile.bytes != null) {
-        gameImagesInBytes.add(platformFile.bytes!);
+        clubImagesInBytes.add(platformFile.bytes!);
         if (mounted) setState(() {});
       }
     }
   }
 
-  Future<String> uploadThumbnailImageToCloudinary() async {
-    List<Uint8List> thumbTempUploadList = [];
-    if(thumbnailImage != null){
-      thumbTempUploadList.add(thumbnailImage!);
-    }
-    List<String> thumbImageUrl = await CloudinaryManager().uploadImagesToCloudinary(thumbTempUploadList);
-    return thumbImageUrl.first;
-  }
-
-  Future<List<String>> uploadGamesImagesToCloudinary() async {
-
-    List<String> methodImageUrlList = await CloudinaryManager().uploadImagesToCloudinary(gameImagesInBytes);
-
-    return methodImageUrlList;
-
-  }
-
-
-
-  Future<void> addGameToFirebase() async {
-
-    setState((){
-      isLoading = true;
-    });
-    String gameId = MyUtils.getUniqueIdFromUuid();
-    String thumbImage = await uploadThumbnailImageToCloudinary();
-    List<String> gamesImagesUrl = await uploadGamesImagesToCloudinary();
-
-    GameModel gameModel = GameModel(
-      id: gameId.trim(),
-      name: gameNameController.text.trim(),
-      description: descriptionController.text.trim(),
-      createdTime: Timestamp.now(),
-      thumbnailImage: thumbImage,
-      enabled: isAdminEnabled,
-      gameImages: gamesImagesUrl,
-    );
-
-    await gameController.AddGameToFirebase(gameModel);
-    MyPrint.printOnConsole('Added Game Model is ${gameModel.toMap()}');
-
-    setState((){
-      isLoading = false;
-    });
-    MyToast.showSuccess(context: context, msg: 'Game Added Successfully');
-  }
+  Future<void> getData() async {}
 
   @override
   void initState() {
     super.initState();
-    gameProvider = Provider.of<GameProvider>(context, listen: false);
-    gameController = GameController(gameProvider: gameProvider);
+    clubProvider = Provider.of<ClubProvider>(context, listen: false);
+    clubController = ClubController(clubProvider: clubProvider);
     futureGetData = getData();
   }
 
@@ -318,78 +147,128 @@ class _AddClubState extends State<AddClub> {
         future: futureGetData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-              backgroundColor: AppColor.bgColor,
-              body: ModalProgressHUD(
-                inAsyncCall: isLoading,
-                child: Form(
-                  key: _formkey,
-                  child: Column(
-                    children: [
-                      HeaderWidget(title: "Add Games", isBackArrow: true),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              getNameAndEnabledRow(),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              getDescriptionTextField(),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              getAdminEnabled(),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              chooseThumbnailImage(),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              getGameImages(),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              const SizedBox(
-                                height: 40,
-                              ),
-                              submitButton()
-                            ],
-                          ),
+            return ModalProgressHUD(
+              inAsyncCall: isLoading,
+              progressIndicator: const Center(child: LoadingWidget()),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Icon(
+                              Icons.arrow_back_ios_rounded,
+                              size: 28,
+                              color: Styles.bgSideMenu,
+                            )),
+                        const SizedBox(
+                          width: 10,
                         ),
-                      ),
-                    ],
-                  ),
+                        Expanded(
+                            child: HeaderWidget(
+                          title: "Add Club",
+                        )),
+                      ],
+                    ),
+                    getMainBody(),
+                  ],
                 ),
               ),
             );
           } else {
-            return const CommonProgressIndicator();
+            return const Center(child: LoadingWidget());
           }
         });
   }
 
-  Widget getNameAndEnabledRow() {
+  Widget getMainBody() {
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 30,
+            ),
+            CommonText(
+                text: " Product Basic Information",
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                color: Styles.bgSideMenu.withOpacity(.6)),
+            const SizedBox(
+              height: 20,
+            ),
+            getNameAndMobileNumber(),
+            const SizedBox(
+              height: 30,
+            ),
+            getDescriptionTextField(),
+            const SizedBox(
+              height: 30,
+            ),
+            getEnabledRow(),
+            const SizedBox(
+              height: 30,
+            ),
+            CommonText(
+                text: " Images",
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                color: Styles.bgSideMenu.withOpacity(.6)),
+            const SizedBox(
+              height: 10,
+            ),
+            getAddImageRow(),
+            const SizedBox(
+              height: 30,
+            ),
+            getClubImages(),
+            const SizedBox(
+              height: 40,
+            ),
+            getAddClubButton(),
+            const SizedBox(
+              height: 40,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget getTitle({required String title}) {
+    return Container(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: CommonText(
+        text: " $title",
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        textAlign: TextAlign.start,
+        color: Styles.bgSideMenu,
+      ),
+    );
+  }
+
+  Widget getNameAndMobileNumber() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GetTitle(title: "Enter Game Name*"),
+              getTitle(title: "Enter Name*"),
               CommonTextFormField(
-                controller: gameNameController,
-                hintText: "Enter Game Name",
+                controller: clubNameController,
+                hintText: "Enter Name",
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "  Please enter Game Name";
+                    return "  Please enter a Test Name";
                   }
                   return null;
                 },
@@ -400,117 +279,175 @@ class _AddClubState extends State<AddClub> {
         const SizedBox(
           width: 20,
         ),
-        Expanded(child: Container()),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              getTitle(title: "Enter Mobile Number*"),
+              CommonTextFormField(
+                controller: mobileNumberController,
+                hintText: "Enter Mobile Number",
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return "Mobile Number Cannot be empty";
+                  } else {
+                    if (RegExp(r"^\d{10}").hasMatch(val)) {
+                      return null;
+                    } else {
+                      return "Invalid Mobile Number";
+                    }
+                  }
+                },
+                keyboardType: TextInputType.number,
+                textInputFormatter: [
+                  LengthLimitingTextInputFormatter(10),
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
   Widget getDescriptionTextField() {
-    return  Column(
+    return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        GetTitle(title: "Enter Description Of Game"),
+        getTitle(title: "Enter Address Of Club"),
         CommonTextFormField(
-          controller: descriptionController,
-          hintText: "Enter Description of Game",
-          minLines: 3,
+          controller: clubAddressController,
+          hintText: "Enter Address of Club",
+          minLines: 2,
           maxLines: 10,
-          validator: (value){
+          validator: (value) {
             return null;
           },
         ),
       ],
     );
-
   }
 
-  Widget getAdminEnabled() {
+  Widget getEnabledRow() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        GetTitle(title: 'Admin Enabled :    ', bottomPadding: 0),
-        getTestEnableSwitch(
-            value: isAdminEnabled,
-            onChanged: (val) {
-              setState(() {
-                isAdminEnabled = val ?? true;
-              });
-            })
-      ],
-    );
-  }
-
-  Widget chooseThumbnailImage() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GetTitle(title: "Choose Game Thumbnail Image*"),
-        thumbnailImage == null
-            ? InkWell(
-            onTap: () async {
-              await addThumbnailImage();
-            },
-            child: const EmptyImageViewBox())
-            : CommonImageViewBox(
-          imageAsBytes: thumbnailImage,
-          rightOnTap: () {
-            thumbnailImage = null;
-            setState(() {});
-          },
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              getTitle(
+                title: 'Admin Enabled :    ',
+              ),
+              getTestEnableSwitch(
+                value: isAdminEnabled,
+                onChanged: (val) {
+                  setState(() {
+                    isAdminEnabled = val ?? true;
+                  });
+                },
+              )
+            ],
+          ),
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              getTitle(
+                title: 'Club Enabled :    ',
+              ),
+              getTestEnableSwitch(
+                value: isClubEnabled,
+                onChanged: (val) {
+                  setState(() {
+                    isClubEnabled = val ?? true;
+                  });
+                },
+              )
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget getTestEnableSwitch(
-      {required bool value, void Function(bool?)? onChanged}) {
+  Widget getTestEnableSwitch({
+    required bool value,
+    void Function(bool?)? onChanged,
+  }) {
     return CupertinoSwitch(
       value: value,
       onChanged: onChanged,
-      activeColor: AppColor.bgSideMenu,
+      activeColor: Styles.bgSideMenu,
     );
   }
 
-  Widget getGameImages() {
+  Widget getAddImageRow() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        GetTitle(title: "Choose Game Images"),
-        Row(
-          children: [
-            gameImagesInBytes.isNotEmpty
-                ? Flexible(
-              child: Container(
-                padding: EdgeInsets.zero,
-                height: 80,
-                child: ListView.builder(
-                    itemCount: gameImagesInBytes.length,
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      dynamic image = gameImagesInBytes[index];
-                      MyPrint.printOnConsole(
-                          "image type : ${image.runtimeType.toString()}");
-                      return CommonImageViewBox(
-                        imageAsBytes: gameImagesInBytes[index],
-                        rightOnTap: (){
-                          gameImagesInBytes.removeAt(index);
-                          MyPrint.printOnConsole('Game List Length in bytes is " ${gameImagesInBytes.length}');
-                          setState(() {});
-                        },
-                      );
-                    }),
-              ),
-            )
-                : const SizedBox.shrink(),
-            gameImagesInBytes.length < 10
-                ? InkWell(
-                onTap: (){
-                  chooseGameImagesMethod();
+        getTitle(title: "Choose Club Thumbnail Image*"),
+        thumbnailImage == null
+            ? InkWell(
+                onTap: () async {
+                  await addThumbnailImage();
                 },
                 child: const EmptyImageViewBox())
+            : CommonImageViewBox(
+                imageAsBytes: thumbnailImage,
+                rightOnTap: () {
+                  thumbnailImage = null;
+                  setState(() {});
+                },
+              ),
+      ],
+    );
+  }
+
+  Widget getClubImages() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        getTitle(title: "Choose Club Images (up to 10 images)"),
+        Row(
+          children: [
+            clubImagesInBytes.isNotEmpty
+                ? Flexible(
+                    child: Container(
+                      padding: EdgeInsets.zero,
+                      height: 80,
+                      child: ListView.builder(
+                          itemCount: clubImagesInBytes.length,
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int index) {
+                            dynamic image = clubImagesInBytes[index];
+                            MyPrint.printOnConsole(
+                                "image type : ${image.runtimeType.toString()}");
+                            return CommonImageViewBox(
+                              imageAsBytes: clubImagesInBytes[index],
+                              rightOnTap: () {
+                                clubImagesInBytes.removeAt(index);
+                                MyPrint.printOnConsole(
+                                    'Game List Length in bytes is " ${clubImagesInBytes.length}');
+                                setState(() {});
+                              },
+                            );
+                          }),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+            clubImagesInBytes.length < 10
+                ? InkWell(
+                    onTap: () {
+                      chooseClubImagesMethod();
+                    },
+                    child: const EmptyImageViewBox())
                 : const SizedBox.shrink()
           ],
         )
@@ -518,25 +455,19 @@ class _AddClubState extends State<AddClub> {
     );
   }
 
-  Widget submitButton() {
+  Widget getAddClubButton() {
     return CommonButton(
-      onTap: () async {
-        if (_formkey.currentState!.validate()) {
-          if(gameImagesInBytes.length > 10){
-            MyToast.showError(context: context, msg: 'You can Upload up to 10 images');
-            return;
+        onTap: () async {
+          if (_formKey.currentState!.validate()) {
+            if (thumbnailImage == null) {
+              MyToast.showError(
+                  context: context,
+                  msg: 'Please upload a club thumbnail image');
+              return;
+            }
+            await addClub();
           }
-          if(thumbnailImage == null){
-            MyToast.showError(context: context, msg: 'Please upload a game thumbnail image');
-            return;
-          }
-          await addGameToFirebase();
-          Navigator.pop(context);
-        }
-      },
-      verticalPadding: 15,
-      text: '+   Add Game',
-      fontSize: 17,
-    );
+        },
+        text: "+ Add Club");
   }
-}*/
+}

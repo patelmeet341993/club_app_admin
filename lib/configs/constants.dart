@@ -7,7 +7,12 @@ class MySharePreferenceKeys {
 }
 
 class MyAppConstants {
+  static const String cClubEnabled = "clubEnabled";
 
+  static const String cAdminEnabled = "adminEnabled";
+
+  static const int userDocumentLimitForPagination = 15; //25 //5
+  static const int userRefreshIndexForPagination = 5;
 }
 
 class AppUIConfiguration {

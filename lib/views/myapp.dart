@@ -3,9 +3,11 @@ import 'package:club_app_admin/backend/authentication/authentication_provider.da
 import 'package:club_app_admin/backend/club_backend/club_provider.dart';
 import 'package:club_app_admin/backend/common/menu_provider.dart';
 import 'package:club_app_admin/backend/products_backend/product_provider.dart';
+import 'package:club_app_admin/backend/users_backend/user_provider.dart';
 import 'package:club_model/club_model.dart';
 import 'package:flutter/material.dart';
 
+import '../backend/brands_backend/brand_provider.dart';
 import '../backend/navigation/navigation_controller.dart';
 
 class MyApp extends StatelessWidget {
@@ -17,12 +19,22 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AppThemeProvider>(create: (_) => AppThemeProvider(), lazy: false),
-        ChangeNotifierProvider<AdminProvider>(create: (_) => AdminProvider(), lazy: false),
-        ChangeNotifierProvider<AuthenticationProvider>(create: (_) => AuthenticationProvider(), lazy: false),
-        ChangeNotifierProvider<MenuProvider>(create: (_) => MenuProvider(), lazy: false),
-        ChangeNotifierProvider<ProductProvider>(create: (_) => ProductProvider(), lazy: false),
-        ChangeNotifierProvider<ClubProvider>(create: (_) => ClubProvider(), lazy: false),
+        ChangeNotifierProvider<AppThemeProvider>(
+            create: (_) => AppThemeProvider(), lazy: false),
+        ChangeNotifierProvider<AdminProvider>(
+            create: (_) => AdminProvider(), lazy: false),
+        ChangeNotifierProvider<AuthenticationProvider>(
+            create: (_) => AuthenticationProvider(), lazy: false),
+        ChangeNotifierProvider<MenuProvider>(
+            create: (_) => MenuProvider(), lazy: false),
+        ChangeNotifierProvider<ProductProvider>(
+            create: (_) => ProductProvider(), lazy: false),
+        ChangeNotifierProvider<ClubProvider>(
+            create: (_) => ClubProvider(), lazy: false),
+        ChangeNotifierProvider<UserProvider>(
+            create: (_) => UserProvider(), lazy: false),
+        ChangeNotifierProvider<BrandProvider>(
+            create: (_) => BrandProvider(), lazy: false),
       ],
       child: MainApp(),
     );
@@ -38,7 +50,8 @@ class MainApp extends StatelessWidget {
     MyPrint.printOnConsole("MainApp Build Called");
 
     return Consumer<AppThemeProvider>(
-      builder: (BuildContext context, AppThemeProvider appThemeProvider, Widget? child) {
+      builder: (BuildContext context, AppThemeProvider appThemeProvider,
+          Widget? child) {
         //MyPrint.printOnConsole("ThemeMode:${appThemeProvider.themeMode}");
 
         return MaterialApp(
