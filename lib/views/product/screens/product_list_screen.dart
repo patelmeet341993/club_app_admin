@@ -6,9 +6,9 @@ import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../backend/navigation/navigation_arguments.dart';
 import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
-
 
 class ProductScreenNavigator extends StatefulWidget {
   const ProductScreenNavigator({Key? key}) : super(key: key);
@@ -55,42 +55,51 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: futureGetData,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-              backgroundColor: Styles.bgColor,
-              body: ModalProgressHUD(
-                inAsyncCall: isLoading,
-                child: Column(
-                  children: [
-                    HeaderWidget(title: "Products",suffixWidget: CommonButton(text: "Add Product",
-                        icon: Icon(Icons.add,color: Styles.white,),
-                        onTap: (){
-                          NavigationController.navigateToAddProductScreen(navigationOperationParameters:
-                          NavigationOperationParameters(
+      future: futureGetData,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Scaffold(
+            backgroundColor: Styles.bgColor,
+            body: ModalProgressHUD(
+              inAsyncCall: isLoading,
+              child: Column(
+                children: [
+                  HeaderWidget(
+                    title: "Products",
+                    suffixWidget: CommonButton(
+                      text: "Add Product",
+                      icon: Icon(
+                        Icons.add,
+                        color: Styles.white,
+                      ),
+                      onTap: () {
+                        NavigationController.navigateToAddProductScreen(
+                          navigationOperationParameters: NavigationOperationParameters(
                             navigationType: NavigationType.pushNamed,
                             context: context,
-
-                          ));
-                        }),),
-                    const SizedBox(
-                      height: 20,
+                          ),
+                          navigationArgument: AddEditProductNavigationArgument(),
+                        );
+                      },
                     ),
-                    Expanded(child: getProductsList()),
-                  ],
-                ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Expanded(child: getProductsList()),
+                ],
               ),
-            );
-          } else {
-            return const Center(child: LoadingWidget());
-          }
-        });
+            ),
+          );
+        } else {
+          return const Center(child: LoadingWidget());
+        }
+      },
+    );
   }
 
   Widget getProductsList() {
-    return Consumer(builder:
-        (BuildContext context, ProductProvider productProvider, Widget? child) {
+    return Consumer(builder: (BuildContext context, ProductProvider productProvider, Widget? child) {
       if (productProvider.productsList.isEmpty) {
         return Center(
           child: CommonText(
@@ -112,15 +121,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
     });
   }
 
-
   Widget SingleProduct(ProductModel productModel, index) {
+    MyPrint.printOnConsole("productModel.thumbnailImageUrl: ${productModel.thumbnailImageUrl}");
     return InkWell(
-      onTap: (){
-
-      },
+      onTap: () {},
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10).copyWith(bottom: 15),
-        padding: EdgeInsets.all(10),
+        margin: const EdgeInsets.symmetric(horizontal: 10).copyWith(bottom: 15),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Styles.white,
           border: Border.all(color: Styles.yellow, width: 1),
@@ -129,17 +136,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
         child: Row(
           children: [
             Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
-                ),
-                child: CommonCachedNetworkImage(
-                  imageUrl: productModel.thumbnailImageUrl,
-                  height: 80,
-                  width: 80,
-                  borderRadius: 4,
-                )),
-            SizedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
+              ),
+              child: CommonCachedNetworkImage(
+                imageUrl: productModel.thumbnailImageUrl,
+                height: 80,
+                width: 80,
+                borderRadius: 4,
+              ),
+            ),
+            const SizedBox(
               width: 30,
             ),
             Column(
@@ -150,13 +158,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 CommonText(
-                  text: (productModel.brand?.name ?? "").isNotEmpty?'by ${productModel.brand?.name}':'',
+                  text: (productModel.brand?.name ?? "").isNotEmpty ? 'by ${productModel.brand?.name}' : '',
                   fontSize: 16,
                   fontWeight: FontWeight.normal,
                 ),
-                SizedBox(height: 3),
+                const SizedBox(height: 3),
                 CommonText(
                   text: productModel.createdTime == null
                       ? 'Created Date: No Data'
@@ -168,10 +176,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
-            Spacer(),
+            const Spacer(),
             Column(
               children: [
                 CommonText(
@@ -179,7 +187,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
-                SizedBox(height: 3),
+                const SizedBox(height: 3),
                 CommonText(
                   text: 'Size(ml) :  ${productModel.sizeInML} ml',
                   fontSize: 20,
@@ -187,18 +195,32 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 ),
               ],
             ),
-
-            SizedBox(
+            const SizedBox(
               width: 20,
             ),
-
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [InkWell(onTap: () {
+                NavigationController.navigateToAddProductScreen(
+                  navigationOperationParameters: NavigationOperationParameters(
+                    navigationType: NavigationType.pushNamed,
+                    context: context,
+                  ),
+                  navigationArgument: AddEditProductNavigationArgument(
+                    isEdit: true,
+                    productModel: productModel
+                  ),
+                );
+              }, child: const Icon(Icons.edit))],
+            )
           ],
         ),
       ),
     );
   }
 
-  /*
+/*
   Widget getTestEnableSwitch(
       {required bool value, void Function(bool?)? onChanged}) {
     return Tooltip(
@@ -220,6 +242,4 @@ class _ProductListScreenState extends State<ProductListScreen> {
   productController.EnableDisableGameInFirebase(
   editableData: data, id: productModel.id, listIndex: index);
   })*/
-
-
 }

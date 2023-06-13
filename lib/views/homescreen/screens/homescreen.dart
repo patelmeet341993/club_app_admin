@@ -1,4 +1,5 @@
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
+import 'package:club_app_admin/views/club_profile/club_profile_screen.dart';
 import 'package:club_app_admin/views/product/screens/product_list_screen.dart';
 import 'package:club_model/club_model.dart';
 import 'package:flutter/material.dart';
@@ -10,12 +11,12 @@ import '../../common/components/side_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/HomeScreen';
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int tabNumber = 0;
 
   @override
@@ -23,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     MyPrint.printOnConsole('On Main Home Page');
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.account_box_outlined,
           press: () {
             setState(() {
-              tabNumber=0;
+              tabNumber = 0;
             });
           },
         ),
@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.view_in_ar_outlined,
           press: () {
             setState(() {
-              tabNumber=1;
+              tabNumber = 1;
             });
           },
         ),
@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.videogame_asset_outlined,
           press: () {
             setState(() {
-              tabNumber=2;
+              tabNumber = 2;
             });
           },
         ),
@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.auto_graph,
           press: () {
             setState(() {
-              tabNumber=3;
+              tabNumber = 3;
             });
           },
         ),
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.dashboard,
           press: () {
             setState(() {
-              tabNumber=4;
+              tabNumber = 4;
             });
           },
         ),
@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icons.library_books_outlined,
           press: () {
             setState(() {
-              tabNumber=5;
+              tabNumber = 5;
             });
           },
         ),
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.account_box_outlined,
                       press: () {
                         setState(() {
-                          tabNumber=0;
+                          tabNumber = 0;
                         });
                       },
                     ),
@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.view_in_ar_outlined,
                       press: () {
                         setState(() {
-                          tabNumber=1;
+                          tabNumber = 1;
                         });
                       },
                     ),
@@ -149,7 +149,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icons.library_books_outlined,
                       press: () {
                         setState(() {
-                          tabNumber=5;
+                          tabNumber = 4;
+                        });
+                      },
+                    ),
+                    DrawerListTile(
+                      title: "Club Profile",
+                      icon: Icons.library_books_outlined,
+                      press: () {
+                        setState(() {
+                          tabNumber = 5;
                         });
                       },
                     ),
@@ -175,14 +184,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget getPageWidget(int number){
-    switch(number){
-      case 0:{
-        return const ProductScreenNavigator();
-      }
-      case 1:{
-        return const ClubScreenNavigator();
-      }
+  Widget getPageWidget(int number) {
+    switch (number) {
+      case 0:
+        {
+          return const ProductScreenNavigator();
+        }
+      case 1:
+        {
+          return const ClubScreenNavigator();
+        }
       // case 2:{
       //   return const GameScreenNavigator();
       // }
@@ -192,15 +203,13 @@ class _HomeScreenState extends State<HomeScreen> {
       // case 4:{
       //   return const SubscriptionPlanNavigator();
       // }
-      // case 5:{
-      //   return const OkotoProfileScreenNavigator();
-      // }
-      default : {
-        return  const ProductScreenNavigator();
-
+      case 5:{
+        return const ClubProfileScreenNavigator();
       }
-
+      default:
+        {
+          return const ProductScreenNavigator();
+        }
     }
   }
-
 }

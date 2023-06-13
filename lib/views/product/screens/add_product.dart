@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../backend/navigation/navigation_arguments.dart';
 import '../../../backend/products_backend/product_controller.dart';
 import '../../../backend/products_backend/product_provider.dart';
 import '../../common/components/add_price_widget.dart';
@@ -15,11 +18,9 @@ import '../../common/components/header_widget.dart';
 
 class AddProduct extends StatefulWidget {
   static const String routeName = "/AddProduct";
-  ProductModel? productModel;
-  bool isEdit = false;
-  int? index;
+  final AddEditProductNavigationArgument arguments;
 
-  AddProduct({this.productModel, this.isEdit = false, this.index});
+  const AddProduct({super.key, required this.arguments});
 
   @override
   State<AddProduct> createState() => _AddProductState();
@@ -36,41 +37,33 @@ class _AddProductState extends State<AddProduct> {
   TextEditingController priceController = TextEditingController();
   TextEditingController sizeInMLController = TextEditingController();
   String thumbnailImageUrl = '';
-  Uint8List? thumbnailImage;
   String brandThumbnailImageUrl = '';
-  Uint8List? brandThumbnailImage;
+  XFile? thumbnailImage, brandThumbnailImage;
+  Uint8List? thumbnailUint8List, brandThumbnailImageUint8List;
+
+  final ImagePicker _picker = ImagePicker();
 
   Future<void> addThumbnailImage() async {
-    setState(() {});
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: false,
-      withData: true,
-      allowCompression: true,
-    );
+    XFile? file = await _picker.pickImage(source: ImageSource.gallery);
 
-    if (result?.files.firstElement != null) {
-      PlatformFile platformFile = result!.files.firstElement!;
-      thumbnailImage = platformFile.bytes;
-
-      if (mounted) setState(() {});
+    if (file != null) {
+      thumbnailImage = file;
+      thumbnailUint8List = await file.readAsBytes();
+      MyPrint.printOnConsole("Mime type: ${file.mimeType}");
     }
+    if (mounted) setState(() {});
+    // }
   }
 
   Future<void> addBrandThumbnailImage() async {
-    setState(() {});
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: false,
-      withData: true,
-      allowCompression: true,
-    );
+    XFile? file = await _picker.pickImage(source: ImageSource.gallery);
 
-    if (result?.files.firstElement != null) {
-      PlatformFile platformFile = result!.files.firstElement!;
-      brandThumbnailImage = platformFile.bytes;
-      if (mounted) setState(() {});
+    if (file != null) {
+      brandThumbnailImage = file;
+      brandThumbnailImageUint8List = await file.readAsBytes();
     }
+    if (mounted) setState(() {});
+    // }
   }
 
   Future<void> getData() async {}
@@ -79,27 +72,38 @@ class _AddProductState extends State<AddProduct> {
     setState(() {
       isLoading = true;
     });
+
+    if (thumbnailImage != null) {
+      thumbnailImageUrl = await productController.uploadImageToFirebase(thumbnailImage!);
+    }
+    if (brandThumbnailImage != null) {
+      brandThumbnailImageUrl = await productController.uploadImageToFirebase(brandThumbnailImage!);
+    }
+
     BrandModel brandModel = BrandModel(
-      name: brandNameController.text.trim(),
-      thumbnailImageUrl: brandThumbnailImageUrl,
-      createdTime: widget.productModel!.createdTime,
-    );
-    if (widget.productModel != null && widget.index != null && widget.isEdit == true) {
-      MyPrint.printOnConsole("test model edit this with index: ${widget.index} edit: ${widget.isEdit}");
+        name: brandNameController.text.trim(),
+        thumbnailImageUrl: brandThumbnailImageUrl,
+        createdTime: widget.arguments.productModel?.createdTime ?? Timestamp.now(),
+        updatedTime: widget.arguments.isEdit ? Timestamp.now() : null);
+
+    if (widget.arguments.isEdit == true) {
+      MyPrint.printOnConsole("test model edit this with index: ${widget.arguments.index} edit: ${widget.arguments.isEdit}");
 
       ProductModel productModel = ProductModel(
-        id: widget.productModel!.id,
+        id: widget.arguments.productModel!.id,
         name: nameController.text.trim(),
         brand: brandModel,
         price: double.tryParse(priceController.text) ?? 0,
-        sizeInML: double.tryParse(priceController.text) ?? 0,
+        sizeInML: double.tryParse(sizeInMLController.text) ?? 0,
         thumbnailImageUrl: thumbnailImageUrl,
-        createdTime: widget.productModel!.createdTime,
+        createdTime: widget.arguments.productModel!.createdTime,
         updatedTime: Timestamp.now(),
       );
 
-      // await productController.AddProductToFirebase(productModel);
-      MyToast.showSuccess(context: context, msg: 'Product Edited successfully');
+      await productController.updateProductToFirebase(productModel);
+      if (context.mounted) {
+        MyToast.showSuccess(context: context, msg: 'Product Edited successfully');
+      }
     } else {
       MyPrint.printOnConsole("test model new duplicate");
       ProductModel productModel = ProductModel(
@@ -107,19 +111,34 @@ class _AddProductState extends State<AddProduct> {
         name: nameController.text.trim(),
         brand: brandModel,
         price: double.tryParse(priceController.text) ?? 0,
-        sizeInML: double.tryParse(priceController.text) ?? 0,
+        sizeInML: double.tryParse(sizeInMLController.text) ?? 0,
         thumbnailImageUrl: thumbnailImageUrl,
         createdTime: Timestamp.now(),
         updatedTime: Timestamp.now(),
       );
 
-      await productController.AddProductToFirebase(productModel);
-      MyToast.showSuccess(context: context, msg: 'Product added successfully');
-    }
+      MyPrint.printOnConsole("productModel : ${productModel.toMap()}");
 
+      await productController.addProductToFirebase(productModel);
+      if (context.mounted) {
+        MyToast.showSuccess(context: context, msg: 'Product added successfully');
+      }
+    }
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> setData() async {
+    ProductModel productModel = widget.arguments.productModel ?? ProductModel();
+    BrandModel brandModel = productModel.brand ?? BrandModel();
+    nameController.text = productModel.name;
+    brandNameController.text = brandModel.name;
+    priceController.text = "${productModel.price}";
+    sizeInMLController.text = "${productModel.sizeInML}";
+    thumbnailImageUrl = productModel.thumbnailImageUrl;
+    brandThumbnailImageUrl = brandModel.thumbnailImageUrl;
+    setState(() {});
   }
 
   @override
@@ -128,6 +147,10 @@ class _AddProductState extends State<AddProduct> {
     productProvider = Provider.of<ProductProvider>(context, listen: false);
     productController = ProductController(productProvider: productProvider);
     futureGetData = getData();
+
+    if (widget.arguments.isEdit) {
+      setData();
+    }
   }
 
   @override
@@ -160,7 +183,7 @@ class _AddProductState extends State<AddProduct> {
                         ),
                         Expanded(
                             child: HeaderWidget(
-                          title: "Add Product",
+                          title: widget.arguments.isEdit ? "Edit Product" : "Add Product",
                         )),
                       ],
                     ),
@@ -329,19 +352,7 @@ class _AddProductState extends State<AddProduct> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GetTitle(title: "Choose Product Thumbnail Image*"),
-              thumbnailImage == null
-                  ? InkWell(
-                      onTap: () async {
-                        await addThumbnailImage();
-                      },
-                      child: const EmptyImageViewBox())
-                  : CommonImageViewBox(
-                      imageAsBytes: thumbnailImage,
-                      rightOnTap: () {
-                        thumbnailImage = null;
-                        setState(() {});
-                      },
-                    ),
+              getThumbImageViewForEdit(),
             ],
           ),
         ),
@@ -353,19 +364,7 @@ class _AddProductState extends State<AddProduct> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GetTitle(title: "Choose Brand Thumbnail Image*"),
-              brandThumbnailImage == null
-                  ? InkWell(
-                      onTap: () async {
-                        await addBrandThumbnailImage();
-                      },
-                      child: const EmptyImageViewBox())
-                  : CommonImageViewBox(
-                      imageAsBytes: brandThumbnailImage,
-                      rightOnTap: () {
-                        brandThumbnailImage = null;
-                        setState(() {});
-                      },
-                    ),
+              getBrandThumbImageViewForEdit(),
             ],
           ),
         ),
@@ -373,21 +372,71 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
+  Widget getThumbImageViewForEdit() {
+    return thumbnailImageUrl.isEmpty && thumbnailUint8List == null
+        ? InkWell(
+            onTap: () async {
+              await addThumbnailImage();
+            },
+            child: const EmptyImageViewBox(),
+          )
+        : thumbnailUint8List != null
+            ? CommonImageViewBox(
+                imageAsBytes: thumbnailUint8List,
+                rightOnTap: () {
+                  thumbnailUint8List = null;
+                  setState(() {});
+                },
+              )
+            : CommonImageViewBox(
+                url: thumbnailImageUrl,
+                rightOnTap: () {
+                  thumbnailImageUrl = "";
+                  setState(() {});
+                },
+              );
+  }
+
+  Widget getBrandThumbImageViewForEdit() {
+    return brandThumbnailImageUrl.isEmpty && brandThumbnailImageUint8List == null
+        ? InkWell(
+            onTap: () async {
+              await addBrandThumbnailImage();
+            },
+            child: const EmptyImageViewBox(),
+          )
+        : brandThumbnailImageUint8List != null
+            ? CommonImageViewBox(
+                imageAsBytes: brandThumbnailImageUint8List,
+                rightOnTap: () {
+                  brandThumbnailImage = null;
+                  setState(() {});
+                },
+              )
+            : CommonImageViewBox(
+                url: brandThumbnailImageUrl,
+                rightOnTap: () {
+                  brandThumbnailImageUrl = "";
+                  setState(() {});
+                },
+              );
+  }
+
   Widget getAddProductButton() {
     return CommonButton(
         onTap: () async {
           if (_formKey.currentState!.validate()) {
-            if (thumbnailImage == null) {
+            if (thumbnailImage == null && thumbnailImageUrl.isEmpty) {
               MyToast.showError(context: context, msg: 'Please upload a product thumbnail image');
               return;
             }
-            if (brandThumbnailImage == null) {
+            if (brandThumbnailImage == null && brandThumbnailImageUrl.isEmpty) {
               MyToast.showError(context: context, msg: 'Please upload a product brand thumbnail image');
               return;
             }
             await submitProduct();
           }
         },
-        text: "+ Add Product");
+        text: widget.arguments.isEdit ? "Update product" : "+ Add Product");
   }
 }

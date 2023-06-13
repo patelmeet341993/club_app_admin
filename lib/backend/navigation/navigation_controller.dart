@@ -13,6 +13,7 @@ import '../../views/homescreen/screens/homescreen.dart';
 import '../../views/product/screens/add_product.dart';
 import '../../views/product/screens/product_list_screen.dart';
 import '../../views/splash/splash_screen.dart';
+import 'navigation_arguments.dart';
 
 class NavigationController {
   static NavigationController? _instance;
@@ -40,7 +41,7 @@ class NavigationController {
   static bool checkDataAndNavigateToSplashScreen() {
     MyPrint.printOnConsole("checkDataAndNavigateToSplashScreen called, isFirst:$isFirst");
 
-    if(isFirst) {
+    if (isFirst) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         isFirst = false;
         Navigator.pushNamedAndRemoveUntil(mainScreenNavigator.currentContext!, SplashScreen.routeName, (route) => false);
@@ -57,8 +58,8 @@ class NavigationController {
     //   return null;
     // }
 
-    if(kIsWeb) {
-      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
         return null;
       }
     }
@@ -79,22 +80,26 @@ class NavigationController {
     Widget? page;
 
     switch (settings.name) {
-      case "/": {
-        page = const SplashScreen();
-        break;
-      }
-      case SplashScreen.routeName: {
-        page = const SplashScreen();
-        break;
-      }
-      case LoginScreen.routeName: {
-        page = parseLoginScreen(settings: settings);
-        break;
-      }
-      case HomeScreen.routeName: {
-        page = parseHomeScreen(settings: settings);
-        break;
-      }
+      case "/":
+        {
+          page = const SplashScreen();
+          break;
+        }
+      case SplashScreen.routeName:
+        {
+          page = const SplashScreen();
+          break;
+        }
+      case LoginScreen.routeName:
+        {
+          page = parseLoginScreen(settings: settings);
+          break;
+        }
+      case HomeScreen.routeName:
+        {
+          page = parseHomeScreen(settings: settings);
+          break;
+        }
     }
 
     if (page != null) {
@@ -112,26 +117,27 @@ class NavigationController {
   static Route? onProductGeneratedRoutes(RouteSettings settings) {
     MyPrint.printOnConsole("Product Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
 
-    if(kIsWeb) {
-      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
         return null;
       }
     }
-
 
     MyPrint.printOnConsole("First Page:$isFirst");
     Widget? page;
 
     switch (settings.name) {
-      case "/": {
-        page = const ProductListScreen();
-        break;
-      }
+      case "/":
+        {
+          page = const ProductListScreen();
+          break;
+        }
 
-      case AddProduct.routeName: {
-        page = parseAddProductScreen(settings: settings);
-        break;
-      }
+      case AddProduct.routeName:
+        {
+          page = parseAddProductScreen(settings: settings);
+          break;
+        }
     }
 
     if (page != null) {
@@ -146,11 +152,11 @@ class NavigationController {
     return null;
   }
 
- static Route? onClubGeneratedRoutes(RouteSettings settings) {
+  static Route? onClubGeneratedRoutes(RouteSettings settings) {
     MyPrint.printOnConsole("Club Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
 
-    if(kIsWeb) {
-      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
         return null;
       }
     }
@@ -159,15 +165,17 @@ class NavigationController {
     Widget? page;
 
     switch (settings.name) {
-      case "/": {
-        page = const ClubListScreen();
-        break;
-      }
+      case "/":
+        {
+          page = const ClubListScreen();
+          break;
+        }
 
-      case AddClub.routeName: {
-        page = parseAddClubScreen(settings: settings);
-        break;
-      }
+      case AddClub.routeName:
+        {
+          page = parseAddClubScreen(settings: settings);
+          break;
+        }
     }
 
     if (page != null) {
@@ -185,8 +193,8 @@ class NavigationController {
   static Route? onClubProfileGeneratedRoutes(RouteSettings settings) {
     MyPrint.printOnConsole("Club Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
 
-    if(kIsWeb) {
-      if(!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
         return null;
       }
     }
@@ -195,15 +203,17 @@ class NavigationController {
     Widget? page;
 
     switch (settings.name) {
-      case "/": {
-        page = const ClubProfileScreen();
-        break;
-      }
+      case "/":
+        {
+          page = const ClubProfileScreen();
+          break;
+        }
 
-      case AddClub.routeName: {
-        page = parseAddClubScreen(settings: settings);
-        break;
-      }
+      case AddClub.routeName:
+        {
+          page = parseAddClubScreen(settings: settings);
+          break;
+        }
     }
 
     if (page != null) {
@@ -218,47 +228,59 @@ class NavigationController {
     return null;
   }
 
-
   //region Parse Page From RouteSettings
   static Widget? parseLoginScreen({required RouteSettings settings}) {
     return const LoginScreen();
   }
 
   static Widget? parseHomeScreen({required RouteSettings settings}) {
-    return  HomeScreen();
+    return HomeScreen();
   }
 
   static Widget? parseAddProductScreen({required RouteSettings settings}) {
-    return AddProduct();
+    dynamic argument = settings.arguments;
+    if(argument is AddEditProductNavigationArgument) {
+      return AddProduct(
+        arguments: argument,
+      );
+    } else {
+      return null;
+    }
   }
 
   static Widget? parseAddClubScreen({required RouteSettings settings}) {
-    return  const AddClub();
+    return const AddClub();
   }
+
   //endregion
 
   static Future<dynamic> navigateToLoginScreen({required NavigationOperationParameters navigationOperationParameters}) {
-    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: LoginScreen.routeName,
     ));
   }
 
   static Future<dynamic> navigateToHomeScreen({required NavigationOperationParameters navigationOperationParameters}) {
-    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: HomeScreen.routeName,
     ));
   }
 
-  static Future<dynamic> navigateToAddProductScreen({required NavigationOperationParameters navigationOperationParameters}) {
-    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
-      routeName: AddProduct.routeName,
-    ));
+  static Future<dynamic> navigateToAddProductScreen({
+    required NavigationOperationParameters navigationOperationParameters,
+    required AddEditProductNavigationArgument navigationArgument,
+  }) {
+    return NavigationOperation.navigate(
+      navigationOperationParameters: navigationOperationParameters.copyWith(routeName: AddProduct.routeName, arguments: navigationArgument),
+    );
   }
 
   static Future<dynamic> navigateToAddClubScreen({required NavigationOperationParameters navigationOperationParameters}) {
-    return NavigationOperation.navigate(navigationOperationParameters: navigationOperationParameters.copyWith(
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: AddClub.routeName,
     ));
   }
-
 }
