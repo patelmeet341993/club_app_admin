@@ -74,11 +74,7 @@ class _AddProductState extends State<AddProduct> {
     MyPrint.printOnConsole('is edit is ${widget.arguments.isEdit}');
     if (widget.arguments.productModel != null) {
       pageProductModel = widget.arguments.productModel;
-    }
-
-    if (pageProductModel != null) {
       if(pageProductModel!.brand != null){
-        print("insisde");
         brandNameController.text = pageProductModel!.brand!.name;
         brandThumbnailImageUrl = pageProductModel!.brand!.thumbnailImageUrl;
       }
@@ -86,6 +82,9 @@ class _AddProductState extends State<AddProduct> {
       priceController.text = ParsingHelper.parseStringMethod(pageProductModel!.price);
       sizeInMLController.text = ParsingHelper.parseStringMethod(pageProductModel!.sizeInML);
       thumbnailImageUrl = pageProductModel!.thumbnailImageUrl;
+    }else{
+      priceController.text = ParsingHelper.parseStringMethod(0);
+      sizeInMLController.text = ParsingHelper.parseStringMethod(0);
     }
   }
 
