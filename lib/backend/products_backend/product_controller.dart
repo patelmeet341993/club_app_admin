@@ -43,7 +43,7 @@ class ProductController {
     }
   }
 
-  Future<void> addProductToFirebase(ProductModel productModel) async {
+  Future<void> addProductToFirebase(ProductModel productModel, bool isAdInProvider) async {
     try{
       await productRepository.AddProductRepo(productModel);
       if(isAdInProvider) productProvider.addProductModelInGameList(productModel);
@@ -63,7 +63,6 @@ class ProductController {
       MyPrint.printOnConsole(s);
     }
   }
-}
 
   Future<String> uploadImageToFirebase(XFile imageFile, ) async {
     String imageUrl = "";
@@ -89,6 +88,4 @@ class ProductController {
 
     return imageUrl;
   }
-
-
 }

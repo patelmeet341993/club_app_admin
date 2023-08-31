@@ -151,7 +151,7 @@ class _AddProductState extends State<AddProduct> {
       //   model.updatedTime = productModel.updatedTime;
       //   model.thumbnailImageUrl = productModel.thumbnailImageUrl;
       // }
-      await productController.addProductToFirebase(productModel);
+      await productController.addProductToFirebase(productModel, false);
       if (context.mounted) {
         MyToast.showSuccess(context: context, msg: 'Product added successfully');
       }
@@ -160,8 +160,9 @@ class _AddProductState extends State<AddProduct> {
       isLoading = false;
     });
 
-    MyToast.showSuccess(context: context, msg: pageProductModel == null ? 'Product Added Successfully' : 'Product Edited Successfully');
-
+    if(context.mounted && context.checkMounted()){
+      MyToast.showSuccess(context: context, msg: pageProductModel == null ? 'Product Added Successfully' : 'Product Edited Successfully');
+    }
   }
 
   Future<void> setData() async {
@@ -470,7 +471,9 @@ class _AddProductState extends State<AddProduct> {
               return;
             }
             await submitProduct();
-            Navigator.pop(context);
+            if(context.mounted && context.checkMounted()) {
+              Navigator.pop(context);
+            }
           }
         },
         text: widget.arguments.isEdit ? "Update product" : "+ Add Product");

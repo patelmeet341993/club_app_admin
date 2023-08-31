@@ -3,6 +3,7 @@ import 'package:club_app_admin/backend/club_backend/club_provider.dart';
 import 'package:club_app_admin/configs/constants.dart';
 import 'package:club_app_admin/views/common/components/header_widget.dart';
 import 'package:club_model/club_model.dart';
+import 'package:club_model/models/club/data_model/club_user_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,38 +11,38 @@ import 'package:provider/provider.dart';
 import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
 
-class ClubScreenNavigator extends StatefulWidget {
-  const ClubScreenNavigator({Key? key}) : super(key: key);
+class ClubUserScreenNavigator extends StatefulWidget {
+  const ClubUserScreenNavigator({Key? key}) : super(key: key);
 
   @override
-  _ClubScreenNavigatorState createState() => _ClubScreenNavigatorState();
+  _ClubUserScreenNavigatorState createState() => _ClubUserScreenNavigatorState();
 }
 
-class _ClubScreenNavigatorState extends State<ClubScreenNavigator> {
+class _ClubUserScreenNavigatorState extends State<ClubUserScreenNavigator> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: NavigationController.clubScreenNavigator,
-      onGenerateRoute: NavigationController.onClubGeneratedRoutes,
+      key: NavigationController.clubUserNavigator,
+      onGenerateRoute: NavigationController.onClubUserGeneratedRoutes,
     );
   }
 }
 
-class ClubListScreen extends StatefulWidget {
-  const ClubListScreen({Key? key}) : super(key: key);
+class ClubUserListScreen extends StatefulWidget {
+  const ClubUserListScreen({Key? key}) : super(key: key);
 
   @override
-  State<ClubListScreen> createState() => _ClubListScreenState();
+  State<ClubUserListScreen> createState() => _ClubUserListScreenState();
 }
 
-class _ClubListScreenState extends State<ClubListScreen> {
+class _ClubUserListScreenState extends State<ClubUserListScreen> {
   late ClubProvider clubProvider;
   late ClubController clubController;
   late Future<void> futureGetData;
   bool isLoading = false;
 
   Future<void> getData() async {
-    await clubController.getClubList();
+    await clubController.getClubUserList();
   }
 
   @override
@@ -65,20 +66,20 @@ class _ClubListScreenState extends State<ClubListScreen> {
                 child: Column(
                   children: [
                     HeaderWidget(
-                      title: "Clubs",
+                      title: "Club Users",
                       suffixWidget: CommonButton(
-                          text: "Add Club",
+                          text: "Add Club User",
                           icon: Icon(
                             Icons.add,
                             color: Styles.white,
                           ),
                           onTap: () {
-                            NavigationController.navigateToAddClubScreen(
+                            NavigationController.navigateToAddClubUserScreen(
                                 navigationOperationParameters:
-                                    NavigationOperationParameters(
-                              navigationType: NavigationType.pushNamed,
-                              context: context,
-                            ));
+                                NavigationOperationParameters(
+                                  navigationType: NavigationType.pushNamed,
+                                  context: context,
+                                ));
                           }),
                     ),
                     const SizedBox(
@@ -97,7 +98,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
 
   Widget getClubsList() {
     return Consumer(builder: (BuildContext context, ClubProvider clubProvider, Widget? child) {
-      if (clubProvider.clubsList.isEmpty) {
+      if (clubProvider.clubUserList.isEmpty) {
         return Center(
           child: CommonText(
             text: "No Clubs Available",
@@ -109,16 +110,16 @@ class _ClubListScreenState extends State<ClubListScreen> {
 
       //List<NewsFeedModel> newsList = newsProvider.newsList;
       return ListView.builder(
-        itemCount: clubProvider.clubsList.length,
+        itemCount: clubProvider.clubUserList.length,
         //shrinkWrap: true,
         itemBuilder: (context, index) {
-          return SingleClub(clubProvider.clubsList[index], index);
+          return SingleClub(clubProvider.clubUserList[index], index);
         },
       );
     });
   }
 
-  Widget SingleClub(ClubModel clubModel, index) {
+  Widget SingleClub(ClubUserModel clubModel, index) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -137,7 +138,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
                   border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
                 ),
                 child: CommonCachedNetworkImage(
-                  imageUrl: clubModel.thumbnailImageUrl,
+                  imageUrl: clubModel.profileImage,
                   height: 80,
                   width: 80,
                   borderRadius: 4,

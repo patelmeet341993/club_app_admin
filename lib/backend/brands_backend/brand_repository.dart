@@ -1,7 +1,4 @@
 import 'package:club_model/club_model.dart';
-import 'package:club_model/configs/constants.dart';
-import 'package:club_model/configs/typedefs.dart';
-import 'package:club_model/utils/my_print.dart';
 
 class BrandRepository {
   Future<List<BrandModel>> getBrandListRepo() async {

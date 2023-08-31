@@ -4,6 +4,7 @@ import 'package:club_app_admin/backend/club_backend/club_controller.dart';
 import 'package:club_app_admin/backend/club_backend/club_provider.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/configs/styles.dart';
+import 'package:club_model/models/club/data_model/club_user_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:club_model/view/common/components/loading_widget.dart';
 import 'package:club_model/view/common/components/modal_progress_hud.dart';
@@ -19,19 +20,19 @@ import '../../common/components/common_image_view_box.dart';
 import '../../common/components/common_text_form_field.dart';
 import '../../common/components/header_widget.dart';
 
-class AddClub extends StatefulWidget {
-  static const String routeName = "/AddClub";
-  ClubModel? clubModel;
-  bool isEdit = false;
-  int? index;
+class AddClubUser extends StatefulWidget {
+  static const String routeName = "/AddClubUser";
+  final ClubModel? clubModel;
+  final bool isEdit;
+  final int? index;
 
-  AddClub({this.clubModel, this.isEdit = false, this.index});
+  const AddClubUser({super.key, this.clubModel, this.isEdit = false, this.index});
 
   @override
-  State<AddClub> createState() => _AddClubState();
+  State<AddClubUser> createState() => _AddClubUserState();
 }
 
-class _AddClubState extends State<AddClub> {
+class _AddClubUserState extends State<AddClubUser> {
   final _formKey = GlobalKey<FormState>();
   late Future<void> futureGetData;
   bool isLoading = false;
@@ -47,12 +48,8 @@ class _AddClubState extends State<AddClub> {
 
   String thumbnailImageUrl = '';
   XFile? thumbnailImageFile;
-  List<XFile> clubImageFileList = [];
   Uint8List? thumbnailImage;
   final ImagePicker _picker = ImagePicker();
-
-  List<Uint8List> clubImagesInBytes = [];
-  List<String> clubImageListInString = [];
 
   bool isClubEnabled = true;
   bool isAdminEnabled = true;
@@ -86,59 +83,55 @@ class _AddClubState extends State<AddClub> {
     setState(() {
       isLoading = true;
     });
+    ClubProvider clubProvider = Provider.of(context, listen: false);
+    ClubModel loggedInClubModel = clubProvider.getLoggedInClubModel();
+
     String newId = MyUtils.getNewId(isFromUUuid: false);
     if (thumbnailImageFile != null) {
       thumbnailImageUrl = await clubController.uploadImageToFirebase(thumbnailImageFile!);
     }
 
-    for (var element in clubImageFileList) {
-      String imageUrl = await clubController.uploadImageToFirebase(element, clubId: newId);
-      if (imageUrl.isNotEmpty) {
-        clubImageListInString.add(imageUrl);
-      }
-    }
-    MyPrint.printOnConsole("clubImageListInString Length: ${clubImageListInString.length}");
-
-
     if (widget.clubModel != null && widget.index != null && widget.isEdit == true) {
       MyPrint.printOnConsole("test model edit this with index: ${widget.index} edit: ${widget.isEdit}");
-      ClubModel clubModel = ClubModel(
+      ClubUserModel clubUserModel = ClubUserModel(
         id: widget.clubModel!.id,
         password: passwordController.text.trim(),
         userId: userIdController.text.trim(),
         name: clubNameController.text.trim(),
-        address: clubAddressController.text.trim(),
+        profileImage: thumbnailImageUrl,
+        clubId: loggedInClubModel.id.isEmpty ? "" : loggedInClubModel.id,
         mobileNumber: mobileNumberController.text.trim(),
-        thumbnailImageUrl: thumbnailImageUrl,
         createdTime: widget.clubModel!.createdTime,
         adminEnabled: isAdminEnabled,
+        adminType: "club_user",
         clubEnabled: isClubEnabled,
-        images: clubImageListInString,
         updatedTime: Timestamp.now(),
       );
 
-      await clubController.AddClubToFirebase(clubModel);
+      // await clubController.AddClubToFirebase(clubModel);
+      await clubController.AddClubUserToFirebase(clubUserModel);
+
       if (context.mounted && context.checkMounted()) {
         MyToast.showSuccess(context: context, msg: 'Product Edited successfully');
       }
     } else {
       MyPrint.printOnConsole("club model new duplicate");
-      ClubModel clubModel = ClubModel(
+      ClubUserModel clubUserModel = ClubUserModel(
         id: newId,
         name: clubNameController.text.trim(),
         password: passwordController.text.trim(),
         userId: userIdController.text.trim(),
-        address: clubAddressController.text.trim(),
         mobileNumber: mobileNumberController.text.trim(),
-        thumbnailImageUrl: thumbnailImageUrl,
+        profileImage: thumbnailImageUrl,
         adminEnabled: isAdminEnabled,
-        // adminType: MyAppConstants.subAdminType,
+        adminType: MyAppConstants.clubUserType,
+        clubId: loggedInClubModel.id.isEmpty ? "": loggedInClubModel.id,
+        // adminType: adminType
         clubEnabled: isClubEnabled,
-        images: clubImageListInString,
         createdTime: Timestamp.now(),
       );
 
-      await clubController.AddClubToFirebase(clubModel);
+      await clubController.AddClubUserToFirebase(clubUserModel);
       if (context.mounted && context.checkMounted()) {
         MyToast.showSuccess(context: context, msg: 'Club added successfully');
       }
@@ -147,36 +140,6 @@ class _AddClubState extends State<AddClub> {
     setState(() {
       isLoading = false;
     });
-  }
-
-  Future<void> chooseClubImagesMethod() async {
-    List<XFile> xFiles = await _picker.pickMultiImage();
-
-    if (xFiles.isNotEmpty) {
-      for (var element in xFiles) {
-        Uint8List xfile = await element.readAsBytes();
-        clubImagesInBytes.add(xfile);
-        clubImageFileList.add(element);
-      }
-      // clubImageFileList = xFiles;
-    }
-    if (mounted) setState(() {});
-
-    // FilePickerResult? result = await FilePicker.platform.pickFiles(
-    //   type: FileType.image,
-    //   allowMultiple: false,
-    //   withData: true,
-    //   allowCompression: true,
-    // );
-    //
-    // if (result?.files.firstElement != null) {
-    //   PlatformFile platformFile = result!.files.firstElement!;
-    //
-    //   if (platformFile.bytes != null) {
-    //     clubImagesInBytes.add(platformFile.bytes!);
-    //     if (mounted) setState(() {});
-    //   }
-    // }
   }
 
   Future<void> getData() async {}
@@ -219,7 +182,7 @@ class _AddClubState extends State<AddClub> {
                         ),
                         Expanded(
                             child: HeaderWidget(
-                          title: "Add Club",
+                          title: "Add Club User",
                         )),
                       ],
                     ),
@@ -243,7 +206,7 @@ class _AddClubState extends State<AddClub> {
             const SizedBox(
               height: 30,
             ),
-            CommonText(text: " Product Basic Information", fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu.withOpacity(.6)),
+            CommonText(text: " Basic Information", fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu.withOpacity(.6)),
             const SizedBox(
               height: 20,
             ),
@@ -252,10 +215,6 @@ class _AddClubState extends State<AddClub> {
               height: 30,
             ),
             getUserIdAndPasswordField(),
-            const SizedBox(
-              height: 30,
-            ),
-            getDescriptionTextField(),
             const SizedBox(
               height: 30,
             ),
@@ -270,10 +229,6 @@ class _AddClubState extends State<AddClub> {
             getAddImageRow(),
             const SizedBox(
               height: 30,
-            ),
-            getClubImages(),
-            const SizedBox(
-              height: 40,
             ),
             getAddClubButton(),
             const SizedBox(
@@ -306,7 +261,7 @@ class _AddClubState extends State<AddClub> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              getTitle(title: "Enter Club Name*"),
+              getTitle(title: "Enter User Name*"),
               CommonTextFormField(
                 controller: clubNameController,
                 hintText: "Enter Club Name",
@@ -414,25 +369,6 @@ class _AddClubState extends State<AddClub> {
     );
   }
 
-  Widget getDescriptionTextField() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        getTitle(title: "Enter Address Of Club"),
-        CommonTextFormField(
-          controller: clubAddressController,
-          hintText: "Enter Address of Club",
-          minLines: 2,
-          maxLines: 10,
-          validator: (value) {
-            return null;
-          },
-        ),
-      ],
-    );
-  }
-
   Widget getEnabledRow() {
     return Row(
       children: [
@@ -493,7 +429,7 @@ class _AddClubState extends State<AddClub> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getTitle(title: "Choose Club Thumbnail Image*"),
+        getTitle(title: "Choose Club User Image*"),
         thumbnailImage == null
             ? InkWell(
                 onTap: () async {
@@ -511,51 +447,6 @@ class _AddClubState extends State<AddClub> {
     );
   }
 
-  Widget getClubImages() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        getTitle(title: "Choose Club Images (up to 10 images)"),
-        Row(
-          children: [
-            clubImagesInBytes.isNotEmpty
-                ? Flexible(
-                    child: Container(
-                      padding: EdgeInsets.zero,
-                      height: 80,
-                      child: ListView.builder(
-                          itemCount: clubImagesInBytes.length,
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            dynamic image = clubImagesInBytes[index];
-                            MyPrint.printOnConsole("image type : ${image.runtimeType.toString()}");
-                            return CommonImageViewBox(
-                              imageAsBytes: clubImagesInBytes[index],
-                              rightOnTap: () {
-                                clubImagesInBytes.removeAt(index);
-                                clubImageFileList.removeAt(index);
-                                MyPrint.printOnConsole('Game List Length in bytes is " ${clubImagesInBytes.length}');
-                                setState(() {});
-                              },
-                            );
-                          }),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-            clubImagesInBytes.length < 10
-                ? InkWell(
-                    onTap: () {
-                      chooseClubImagesMethod();
-                    },
-                    child: const EmptyImageViewBox())
-                : const SizedBox.shrink()
-          ],
-        )
-      ],
-    );
-  }
-
   Widget getAddClubButton() {
     return CommonButton(
         onTap: () async {
@@ -567,6 +458,6 @@ class _AddClubState extends State<AddClub> {
             await addClub();
           }
         },
-        text: "+ Add Club");
+        text: "+ Add Club User");
   }
 }

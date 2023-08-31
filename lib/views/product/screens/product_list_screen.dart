@@ -75,13 +75,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           ),
                           onTap: () {
                             NavigationController.navigateToAddProductScreen(
-                                navigationOperationParameters:
-                                    NavigationOperationParameters(
-                              navigationType: NavigationType.pushNamed,
-                              context: context,
-                            ),
-                              addProductScreenNavigationArguments: AddProductScreenNavigationArguments()
-                            );
+                                navigationOperationParameters: NavigationOperationParameters(
+                                  navigationType: NavigationType.pushNamed,
+                                  context: context,
+                                ),
+                                addProductScreenNavigationArguments: AddEditProductNavigationArgument());
                           }),
                     ),
                     const SizedBox(
@@ -215,7 +213,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               navigationType: NavigationType.pushNamed,
                               context: NavigationController.productScreenNavigator.currentContext!,
                             ),
-                            addProductScreenNavigationArguments: AddProductScreenNavigationArguments(
+                            addProductScreenNavigationArguments: AddEditProductNavigationArgument(
                               productModel: productModel,
                               index: index,
                               isEdit: true,

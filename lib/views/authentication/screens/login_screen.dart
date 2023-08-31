@@ -1,3 +1,6 @@
+import 'package:club_app_admin/backend/club_backend/club_controller.dart';
+import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_app_admin/backend/club_backend/club_repository.dart';
 import 'package:club_model/backend/navigation/navigation_operation_parameters.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/utils/my_toast.dart';
@@ -15,6 +18,7 @@ import '../../common/components/common_text_form_field.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String routeName = '/LoginScreen';
+
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
@@ -26,29 +30,46 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isObscure = true;
   late AdminUserController adminController;
   late AuthenticationProvider adminProvider;
+  late ClubController clubController;
+  late ClubProvider clubProvider;
   TextEditingController idController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
   Future<void> checkAdmin() async {
-    AdminUserModel? adminModel = await AdminUserRepository()
-        .checkLoginAdminMethod(
-            adminId: idController.text,
-            password: passwordController.text.trim());
+    AdminUserModel? adminModel = await AdminUserRepository().checkLoginAdminMethod(adminId: idController.text, password: passwordController.text.trim());
     if (adminModel == null) {
-      MyToast.showError(
-          context: context, msg: "Please Enter Valid ID or Password");
+      ClubModel? clubModel = await ClubRepository().checkLoginClubMethod(adminId: idController.text, password: passwordController.text.trim());
+      if (clubModel != null) {
+        clubProvider.setClubModel(clubModel);
+        if (context.mounted && context.checkMounted()) {
+          MyToast.showSuccess(context: context, msg: "Logged In Successfully");
+          NavigationController.navigateToHomeScreen(
+            navigationOperationParameters: NavigationOperationParameters(
+              context: context,
+              navigationType: NavigationType.pushNamedAndRemoveUntil,
+            ),
+          );
+        }
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool(MySharePreferenceKeys.isLogin, true);
+      } else {
+        if (context.mounted && context.checkMounted()) {
+          MyToast.showError(context: context, msg: "Please Enter Valid ID or Password");
+        }
+      }
     } else {
       adminProvider.setAdminUserModel(adminModel);
-      MyToast.showSuccess(context: context, msg: "Logged In Successfully");
-      NavigationController.navigateToHomeScreen(
-          navigationOperationParameters: NavigationOperationParameters(
-        context: context,
-        navigationType: NavigationType.pushNamedAndRemoveUntil,
-      ));
+      if (context.mounted && context.checkMounted()) {
+        MyToast.showSuccess(context: context, msg: "Logged In Successfully");
+        NavigationController.navigateToHomeScreen(
+            navigationOperationParameters: NavigationOperationParameters(
+          context: context,
+          navigationType: NavigationType.pushNamedAndRemoveUntil,
+        ));
+      }
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool(MySharePreferenceKeys.isLogin, true);
-      MyPrint.printOnConsole(
-          "SharedPreferences isLogin boolean set as ${prefs.getBool(MySharePreferenceKeys.isLogin)}");
+      MyPrint.printOnConsole("SharedPreferences isLogin boolean set as ${prefs.getBool(MySharePreferenceKeys.isLogin)}");
     }
   }
 
@@ -56,7 +77,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     adminProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+    clubProvider = context.read<ClubProvider>();
     adminController = AdminUserController(adminProvider: adminProvider);
+    clubController = ClubController(clubProvider: clubProvider);
   }
 
   @override
@@ -77,8 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   height: MediaQuery.of(context).size.height * .5,
                   width: MediaQuery.of(context).size.width * .5,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 30, horizontal: 60),
+                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 60),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.white),
                     borderRadius: BorderRadius.circular(4),
@@ -135,11 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               isObscure = !isObscure;
                               setState(() {});
                             },
-                            child: Icon(
-                                !isObscure
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                                color: Styles.bgSideMenu)),
+                            child: Icon(!isObscure ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Styles.bgSideMenu)),
                       ),
                       const SizedBox(
                         height: 25,
@@ -154,11 +172,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 12),
-                              decoration: BoxDecoration(
-                                  color: Styles.white,
-                                  borderRadius: BorderRadius.circular(4)),
+                              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                              decoration: BoxDecoration(color: Styles.white, borderRadius: BorderRadius.circular(4)),
                               child: CommonText(
                                 text: "Login",
                                 color: Styles.bgSideMenu,
