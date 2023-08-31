@@ -8,16 +8,16 @@ import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/material.dart';
 
 class CommonPopup extends StatelessWidget {
-  String text;
-  String leftText, rightText;
-  IconData? icon;
-  Color rightBackgroundColor;
-  Function()? rightOnTap;
-  Function()? leftOnTap;
+  final String text, content, leftText, rightText;
+  final IconData? icon;
+  final Color rightBackgroundColor;
+  final Function()? rightOnTap;
+  final Function()? leftOnTap;
 
-  CommonPopup({
+  const CommonPopup({super.key,
     required this.text,
     this.icon,
+    this.content = "",
     this.leftText = "No",
     this.rightText = "Yes",
     this.leftOnTap,
@@ -28,13 +28,13 @@ class CommonPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0))),
       child: Container(
-        height: MediaQuery.of(context).size.height * .15,
+        // height: MediaQuery.of(context).size.height * .15,
         width: MediaQuery.of(context).size.width * .3,
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(8.0)),
             color: Colors.white),
         child: Column(
@@ -47,15 +47,15 @@ class CommonPopup extends StatelessWidget {
               children: <Widget>[
                 icon != null
                     ? Container(
-                        margin: EdgeInsets.only(right: 16),
+                        margin: const EdgeInsets.only(right: 16),
                         child: Icon(
                           icon,
                           size: 28,
                           color: Colors.black,
                         ),
                       )
-                    : SizedBox.shrink(),
-                SizedBox(
+                    : const SizedBox.shrink(),
+                const SizedBox(
                   width: 8,
                 ),
                 Expanded(
@@ -66,8 +66,18 @@ class CommonPopup extends StatelessWidget {
                 )
               ],
             ),
+            Visibility(
+              visible: content.isNotEmpty,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 8),
+                child: CommonText(
+                  text: content,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
             Container(
-                margin: EdgeInsets.only(top: 8),
+                margin: const EdgeInsets.only(top: 8),
                 alignment: AlignmentDirectional.centerEnd,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -88,14 +98,14 @@ class CommonPopup extends StatelessWidget {
                         )),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 8,
                     ),
                     Flexible(
                       child: InkWell(
                         onTap: rightOnTap,
                         child: Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 25, vertical: 10),
                             decoration: BoxDecoration(
                               color: rightBackgroundColor,

@@ -1,22 +1,25 @@
+import 'package:club_app_admin/backend/authentication/authentication_provider.dart';
 import 'package:club_model/backend/navigation/navigation_operation_parameters.dart';
 import 'package:club_model/backend/navigation/navigation_type.dart';
+import 'package:club_model/club_model.dart';
 import 'package:club_model/configs/styles.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/material.dart';
 
+import '../../../backend/club_backend/club_provider.dart';
 import '../../../backend/navigation/navigation_controller.dart';
+import '../../../configs/constants.dart';
+import '../../common/components/common_popup.dart';
 import '../../common/components/header_widget.dart';
 
 class SystemScreenNavigator extends StatefulWidget {
   const SystemScreenNavigator({Key? key}) : super(key: key);
 
   @override
-  _SystemScreenNavigatorState createState() =>
-      _SystemScreenNavigatorState();
+  _SystemScreenNavigatorState createState() => _SystemScreenNavigatorState();
 }
 
-class _SystemScreenNavigatorState
-    extends State<SystemScreenNavigator> {
+class _SystemScreenNavigatorState extends State<SystemScreenNavigator> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
@@ -58,14 +61,46 @@ class _SystemMainScreenState extends State<SystemMainScreen> {
                   title: "Offers",
                   onTap: () {
                     NavigationController.navigateToOfferListScreen(
-                        navigationOperationParameters:
-                            NavigationOperationParameters(
+                        navigationOperationParameters: NavigationOperationParameters(
                       navigationType: NavigationType.pushNamed,
-                      context: NavigationController
-                          .systemProfileNavigator.currentContext!,
+                      context: NavigationController.systemProfileNavigator.currentContext!,
                     ));
                   }),
               getGoToPageButtons(title: "Profile Details", onTap: () {}),
+              getGoToPageButtons(
+                  title: "Logout",
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return CommonPopup(
+                          text: "Logout",
+                          content: "Are you sure you want to logout?",
+
+                          rightText: "Yes",
+                          rightOnTap: () async {
+                            MyPrint.printOnConsole("context: ${context}");
+                            AuthenticationProvider provider = Provider.of<AuthenticationProvider>(context,listen: false);
+                            ClubProvider clubProvider = Provider.of<ClubProvider>(context,listen: false);
+                            provider.setAdminUserModel(AdminUserModel());
+                            clubProvider.setClubModel(ClubModel());
+
+                            NavigationController.navigateToLoginScreen(
+                              navigationOperationParameters: NavigationOperationParameters(
+                                context: context,
+                                navigationType: NavigationType.pushNamedAndRemoveUntil,
+                              ),
+                            );
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            prefs.setBool(MySharePreferenceKeys.isLogin, false);
+                            // if (context.mounted) {
+                            //   Navigator.pop(context);
+                            // }
+                          },
+                        );
+                      },
+                    );
+                  }),
             ],
           ),
         ),
@@ -73,8 +108,7 @@ class _SystemMainScreenState extends State<SystemMainScreen> {
     );
   }
 
-  Widget getGoToPageButtons(
-      {required String title, Function()? onTap, String hintMessage = ''}) {
+  Widget getGoToPageButtons({required String title, Function()? onTap, String hintMessage = ''}) {
     return InkWell(
       onTap: onTap,
       child: Tooltip(
@@ -91,13 +125,7 @@ class _SystemMainScreenState extends State<SystemMainScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                  child: CommonText(
-                      text: title,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
-                      color: Styles.bgSideMenu,
-                      textAlign: TextAlign.start)),
+              Expanded(child: CommonText(text: title, fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu, textAlign: TextAlign.start)),
               SizedBox(
                 width: 10,
               ),
@@ -107,8 +135,7 @@ class _SystemMainScreenState extends State<SystemMainScreen> {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.arrow_forward_ios,
-                    size: 18, color: Styles.bgSideMenu),
+                child: Icon(Icons.arrow_forward_ios, size: 18, color: Styles.bgSideMenu),
               )
             ],
           ),

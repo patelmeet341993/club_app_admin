@@ -4,6 +4,7 @@ import 'package:club_app_admin/views/common/components/header_widget.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/material.dart';
+import '../../../backend/navigation/navigation_arguments.dart';
 
 import '../../../backend/navigation/navigation_arguments.dart';
 import '../../../backend/navigation/navigation_controller.dart';
@@ -74,13 +75,11 @@ class _ProductListScreenState extends State<ProductListScreen> {
                           ),
                           onTap: () {
                             NavigationController.navigateToAddProductScreen(
-                                navigationOperationParameters:
-                                    NavigationOperationParameters(
-                              navigationType: NavigationType.pushNamed,
-                              context: context,
-                            ),
-                              addProductScreenNavigationArguments: AddProductScreenNavigationArguments()
-                            );
+                                navigationOperationParameters: NavigationOperationParameters(
+                                  navigationType: NavigationType.pushNamed,
+                                  context: context,
+                                ),
+                                addProductScreenNavigationArguments: AddEditProductNavigationArgument());
                           }),
                     ),
                     const SizedBox(
@@ -98,8 +97,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Widget getProductsList() {
-    return Consumer(builder:
-        (BuildContext context, ProductProvider productProvider, Widget? child) {
+    return Consumer(builder: (BuildContext context, ProductProvider productProvider, Widget? child) {
       if (productProvider.productsList.isEmpty) {
         return Center(
           child: CommonText(
@@ -122,6 +120,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   Widget SingleProduct(ProductModel productModel, index) {
+    MyPrint.printOnConsole("productModel.thumbnailImageUrl: ${productModel.thumbnailImageUrl}");
     return InkWell(
       onTap: () {},
       child: Container(
@@ -214,7 +213,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                               navigationType: NavigationType.pushNamed,
                               context: NavigationController.productScreenNavigator.currentContext!,
                             ),
-                            addProductScreenNavigationArguments: AddProductScreenNavigationArguments(
+                            addProductScreenNavigationArguments: AddEditProductNavigationArgument(
                               productModel: productModel,
                               index: index,
                               isEdit: true,
@@ -244,7 +243,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
     );
   }
 
-  /*
+/*
   Widget getTestEnableSwitch(
       {required bool value, void Function(bool?)? onChanged}) {
     return Tooltip(

@@ -34,4 +34,9 @@ class ProductRepository {
     await FirebaseNodes.productDocumentReference(productId: productModel.id)
         .set(productModel.toMap());
   }
+
+  Future<void> UpdateProductRepo(ProductModel productModel) async {
+    await FirebaseNodes.productDocumentReference(productId: productModel.id).update(productModel.toMap());
+  }
+
 }

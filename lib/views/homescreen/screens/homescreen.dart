@@ -1,5 +1,10 @@
+import 'package:club_app_admin/backend/admin/admin_provider.dart';
+import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_app_admin/configs/constants.dart';
 import 'package:club_app_admin/views/brand/screens/brand_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
+import 'package:club_app_admin/views/club/screens/club_user_list.dart';
+import 'package:club_app_admin/views/club_profile/club_profile_screen.dart';
 import 'package:club_app_admin/views/product/screens/product_list_screen.dart';
 import 'package:club_app_admin/views/system/screens/system_main_screen.dart';
 import 'package:club_app_admin/views/users/screens/user_list_screen.dart';
@@ -7,6 +12,7 @@ import 'package:club_model/club_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../backend/authentication/authentication_provider.dart';
 import '../../../backend/common/menu_provider.dart';
 import '../../common/components/app_response.dart';
 import '../../common/components/side_bar.dart';
@@ -29,130 +35,180 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: SideBar(
-        drawerListTile: [
-          DrawerListTile(
-            title: "Products",
-            icon: Icons.account_box_outlined,
-            press: () {
-              setState(() {
-                tabNumber = 0;
-              });
-            },
-          ),
-          DrawerListTile(
-            title: "Clubs",
-            icon: Icons.view_in_ar_outlined,
-            press: () {
-              setState(() {
-                tabNumber = 1;
-              });
-            },
-          ),
-          DrawerListTile(
-            title: "Brands",
-            icon: Icons.branding_watermark,
-            press: () {
-              setState(() {
-                tabNumber = 2;
-              });
-            },
-          ),
-          DrawerListTile(
-            title: "Users",
-            icon: Icons.person_outline,
-            press: () {
-              setState(() {
-                tabNumber = 3;
-              });
-            },
-          ),
-          DrawerListTile(
-            title: "System",
-            icon: Icons.library_books_outlined,
-            press: () {
-              setState(() {
-                tabNumber = 4;
-              });
-            },
-          ),
-        ],
-      ),
-      key: Provider.of<MenuProvider>(context, listen: false).scaffoldKey,
-      backgroundColor: Styles.bgSideMenu,
-      body: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (AppResponsive.isDesktop(context))
-              Expanded(
-                child: SideBar(
-                  drawerListTile: [
-                    DrawerListTile(
-                      title: "Products",
-                      icon: Icons.account_box_outlined,
-                      press: () {
-                        setState(() {
-                          tabNumber = 0;
-                        });
-                      },
-                    ),
-                    DrawerListTile(
-                      title: "Clubs",
-                      icon: Icons.view_in_ar_outlined,
-                      press: () {
-                        setState(() {
-                          tabNumber = 1;
-                        });
-                      },
-                    ),
-                    DrawerListTile(
-                      title: "Brands",
-                      icon: Icons.branding_watermark,
-                      press: () {
-                        setState(() {
-                          tabNumber = 2;
-                        });
-                      },
-                    ),
-                    DrawerListTile(
-                      title: "Users",
-                      icon: Icons.person_outline,
-                      press: () {
-                        setState(() {
-                          tabNumber = 3;
-                        });
-                      },
-                    ),
-                    DrawerListTile(
-                      title: "System",
-                      icon: Icons.library_books_outlined,
-                      press: () {
-                        setState(() {
-                          tabNumber = 4;
-                        });
-                      },
-                    ),
-                  ],
+    return Consumer2<AuthenticationProvider, ClubProvider>(
+      builder: (BuildContext context, AuthenticationProvider adminProvider, ClubProvider clubProvider,_) {
+        AdminUserModel adminUserModel = adminProvider.getAdminUserModel();
+        ClubModel clubModel = clubProvider.getLoggedInClubModel();
+        String adminType = "";
+        if(adminUserModel.adminType.isEmpty){
+          if(clubModel.adminType.isNotEmpty){
+            adminType = clubModel.adminType;
+          }
+        } else {
+          adminType = adminUserModel.adminType;
+        }
+        MyPrint.printOnConsole("adminType: $adminType");
+        MyPrint.printOnConsole("clubModel: ${clubModel.adminType}");
+        MyPrint.printOnConsole("adminUserModel: ${adminUserModel.adminType}");
+        return Scaffold(
+          drawer: SideBar(
+            drawerListTile: [
+              DrawerListTile(
+                title: "Products",
+                icon: Icons.account_box_outlined,
+                press: () {
+                  setState(() {
+                    tabNumber = 0;
+                  });
+                },
+              ),
+              Visibility(
+                visible: adminType == MyAppConstants.superAdminType,
+                child: DrawerListTile(
+                  title: "Clubs",
+                  icon: Icons.view_in_ar_outlined,
+                  press: () {
+                    setState(() {
+                      tabNumber = 1;
+                    });
+                  },
                 ),
               ),
-
-            /// Main Body Part
-            Expanded(
-              flex: 4,
-              child: Container(
-                  margin: const EdgeInsets.all(15),
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: Styles.bgColor,
-                    borderRadius: BorderRadius.circular(30),
+              DrawerListTile(
+                title: "Brands",
+                icon: Icons.branding_watermark,
+                press: () {
+                  setState(() {
+                    tabNumber = 2;
+                  });
+                },
+              ),
+              DrawerListTile(
+                title: "Users",
+                icon: Icons.person_outline,
+                press: () {
+                  setState(() {
+                    tabNumber = 3;
+                  });
+                },
+              ),
+              DrawerListTile(
+                title: "System",
+                icon: Icons.library_books_outlined,
+                press: () {
+                  setState(() {
+                    tabNumber = 4;
+                  });
+                },
+              ),
+              DrawerListTile(
+                title: "Club Users",
+                icon: Icons.person,
+                press: () {
+                  setState(() {
+                    tabNumber = 6;
+                  });
+                },
+              ),
+            ],
+          ),
+          key: Provider.of<MenuProvider>(context, listen: false).scaffoldKey,
+          backgroundColor: Styles.bgSideMenu,
+          body: SafeArea(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (AppResponsive.isDesktop(context))
+                  Expanded(
+                    child: SideBar(
+                      drawerListTile: [
+                        DrawerListTile(
+                          title: "Products",
+                          icon: Icons.account_box_outlined,
+                          press: () {
+                            setState(() {
+                              tabNumber = 0;
+                            });
+                          },
+                        ),
+                        Visibility(
+                          visible: adminType == MyAppConstants.superAdminType,
+                          child: DrawerListTile(
+                            title: "Clubs",
+                            icon: Icons.view_in_ar_outlined,
+                            press: () {
+                              setState(() {
+                                tabNumber = 1;
+                              });
+                            },
+                          ),
+                        ),
+                        DrawerListTile(
+                          title: "Brands",
+                          icon: Icons.branding_watermark,
+                          press: () {
+                            setState(() {
+                              tabNumber = 2;
+                            });
+                          },
+                        ),
+                        DrawerListTile(
+                          title: "Users",
+                          icon: Icons.person_outline,
+                          press: () {
+                            setState(() {
+                              tabNumber = 3;
+                            });
+                          },
+                        ),
+                        DrawerListTile(
+                          title: "System",
+                          icon: Icons.library_books_outlined,
+                          press: () {
+                            setState(() {
+                              tabNumber = 4;
+                            });
+                          },
+                        ),
+                        DrawerListTile(
+                          title: "Club Profile",
+                          icon: Icons.library_books_outlined,
+                          press: () {
+                            setState(() {
+                              tabNumber = 5;
+                            });
+                          },
+                        ),
+                        DrawerListTile(
+                          title: "Club Users",
+                          icon: Icons.person,
+                          press: () {
+                            setState(() {
+                              tabNumber = 6;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  child: getPageWidget(tabNumber)),
+
+                /// Main Body Part
+                Expanded(
+                  flex: 4,
+                  child: Container(
+                      margin: const EdgeInsets.all(15),
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Styles.bgColor,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: getPageWidget(tabNumber)),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      }
     );
   }
 
@@ -178,9 +234,13 @@ class _HomeScreenState extends State<HomeScreen> {
         {
           return const SystemScreenNavigator();
         }
+        case 6:
+        {
+          return const ClubUserScreenNavigator();
+        }
       default:
         {
-          return const ProductScreenNavigator();
+          return const ClubProfileScreenNavigator();
         }
     }
   }

@@ -9,14 +9,20 @@ class LoginScreenNavigationArguments extends NavigationArguments{
   });
 }
 */
+import 'package:club_model/backend/navigation/navigation_arguments.dart';
+import 'package:club_model/models/brand/data_model/brand_model.dart';
+import 'package:club_model/models/product/data_model/product_model.dart';
 
-import 'package:club_model/club_model.dart';
-
-class AddProductScreenNavigationArguments extends NavigationArguments {
+class AddEditProductNavigationArgument extends NavigationArguments {
   ProductModel? productModel;
   bool isEdit = false;
   int? index;
-  AddProductScreenNavigationArguments({this.isEdit= false,this.productModel,this.index});
+
+  AddEditProductNavigationArgument({
+    this.productModel,
+    this.isEdit = false,
+    this.index,
+  });
 }
 
 class AddBrandScreenNavigationArguments extends NavigationArguments {

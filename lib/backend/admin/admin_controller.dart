@@ -7,13 +7,13 @@ class AdminController {
   late AdminProvider _adminProvider;
   late AdminRepository _adminRepository;
 
-  AdminController(
-      {required AdminProvider? adminProvider, AdminRepository? repository}) {
+  AdminController({required AdminProvider? adminProvider, AdminRepository? repository}) {
     _adminProvider = adminProvider ?? AdminProvider();
     _adminRepository = repository ?? AdminRepository();
   }
 
   AdminProvider get adminProvider => _adminProvider;
+
   AdminRepository get adminRepository => _adminRepository;
 
   Future<void> getPropertyDataAndSetInProvider() async {
