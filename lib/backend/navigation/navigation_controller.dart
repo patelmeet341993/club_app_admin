@@ -91,6 +91,7 @@ class NavigationController {
     if (page != null) {
       return PageRouteBuilder(
         pageBuilder: (c, a1, a2) => page!,
+        //new commit
         //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
         transitionsBuilder: (c, anim, a2, child) => SizeTransition(sizeFactor: anim, child: child),
         transitionDuration: const Duration(milliseconds: 0),
