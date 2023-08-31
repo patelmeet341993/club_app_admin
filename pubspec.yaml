@@ -11,10 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
 
+
   club_model:
     git:
       url: https://github.com/patelmeet341993/club_model
-      ref: master
+      ref: viren
+  firebase_storage: ^11.2.2
+  image_picker: ^0.8.8
+
 
 dev_dependencies:
   flutter_test:

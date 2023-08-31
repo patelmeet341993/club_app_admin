@@ -17,12 +17,14 @@ class GetKeyValueWidget extends StatelessWidget {
       children: [
         Text(
           "$keyString : ",
-          style: themeData.textTheme.bodyLarge?.copyWith(fontSize: 14, fontWeight: FontWeight.w600),
+          style: themeData.textTheme.bodyLarge
+              ?.copyWith(fontSize: 14, fontWeight: FontWeight.w600),
         ),
         Flexible(
           child: Text(
             value,
-            style: themeData.textTheme.bodyLarge?.merge(TextStyle(color: themeData.primaryColor, fontSize: 13)),
+            style: themeData.textTheme.bodyLarge
+                ?.merge(TextStyle(color: themeData.primaryColor, fontSize: 13)),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

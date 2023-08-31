@@ -1,197 +1,197 @@
-import 'package:club_app_admin/backend/navigation/navigation_controller.dart';
+import 'package:club_app_admin/backend/club_backend/club_controller.dart';
+import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_app_admin/backend/club_backend/club_repository.dart';
+import 'package:club_model/backend/navigation/navigation_operation_parameters.dart';
 import 'package:club_model/club_model.dart';
+import 'package:club_model/utils/my_toast.dart';
+import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../backend/admin_user/admin_user_controller.dart';
+import '../../../backend/admin_user/admin_user_repository.dart';
+import '../../../backend/authentication/authentication_provider.dart';
+import '../../../backend/navigation/navigation_controller.dart';
+import '../../../configs/constants.dart';
+import '../../common/components/common_text_form_field.dart';
 
 class LoginScreen extends StatefulWidget {
-  static const String routeName = "/LoginScreen";
+  static const String routeName = '/LoginScreen';
 
-  const LoginScreen({
-    Key? key,
-  }) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with MySafeState {
-  late ThemeData themeData;
-  bool isLoading = false;
-
-  final GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
-  TextEditingController usernameController = TextEditingController();
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  bool isObscure = true;
+  late AdminUserController adminController;
+  late AuthenticationProvider adminProvider;
+  late ClubController clubController;
+  late ClubProvider clubProvider;
+  TextEditingController idController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  Future<void> login(String userName, String password) async {
-    isLoading = true;
-    mySetState();
-
-    await Future.delayed(const Duration(seconds: 3));
-    bool isLoggedIn = true;
-    MyPrint.printOnConsole("isLoggedIn:$isLoggedIn");
-
-    isLoading = false;
-    mySetState();
+  Future<void> checkAdmin() async {
+    AdminUserModel? adminModel = await AdminUserRepository().checkLoginAdminMethod(adminId: idController.text, password: passwordController.text.trim());
+    if (adminModel == null) {
+      ClubModel? clubModel = await ClubRepository().checkLoginClubMethod(adminId: idController.text, password: passwordController.text.trim());
+      if (clubModel != null) {
+        clubProvider.setClubModel(clubModel);
+        if (context.mounted && context.checkMounted()) {
+          MyToast.showSuccess(context: context, msg: "Logged In Successfully");
+          NavigationController.navigateToHomeScreen(
+            navigationOperationParameters: NavigationOperationParameters(
+              context: context,
+              navigationType: NavigationType.pushNamedAndRemoveUntil,
+            ),
+          );
+        }
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool(MySharePreferenceKeys.isLogin, true);
+      } else {
+        if (context.mounted && context.checkMounted()) {
+          MyToast.showError(context: context, msg: "Please Enter Valid ID or Password");
+        }
+      }
+    } else {
+      adminProvider.setAdminUserModel(adminModel);
+      if (context.mounted && context.checkMounted()) {
+        MyToast.showSuccess(context: context, msg: "Logged In Successfully");
+        NavigationController.navigateToHomeScreen(
+            navigationOperationParameters: NavigationOperationParameters(
+          context: context,
+          navigationType: NavigationType.pushNamedAndRemoveUntil,
+        ));
+      }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool(MySharePreferenceKeys.isLogin, true);
+      MyPrint.printOnConsole("SharedPreferences isLogin boolean set as ${prefs.getBool(MySharePreferenceKeys.isLogin)}");
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    adminProvider = Provider.of<AuthenticationProvider>(context, listen: false);
+    clubProvider = context.read<ClubProvider>();
+    adminController = AdminUserController(adminProvider: adminProvider);
+    clubController = ClubController(clubProvider: clubProvider);
   }
 
   @override
   Widget build(BuildContext context) {
-    themeData = Theme.of(context);
-    super.pageBuild();
-
-    return Consumer<AppThemeProvider>(builder: (context, AppThemeProvider appThemeProvider, _) {
-      return ModalProgressHUD(
-        inAsyncCall: isLoading,
-        progressIndicator: const LoadingWidget(),
-        child: Scaffold(
-          backgroundColor: Colors.grey.shade100,
-          body: Center(
-            child: Container(
-              child: mainBody(),
-            ),
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget mainBody() {
-    return Form(
-      key: _globalKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("Login Screen"),
-          ElevatedButton(
-            onPressed: () {
-              NavigationController.navigateToHomeScreen(
-                navigationOperationParameters: NavigationOperationParameters(
-                  context: context,
-                  navigationType: NavigationType.pushNamedAndRemoveUntil,
+    return Scaffold(
+      backgroundColor: Styles.bgSideMenu,
+      body: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * .5,
+                  width: MediaQuery.of(context).size.width * .5,
+                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 60),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CommonText(
+                        text: 'Login',
+                        textAlign: TextAlign.start,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        color: Styles.white,
+                      ),
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      CommonTextFormField(
+                        controller: idController,
+                        hintText: "Enter Your ID",
+                        verticalPadding: 20,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "  Please enter ID";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      CommonTextFormField(
+                        controller: passwordController,
+                        hintText: "Password",
+                        verticalPadding: 20,
+                        obscureText: isObscure,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "  Please enter Password";
+                          }
+                          return null;
+                        },
+                        textInputFormatter: [
+                          FilteringTextInputFormatter.deny(" "),
+                        ],
+                        onFieldSubmitted: (val) async {
+                          if (_formKey.currentState!.validate()) {
+                            await checkAdmin();
+                          }
+                        },
+                        suffixIcon: InkWell(
+                            onTap: () {
+                              isObscure = !isObscure;
+                              setState(() {});
+                            },
+                            child: Icon(!isObscure ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: Styles.bgSideMenu)),
+                      ),
+                      const SizedBox(
+                        height: 25,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          MaterialButton(
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                await checkAdmin();
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                              decoration: BoxDecoration(color: Styles.white, borderRadius: BorderRadius.circular(4)),
+                              child: CommonText(
+                                text: "Login",
+                                color: Styles.bgSideMenu,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              );
-            },
-            child: const Text("Home SCreen"),
-          )
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget getEmailTextField() {
-    return TextFormField(
-      controller: usernameController,
-      style: const TextStyle(color: Colors.black, fontSize: 16),
-      cursorHeight: 25,
-      decoration: InputDecoration(
-        hintText: "Enter Username",
-        border: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(4.0),
-          ),
-          borderSide: BorderSide(color: themeData.colorScheme.onBackground),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(4.0),
-          ),
-          borderSide: BorderSide(color: themeData.colorScheme.onBackground),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(4.0),
-          ),
-          borderSide: BorderSide(color: themeData.colorScheme.onBackground),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(4.0),
-          ),
-          borderSide: BorderSide(color: themeData.colorScheme.onBackground),
-        ),
-        filled: true,
-        fillColor: themeData.colorScheme.background,
-        prefixIcon: Icon(
-          Icons.person,
-          size: 22,
-          color: themeData.colorScheme.onBackground.withAlpha(200),
-        ),
-        prefixIconColor: themeData.primaryColor,
-        isDense: true,
-        contentPadding: EdgeInsets.zero,
-      ),
-      autofocus: false,
-      textCapitalization: TextCapitalization.sentences,
-      validator: (text) {
-        if (text?.isNotEmpty ?? false) {
-          return null;
-        } else {
-          return "UserId is Required";
-        }
-      },
-    );
-  }
-
-  Widget getPasswordTextField() {
-    return TextFormField(
-      controller: passwordController,
-      style: const TextStyle(color: Colors.black, fontSize: 16),
-      cursorHeight: 25,
-      onFieldSubmitted: (val) {
-        if (_globalKey.currentState?.validate() ?? false) {
-          login(usernameController.text, passwordController.text);
-        }
-      },
-      decoration: InputDecoration(
-        hintText: "Password",
-        border: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(4.0),
-          ),
-          borderSide: BorderSide(color: themeData.colorScheme.onBackground),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(4.0),
-          ),
-          borderSide: BorderSide(color: themeData.colorScheme.onBackground),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(4.0),
-          ),
-          borderSide: BorderSide(color: themeData.colorScheme.onBackground),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(4.0),
-          ),
-          borderSide: BorderSide(color: themeData.colorScheme.onBackground),
-        ),
-        filled: true,
-        fillColor: themeData.colorScheme.background,
-        prefixIcon: Icon(
-          Icons.lock,
-          size: 22,
-          color: themeData.colorScheme.onBackground.withAlpha(200),
-        ),
-        prefixIconColor: themeData.primaryColor,
-        isDense: true,
-        contentPadding: EdgeInsets.zero,
-      ),
-      autofocus: false,
-      textCapitalization: TextCapitalization.sentences,
-      validator: (text) {
-        if (text?.isNotEmpty ?? false) {
-          return null;
-        } else {
-          return "Password is Required";
-        }
-      },
     );
   }
 }
