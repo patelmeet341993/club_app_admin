@@ -4,6 +4,7 @@ import 'package:club_app_admin/views/brand/screens/brand_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/add_club.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/club_user_list.dart';
+import 'package:club_app_admin/views/system/componants/add_banner_screen.dart';
 import 'package:club_app_admin/views/system/screens/banner_list_screen.dart';
 import 'package:club_app_admin/views/system/screens/system_main_screen.dart';
 import 'package:club_app_admin/views/users/screens/disabled_users_list.dart';
@@ -338,6 +339,12 @@ class NavigationController {
           page = parseBannerListScreen(settings: settings);
           break;
         }
+
+        case AddBannerScreen.routeName:
+        {
+          page = parseAddBannerScreen(settings: settings);
+          break;
+        }
     }
 
 
@@ -485,6 +492,10 @@ class NavigationController {
     return const AddClubUser();
   }
 
+  static Widget? parseAddBannerScreen({required RouteSettings settings}) {
+    return const AddBannerScreen();
+  }
+
   //endregion
 
   static Future<dynamic> navigateToLoginScreen(
@@ -558,6 +569,14 @@ class NavigationController {
     return NavigationOperation.navigate(
         navigationOperationParameters: navigationOperationParameters.copyWith(
           routeName: AddClubUser.routeName,
+        ));
+  }
+
+  static Future<dynamic> navigateToAddBannerScreen(
+      {required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
+          routeName: AddBannerScreen.routeName,
         ));
   }
 }

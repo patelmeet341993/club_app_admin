@@ -227,7 +227,7 @@ class _AddBrandState extends State<AddBrand> {
               height: 30,
             ),
             CommonText(
-                text: " Images",
+                text: " Image",
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
                 color: Styles.bgSideMenu.withOpacity(.6)),
