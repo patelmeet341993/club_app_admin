@@ -1,5 +1,7 @@
 import 'package:club_app_admin/backend/admin/admin_controller.dart';
 import 'package:club_app_admin/backend/admin/admin_provider.dart';
+import 'package:club_app_admin/backend/brands_backend/brand_controller.dart';
+import 'package:club_app_admin/backend/brands_backend/brand_provider.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,10 +22,13 @@ class _SplashScreenState extends State<SplashScreen> {
   bool isFirst = true;
 
   late AdminController adminController;
+  late BrandController brandController;
+  late BrandProvider brandProvider;
   late AdminProvider adminProvider;
 
   void loginCheckMethod(BuildContext context) async {
     NavigationController.isFirst = false;
+    await getAppRelatedData();
 
     await Future.delayed(const Duration(milliseconds: 600));
     MyPrint.printOnConsole("In loginCheckMethod");
@@ -59,6 +64,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     await Future.wait([
       adminController.getPropertyDataAndSetInProvider(),
+      brandController.getBrandList()
     ]);
 
     DateTime end = DateTime.now();
@@ -71,6 +77,10 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     adminProvider = Provider.of<AdminProvider>(context, listen: false);
     adminController = AdminController(adminProvider: adminProvider);
+    brandProvider = context.read<BrandProvider>();
+    brandController = BrandController(brandProvider: brandProvider);
+
+
   }
 
   @override
