@@ -4,7 +4,7 @@ import 'package:club_app_admin/views/brand/screens/brand_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/add_club.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/club_user_list.dart';
-import 'package:club_app_admin/views/system/screens/offer_list_screen.dart';
+import 'package:club_app_admin/views/system/screens/banner_list_screen.dart';
 import 'package:club_app_admin/views/system/screens/system_main_screen.dart';
 import 'package:club_app_admin/views/users/screens/disabled_users_list.dart';
 import 'package:club_app_admin/views/users/screens/user_list_screen.dart';
@@ -22,6 +22,7 @@ import '../../views/homescreen/screens/homescreen.dart';
 import '../../views/product/screens/add_product.dart';
 import '../../views/product/screens/product_list_screen.dart';
 import '../../views/splash/splash_screen.dart';
+import '../../views/system/screens/offer_list_screen.dart';
 import 'navigation_arguments.dart';
 
 class NavigationController {
@@ -332,6 +333,11 @@ class NavigationController {
           page = parseLoginScreen(settings: settings);
           break;
         }
+        case BannerListScreen.routeName:
+        {
+          page = parseBannerListScreen(settings: settings);
+          break;
+        }
     }
 
 
@@ -443,6 +449,10 @@ class NavigationController {
     return OfferListScreen();
   }
 
+  static Widget? parseBannerListScreen({required RouteSettings settings}) {
+    return BannerListScreen();
+  }
+
   static Widget? parseAddProductScreen({required RouteSettings settings}) {
     if (settings.arguments is AddEditProductNavigationArgument) {
       AddEditProductNavigationArgument arguments =
@@ -532,6 +542,14 @@ class NavigationController {
     return NavigationOperation.navigate(
         navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: OfferListScreen.routeName,
+    ));
+  }
+
+  static Future<dynamic> navigateToBannerListScreen(
+      {required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
+      routeName: BannerListScreen.routeName,
     ));
   }
 

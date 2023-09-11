@@ -67,6 +67,13 @@ class _SystemMainScreenState extends State<SystemMainScreen> {
                     ));
                   }),
               getGoToPageButtons(title: "Profile Details", onTap: () {}),
+              getGoToPageButtons(title: "Home Page Banners", onTap: () {
+                NavigationController.navigateToBannerListScreen(
+                    navigationOperationParameters: NavigationOperationParameters(
+                      navigationType: NavigationType.pushNamed,
+                      context: NavigationController.systemProfileNavigator.currentContext!,
+                    ));
+              }),
               getGoToPageButtons(
                   title: "Logout",
                   onTap: () {
