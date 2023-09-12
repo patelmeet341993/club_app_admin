@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 class GetTitle extends StatelessWidget {
   String title;
   double bottomPadding;
-  GetTitle({required this.title, this.bottomPadding = 8.0});
+  double fontSize;
+  GetTitle({required this.title, this.bottomPadding = 8.0,this.fontSize = 17});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class GetTitle extends StatelessWidget {
       child: CommonText(
         text: " $title",
         fontWeight: FontWeight.bold,
-        fontSize: 17,
+        fontSize: fontSize,
         textAlign: TextAlign.start,
         color: Styles.bgSideMenu.withOpacity(.8),
       ),

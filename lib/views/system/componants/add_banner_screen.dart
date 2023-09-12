@@ -3,16 +3,19 @@
 
 import 'dart:typed_data';
 
-import 'package:club_app_admin/backend/admin/admin_controller.dart';
-import 'package:club_app_admin/backend/admin/admin_provider.dart';
+import 'package:club_model/backend/admin/admin_controller.dart';
+import 'package:club_model/backend/admin/admin_provider.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/models/common/data_model/banner_model.dart';
+import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../common/components/common_button.dart';
 import '../../common/components/common_image_view_box.dart';
+import '../../common/components/common_text_form_field.dart';
 import '../../common/components/get_title.dart';
 import '../../common/components/header_widget.dart';
 
@@ -35,13 +38,12 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
   late AdminController adminController;
   late Future<void> futureGetData;
   bool isLoading = false;
+  bool isExternal = true;
   TextEditingController imageUrlController = TextEditingController();
   TextEditingController onTapUrlController = TextEditingController();
+  TextEditingController viewNumberController = TextEditingController();
   String? thumbnailImageUrl;
   Uint8List? thumbnailImage;
-
-
-  final ImagePicker _picker = ImagePicker();
 
   Future<void> addThumbnailImage() async {
     setState(() {});
@@ -61,6 +63,21 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
   }
 
   Future<void> addBanner() async {
+    setState(() {
+      isLoading = true;
+    });
+    pageBannerModel = BannerModel(
+      id: MyUtils.getNewId(isFromUUuid: false),
+      createdTime: Timestamp.now(),
+      isInternal: !isExternal,
+      viewNumber: ParsingHelper.parseIntMethod(viewNumberController.text),
+      onTapUrl: isExternal?onTapUrlController.text.trim():'',
+    );
+
+    await adminController.addBannerToFirebase(bannerModel: pageBannerModel!);
+    setState(() {
+      isLoading = false;
+    });
 
   }
 
@@ -76,7 +93,7 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
   void initState() {
     super.initState();
     adminProvider = context.read<AdminProvider>();
-    adminController = AdminController(adminProvider: adminProvider);
+    adminController = AdminController(adminProvider : adminProvider);
     futureGetData = getData();
   }
 
@@ -136,28 +153,53 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
           ),
           getBannerImage(),
           const SizedBox(
-            height: 30,
+            height: 40,
           ),
-          GetTitle(title: "Choose On Click Routing*"),
-          const SizedBox(
-            height: 30,
-          ),
-
-          const SizedBox(
-            height: 30,
-          ),
-          getAddProductButton(),
+          getBannerViewNumber(),
           const SizedBox(
             height: 40,
           ),
-
-
-
-
-
+          GetTitle(title: "Choose On Click Routing*",fontSize: 20),
+          const SizedBox(
+            height: 5,
+          ),
+          getInternalExternalLink(),
+          const SizedBox(
+            height: 80,
+          ),
+          getAddBannerButton(),
+          const SizedBox(
+            height: 40,
+          ),
         ],
       ),
     ));
+  }
+
+  Widget getBannerViewNumber() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GetTitle(title: "Enter View Number in List(ex. 1,2,3...)*",fontSize: 20),
+        const SizedBox(
+          height: 5,
+        ),
+        CommonTextFormField(
+          controller: viewNumberController,
+          hintText: "Enter View Number in List",
+          cursorColor: Colors.black,
+          textInputFormatter: [
+              FilteringTextInputFormatter.digitsOnly,
+          ],
+          validator: (value) {
+            if (value == null || value.isEmpty || value == "0") {
+              return "  Please Enter View Number in List except zero";
+            }
+            return null;
+          },
+        ),
+      ],
+    );
   }
 
   Widget getBannerImage() {
@@ -167,7 +209,7 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GetTitle(title: "Choose Banner Image*"),
+              GetTitle(title: "Choose Banner Image*",fontSize: 20),
               thumbnailImage == null && thumbnailImageUrl == null && (thumbnailImageUrl?.isEmpty ?? true)
                   ? InkWell(
                   onTap: () async {
@@ -193,20 +235,52 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
   Widget getInternalExternalLink() {
     return Row(
       children: [
-
+        CommonText(text: 'External : ',fontSize: 16,fontWeight: FontWeight.normal),
+        SizedBox(width: 10,),
+        getTestEnableSwitch(value: isExternal,
+         onChanged: (bool? val){
+          setState(() {
+            isExternal = val ?? true;
+          });
+         }
+        ),
+        SizedBox(width: 30,),
+        isExternal ?  Expanded(child:  CommonTextFormField(
+          controller: onTapUrlController,
+          hintText: "Enter External Banner Click Url",
+          validator: null,
+          // validator: (value) {
+          //   // if (value == null || value.isEmpty) {
+          //   //   return "  Please Enter External Banner Click Url";
+          //   // }
+          //   return null;
+          // },
+        ),) : SizedBox.shrink()
       ],
     );
   }
 
 
-  Widget getAddProductButton() {
+  Widget getAddBannerButton() {
     return CommonButton(
         onTap: () async {
-          if (_formKey.currentState!.validate()) {
+          MyPrint.printOnConsole('Helo 0 ');
+          if(_formKey.currentState!.validate()) {
+            MyPrint.printOnConsole('Helo 1 ');
             if (thumbnailImage == null && thumbnailImageUrl.checkEmpty) {
-              MyToast.showError(context: context, msg: 'Please upload a product thumbnail image');
+              MyToast.showError(context: context, msg: 'Please upload a banner image');
               return;
             }
+            MyPrint.printOnConsole('Helo 1.5 ');
+
+            if(isExternal){
+              if(onTapUrlController.text.isEmpty){
+                MyToast.showError(context: context, msg: 'Please Enter an external click URL');
+                return;
+              }
+            }
+            MyPrint.printOnConsole('Helo 2 ');
+
             await addBanner();
             if (context.mounted && context.checkMounted()) {
               Navigator.pop(context);
@@ -214,6 +288,14 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
           }
         },
         text: "+ Add Banner");
+  }
+
+  Widget getTestEnableSwitch({required bool value, void Function(bool?)? onChanged}){
+    return CupertinoSwitch(
+      value: value,
+      onChanged: onChanged,
+      activeColor: Styles.bgSideMenu,
+    );
   }
 
 }

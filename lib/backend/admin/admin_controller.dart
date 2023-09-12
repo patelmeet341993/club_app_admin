@@ -3,16 +3,16 @@ import 'package:club_app_admin/backend/admin/admin_provider.dart';
 import 'package:club_app_admin/backend/admin/admin_repository.dart';
 import 'package:club_model/club_model.dart';
 
-class AdminController {
-  late AdminProvider _adminProvider;
+class MyAdminController {
+  late MyAdminProvider _adminProvider;
   late AdminRepository _adminRepository;
 
-  AdminController({required AdminProvider? adminProvider, AdminRepository? repository}) {
-    _adminProvider = adminProvider ?? AdminProvider();
+  MyAdminController({required MyAdminProvider? adminProvider, AdminRepository? repository}) {
+    _adminProvider = adminProvider ?? MyAdminProvider();
     _adminRepository = repository ?? AdminRepository();
   }
 
-  AdminProvider get adminProvider => _adminProvider;
+  MyAdminProvider get adminProvider => _adminProvider;
 
   AdminRepository get adminRepository => _adminRepository;
 

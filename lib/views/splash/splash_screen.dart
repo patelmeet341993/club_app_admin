@@ -21,10 +21,10 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool isFirst = true;
 
-  late AdminController adminController;
+  late MyAdminController adminController;
   late BrandController brandController;
   late BrandProvider brandProvider;
-  late AdminProvider adminProvider;
+  late MyAdminProvider adminProvider;
 
   void loginCheckMethod(BuildContext context) async {
     NavigationController.isFirst = false;
@@ -75,8 +75,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    adminProvider = Provider.of<AdminProvider>(context, listen: false);
-    adminController = AdminController(adminProvider: adminProvider);
+    adminProvider = Provider.of<MyAdminProvider>(context, listen: false);
+    adminController = MyAdminController(adminProvider: adminProvider);
     brandProvider = context.read<BrandProvider>();
     brandController = BrandController(brandProvider: brandProvider);
 
