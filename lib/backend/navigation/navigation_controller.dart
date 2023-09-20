@@ -493,7 +493,15 @@ class NavigationController {
   }
 
   static Widget? parseAddBannerScreen({required RouteSettings settings}) {
-    return const AddBannerScreen();
+    if (settings.arguments is AddBannerScreenNavigationArguments) {
+      AddBannerScreenNavigationArguments arguments =
+      settings.arguments as AddBannerScreenNavigationArguments;
+      return AddBannerScreen(
+        arguments: arguments,
+      );
+    } else {
+      return null;
+    }
   }
 
   //endregion
@@ -573,10 +581,11 @@ class NavigationController {
   }
 
   static Future<dynamic> navigateToAddBannerScreen(
-      {required NavigationOperationParameters navigationOperationParameters}) {
+      {required NavigationOperationParameters navigationOperationParameters,required AddBannerScreenNavigationArguments addBannerScreenNavigationArguments}) {
     return NavigationOperation.navigate(
         navigationOperationParameters: navigationOperationParameters.copyWith(
           routeName: AddBannerScreen.routeName,
+          arguments: addBannerScreenNavigationArguments
         ));
   }
 }

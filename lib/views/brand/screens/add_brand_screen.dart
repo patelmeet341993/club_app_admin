@@ -264,7 +264,6 @@ class _AddBrandState extends State<AddBrand> {
   Widget getNameAndBrandName() {
     return Row(
       children: [
-
         Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,

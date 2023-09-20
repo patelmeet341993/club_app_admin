@@ -2,6 +2,8 @@ import 'package:club_app_admin/backend/admin/admin_controller.dart';
 import 'package:club_app_admin/backend/admin/admin_provider.dart';
 import 'package:club_app_admin/backend/brands_backend/brand_controller.dart';
 import 'package:club_app_admin/backend/brands_backend/brand_provider.dart';
+import 'package:club_model/backend/admin/admin_controller.dart';
+import 'package:club_model/backend/admin/admin_provider.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,10 +23,10 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool isFirst = true;
 
-  late MyAdminController adminController;
+  late AdminController adminController;
   late BrandController brandController;
   late BrandProvider brandProvider;
-  late MyAdminProvider adminProvider;
+  late AdminProvider adminProvider;
 
   void loginCheckMethod(BuildContext context) async {
     NavigationController.isFirst = false;
@@ -67,6 +69,8 @@ class _SplashScreenState extends State<SplashScreen> {
       brandController.getBrandList()
     ]);
 
+    MyPrint.printOnConsole('Banner list length in provider in SplashScreen:${adminProvider.propertyModel.get()?.banners.length}');
+
     DateTime end = DateTime.now();
     MyPrint.printOnConsole(
         "getAppRelatedData finished in ${start.difference(end).inMilliseconds} Milliseconds");
@@ -75,8 +79,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    adminProvider = Provider.of<MyAdminProvider>(context, listen: false);
-    adminController = MyAdminController(adminProvider: adminProvider);
+    adminProvider = context.read<AdminProvider>();
+    adminController = AdminController(adminProvider: adminProvider);
     brandProvider = context.read<BrandProvider>();
     brandController = BrandController(brandProvider: brandProvider);
 

@@ -18,7 +18,4 @@ class MyAdminProvider extends CommonProvider {
     notify(isNotify: isNotify);
   }
 
-  List<String> getBannerImages() {
-    return propertyModel.bannerImages;
-  }
 }
