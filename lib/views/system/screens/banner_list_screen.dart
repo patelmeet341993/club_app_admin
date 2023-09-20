@@ -144,12 +144,13 @@ class _BannerListScreenState extends State<BannerListScreen> {
   }
 
   Widget getListView(){
-    return ReorderableListView.builder(
+    // return ReorderableListView.builder(
+    return ListView.builder(
         itemBuilder: (context,index){
           return getBannerWidget(bannerList[index],index);
         },
         itemCount: bannerList.length,
-        onReorder: reorderData
+        // onReorder: reorderData
     );
   }
 

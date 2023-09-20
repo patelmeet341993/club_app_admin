@@ -66,11 +66,18 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
       isLoading = true;
     });
     String cloudinaryUploadedImageUrl = '';
-    if(pageBannerModel != null && thumbnailImage != null)  {
-      List<String> removeImages = [];
-      removeImages.add(pageBannerModel!.imageUrl);
-      await CloudinaryManager().deleteImagesFromCloudinary(images: removeImages);
-      MyPrint.printOnConsole('Image Removed from Cloudinary');
+    if(pageBannerModel != null)  {
+      // if(pageBannerModel.imageUrl)
+      if(thumbnailImage != null) {
+        MyPrint.printOnConsole('Inside the cloudinary');
+        List<String> removeImages = [];
+        removeImages.add(pageBannerModel!.imageUrl);
+        await CloudinaryManager().deleteImagesFromCloudinary(images: removeImages);
+        MyPrint.printOnConsole('Image Removed from Cloudinary');
+      }else{
+        cloudinaryUploadedImageUrl = pageBannerModel!.imageUrl;
+        MyPrint.printOnConsole('Existing ImageUrl added');
+      }
     }
     if (thumbnailImage != null) {
       List<String> uploadedImages = [];
@@ -80,7 +87,7 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
       }
     }
     pageBannerModel = BannerModel(
-      id: MyUtils.getNewId(isFromUUuid: false),
+      id:  pageBannerModel == null ? MyUtils.getNewId(isFromUUuid: false) : pageBannerModel!.id,
       createdTime: pageBannerModel != null ? pageBannerModel!.createdTime : Timestamp.now(),
       isInternal: !isExternal,
       viewNumber: ParsingHelper.parseIntMethod(viewNumberController.text),
