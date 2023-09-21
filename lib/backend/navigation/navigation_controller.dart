@@ -287,9 +287,9 @@ class NavigationController {
           break;
         }
 
-      case AddBrand.routeName:
+      case AddNotificationScreen.routeName:
         {
-          page = parseAddBrandScreen(settings: settings);
+          page = parseAddNotificationScreen(settings: settings);
           break;
         }
     }

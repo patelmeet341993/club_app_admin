@@ -176,7 +176,7 @@ class _AddNotificationScreenState extends State<AddNotificationScreen> {
             ),
             getAddImageRow(),
             const SizedBox(
-              height: 40,
+              height: 50,
             ),
             getAddNotificationButton(),
             const SizedBox(
@@ -194,7 +194,7 @@ class _AddNotificationScreenState extends State<AddNotificationScreen> {
       child: CommonText(
         text: title,
         fontWeight: FontWeight.bold,
-        fontSize: 15,
+        fontSize: 18,
         textAlign: TextAlign.start,
         color: Styles.bgSideMenu,
       ),
@@ -203,8 +203,9 @@ class _AddNotificationScreenState extends State<AddNotificationScreen> {
 
   Widget getTitleAndDescription() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getTitle(title: "Enter Notification Title*"),
+        GetTitle(title: "Enter Notification Title*"),
         CommonTextFormField(
           controller: titleController,
           hintText: "Enter Notification Title",
@@ -218,7 +219,7 @@ class _AddNotificationScreenState extends State<AddNotificationScreen> {
         const SizedBox(
           height: 20,
         ),
-        getTitle(title: "Enter Notification Description*"),
+        GetTitle(title: "Enter Notification Description*"),
         CommonTextFormField(
           controller: descriptionController,
           hintText: "Enter Notification Description",

@@ -106,6 +106,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
               child: CommonText(
                 text: "No Notification Available",
                 fontWeight: FontWeight.bold,
+                fontSize: 25,
               ),
             );
           }
