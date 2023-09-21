@@ -5,6 +5,7 @@ import 'package:club_app_admin/backend/common/menu_provider.dart';
 import 'package:club_app_admin/backend/products_backend/product_provider.dart';
 import 'package:club_app_admin/backend/users_backend/user_provider.dart';
 import 'package:club_model/backend/admin/admin_provider.dart';
+import 'package:club_model/backend/notification/notification_provider.dart';
 import 'package:club_model/club_model.dart';
 import 'package:flutter/material.dart';
 
@@ -38,6 +39,8 @@ class MyApp extends StatelessWidget {
             create: (_) => BrandProvider(), lazy: false),
         ChangeNotifierProvider<MyAdminProvider>(
             create: (_) => MyAdminProvider(), lazy: false),
+        ChangeNotifierProvider<NotificationProvider>(
+            create: (_) => NotificationProvider(), lazy: false),
       ],
       child: MainApp(),
     );

@@ -40,7 +40,7 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
   String? thumbnailImageUrl;
   Uint8List? thumbnailImage;
 
-  List<String> internalClickType = ['Offer', 'New Launch', 'New Discounts'];
+  List<String> internalClickType = [];
 
   String? internalClickValue;
 
@@ -104,6 +104,7 @@ class _AddBannerScreenState extends State<AddBannerScreen> {
   }
 
   Future<void> getData() async {
+    internalClickType = BannerRoutingType.values;
     if (widget.arguments.bannerModel != null) {
       pageBannerModel = widget.arguments.bannerModel;
        externalOnTapUrlController.text = pageBannerModel!.externalUrl;

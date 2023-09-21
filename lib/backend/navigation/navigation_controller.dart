@@ -20,6 +20,8 @@ import 'package:flutter/material.dart';
 import '../../views/authentication/screens/login_screen.dart';
 import '../../views/club/screens/add_club_user.dart';
 import '../../views/homescreen/screens/homescreen.dart';
+import '../../views/notifications/screens/add_notification_screen.dart';
+import '../../views/notifications/screens/notification_list_screen.dart';
 import '../../views/product/screens/add_product.dart';
 import '../../views/product/screens/product_list_screen.dart';
 import '../../views/splash/splash_screen.dart';
@@ -54,6 +56,8 @@ class NavigationController {
   static final GlobalKey<NavigatorState> clubProfileNavigator =
       GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> clubUserNavigator =
+      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> notificatioScreenNavigator =
       GlobalKey<NavigatorState>();
 
   static bool isUserProfileTabInitialized = false;
@@ -239,6 +243,47 @@ class NavigationController {
       case "/":
         {
           page = const BrandListScreen();
+          break;
+        }
+
+      case AddBrand.routeName:
+        {
+          page = parseAddBrandScreen(settings: settings);
+          break;
+        }
+    }
+
+    if (page != null) {
+      return PageRouteBuilder(
+        pageBuilder: (c, a1, a2) => page!,
+        //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+        transitionsBuilder: (c, anim, a2, child) =>
+            SizeTransition(sizeFactor: anim, child: child),
+        transitionDuration: const Duration(milliseconds: 0),
+        settings: settings,
+      );
+    }
+    return null;
+  }
+
+  static Route? onNotificationGeneratedRoutes(RouteSettings settings) {
+    MyPrint.printOnConsole(
+        "Notification Routes called for ${settings.name} with arguments:${settings.arguments}");
+
+    if (kIsWeb) {
+      if (!["/", SplashScreen.routeName].contains(settings.name) &&
+          NavigationController.checkDataAndNavigateToSplashScreen()) {
+        return null;
+      }
+    }
+
+    MyPrint.printOnConsole("First Page:$isFirst");
+    Widget? page;
+
+    switch (settings.name) {
+      case "/":
+        {
+          page = const NotificationListScreen();
           break;
         }
 
@@ -484,6 +529,10 @@ class NavigationController {
     }
   }
 
+  static Widget? parseAddNotificationScreen({required RouteSettings settings}) {
+  return AddNotificationScreen();
+  }
+
   static Widget? parseAddClubScreen({required RouteSettings settings}) {
     return AddClub();
   }
@@ -577,6 +626,14 @@ class NavigationController {
     return NavigationOperation.navigate(
         navigationOperationParameters: navigationOperationParameters.copyWith(
           routeName: AddClubUser.routeName,
+        ));
+  }
+
+  static Future<dynamic> navigateToAddNotificationScreen(
+      {required NavigationOperationParameters navigationOperationParameters}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
+          routeName: AddNotificationScreen.routeName,
         ));
   }
 

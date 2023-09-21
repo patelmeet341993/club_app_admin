@@ -16,6 +16,7 @@ import '../../../backend/authentication/authentication_provider.dart';
 import '../../../backend/common/menu_provider.dart';
 import '../../common/components/app_response.dart';
 import '../../common/components/side_bar.dart';
+import '../../notifications/screens/notification_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/HomeScreen';
@@ -171,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                         DrawerListTile(
-                          title: "Club Profile",
+                          title: "Notifications",
                           icon: Icons.library_books_outlined,
                           press: () {
                             setState(() {
@@ -180,11 +181,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                         DrawerListTile(
+                          title: "Club Profile",
+                          icon: Icons.library_books_outlined,
+                          press: () {
+                            setState(() {
+                              tabNumber = 6;
+                            });
+                          },
+                        ),
+                        DrawerListTile(
                           title: "Club Users",
                           icon: Icons.person,
                           press: () {
                             setState(() {
-                              tabNumber = 6;
+                              tabNumber = 7;
                             });
                           },
                         ),
@@ -234,13 +244,21 @@ class _HomeScreenState extends State<HomeScreen> {
         {
           return const SystemScreenNavigator();
         }
+        case 5:
+        {
+          return const NotificationListScreenNavigator();
+        }
         case 6:
+        {
+          return const ClubProfileScreenNavigator();
+        }
+        case 7:
         {
           return const ClubUserScreenNavigator();
         }
       default:
         {
-          return const ClubProfileScreenNavigator();
+          return const SystemScreenNavigator();
         }
     }
   }
