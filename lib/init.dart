@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:club_app_admin/utils/WebPageLoad/web_page_load.dart';
 import 'package:club_model/club_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,12 +31,13 @@ Future<void>? runErrorSafeApp({bool isDev = false}) {
 
 /// It provides initial initialisation the app and its global services
 Future<void> initApp({bool isDev = false}) async {
+  usePathUrlStrategy();
+  checkPageLoad();
+
   WidgetsFlutterBinding.ensureInitialized();
   AppController.isDev = isDev;
 
   List<Future> futures = [];
-
-  usePathUrlStrategy();
 
   if (kIsWeb) {
     FirebaseOptions options = getFirebaseOptions(isDev: isDev);
