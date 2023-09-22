@@ -1,9 +1,6 @@
 import 'dart:html' deferred as html;
 
-import 'package:intl/intl.dart';
-
-import '../my_print.dart';
-import '../parsing_helper.dart';
+import 'package:club_model/club_model.dart';
 
 Future<void> checkPageLoad() async {
   MyPrint.printOnConsole("Loading Library:${DateFormat("dd/MM/yyyy hh:mm:ss.SSS aa").format(DateTime.now())}");
