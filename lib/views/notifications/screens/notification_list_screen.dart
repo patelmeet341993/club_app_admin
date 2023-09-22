@@ -150,29 +150,42 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
 
   Widget getNotificationTile(NotificationModel notificationModel, int index){
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.all(10),
       margin: EdgeInsets.symmetric(vertical: 5,),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius : BorderRadius.circular(4),
           border: Border.all(width: 1,color: Styles.bgSideMenu),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Expanded(child: CommonText(text: '${notificationModel.title}', fontSize:16,fontWeight: FontWeight.bold,)),
-              CommonText(text: notificationModel.createdTime == null ? '' : "${DateFormat("h:mm a, dd-MMM-yyyy").format(notificationModel.createdTime!.toDate())}",fontSize: 13,)
-            ],
+         notificationModel.imageUrl.isNotEmpty ?  Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
+              ),
+              child: CommonCachedNetworkImage(
+                imageUrl: notificationModel.imageUrl,
+                height: 40,
+                width: 40,
+                borderRadius: 4,
+              )):SizedBox.shrink(),
+          notificationModel.imageUrl.isNotEmpty?SizedBox(width: 15,):SizedBox.shrink(),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CommonText(text: '${notificationModel.title}', fontSize:17,fontWeight: FontWeight.bold,maxLines: 2,textOverFlow: TextOverflow.ellipsis),
+                SizedBox(height: 2,),
+                CommonText(text: notificationModel.description,textAlign: TextAlign.start,fontSize: 15,maxLines: 1,textOverFlow: TextOverflow.ellipsis),
+              ],
+            ),
           ),
-          SizedBox(height: 3,),
-          CommonText(text: notificationModel.description,textAlign: TextAlign.start,fontSize: 14),
-          SizedBox(height: 3,),
+          SizedBox(width: 5,),
+          CommonText(text: notificationModel.createdTime == null ? '' : "${DateFormat("h:mm a, dd-MMM-yyyy").format(notificationModel.createdTime!.toDate())}",fontSize: 13,),
         ],
       ),
 

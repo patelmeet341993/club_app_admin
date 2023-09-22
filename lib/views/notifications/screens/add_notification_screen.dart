@@ -79,6 +79,7 @@ class _AddNotificationScreenState extends State<AddNotificationScreen> {
       title: titleController.text.trim(),
       description: descriptionController.text.trim(),
       isOpened: false,
+      imageUrl: cloudinaryUploadedImageUrl
     );
     if(pageNotificationModel != null) {
       await notificationController.createNotification(pageNotificationModel!);
