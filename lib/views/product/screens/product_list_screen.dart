@@ -6,7 +6,6 @@ import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/material.dart';
 import '../../../backend/navigation/navigation_arguments.dart';
 
-import '../../../backend/navigation/navigation_arguments.dart';
 import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
 import '../../common/components/common_popup.dart';

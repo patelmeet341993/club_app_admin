@@ -36,19 +36,13 @@ class ClubController {
     required Map<String, dynamic> editableData,
     required String id,
     required int listIndex,
-    required bool isAdminEnabled,
   }) async {
     try {
       await FirebaseNodes.clubDocumentReference(clubId: id)
           .update(editableData)
           .then((value) {
-        MyPrint.printOnConsole(
-            "user data: ${(isAdminEnabled ? editableData[MyAppConstants.cAdminEnabled] : editableData[MyAppConstants.cClubEnabled])}");
-        isAdminEnabled
-            ? clubProvider.updateEnableDisableOfAdminInList(
-                editableData[MyAppConstants.cAdminEnabled], listIndex)
-            : clubProvider.updateEnableDisableOfClubInList(
-                editableData[MyAppConstants.cClubEnabled], listIndex);
+        clubProvider.updateEnableDisableOfAdminInList(
+                editableData[MyAppConstants.cAdminEnabled], listIndex);
       });
     } catch (e, s) {
       MyPrint.printOnConsole(

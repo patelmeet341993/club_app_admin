@@ -1,10 +1,7 @@
-import 'package:club_app_admin/backend/admin/admin_provider.dart';
 import 'package:club_app_admin/backend/club_backend/club_provider.dart';
 import 'package:club_app_admin/configs/constants.dart';
 import 'package:club_app_admin/views/brand/screens/brand_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
-import 'package:club_app_admin/views/club/screens/club_user_list.dart';
-import 'package:club_app_admin/views/club_profile/club_profile_screen.dart';
 import 'package:club_app_admin/views/product/screens/product_list_screen.dart';
 import 'package:club_app_admin/views/system/screens/system_main_screen.dart';
 import 'package:club_app_admin/views/users/screens/user_list_screen.dart';
@@ -39,17 +36,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return Consumer2<AuthenticationProvider, ClubProvider>(
       builder: (BuildContext context, AuthenticationProvider adminProvider, ClubProvider clubProvider,_) {
         AdminUserModel adminUserModel = adminProvider.getAdminUserModel();
-        ClubModel clubModel = clubProvider.getLoggedInClubModel();
+        // ClubModel clubModel = clubProvider.getLoggedInClubModel();
         String adminType = "";
-        if(adminUserModel.adminType.isEmpty){
-          if(clubModel.adminType.isNotEmpty){
-            adminType = clubModel.adminType;
-          }
-        } else {
-          adminType = adminUserModel.adminType;
-        }
+        adminType = adminUserModel.adminType;
+
+        // if(adminUserModel.adminType.isEmpty){
+        //   if(clubModel.adminType.isNotEmpty){
+        //     adminType = clubModel.adminType;
+        //   }
+        // } else {
+        //   adminType = adminUserModel.adminType;
+        // }
         MyPrint.printOnConsole("adminType: $adminType");
-        MyPrint.printOnConsole("clubModel: ${clubModel.adminType}");
         MyPrint.printOnConsole("adminUserModel: ${adminUserModel.adminType}");
         return Scaffold(
           drawer: SideBar(
@@ -63,17 +61,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 },
               ),
-              Visibility(
-                visible: adminType == MyAppConstants.superAdminType,
-                child: DrawerListTile(
-                  title: "Clubs",
-                  icon: Icons.view_in_ar_outlined,
-                  press: () {
-                    setState(() {
-                      tabNumber = 1;
-                    });
-                  },
-                ),
+              DrawerListTile(
+                title: "Clubs",
+                icon: Icons.view_in_ar_outlined,
+                press: () {
+                  setState(() {
+                    tabNumber = 1;
+                  });
+                },
               ),
               DrawerListTile(
                 title: "Brands",
@@ -103,14 +98,32 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               DrawerListTile(
-                title: "Club Users",
-                icon: Icons.person,
+                title: "Notifications",
+                icon: Icons.notifications_none,
                 press: () {
                   setState(() {
-                    tabNumber = 6;
+                    tabNumber = 5;
                   });
                 },
               ),
+              // DrawerListTile(
+              //   title: "Club Profile",
+              //   icon: Icons.library_books_outlined,
+              //   press: () {
+              //     setState(() {
+              //       tabNumber = 6;
+              //     });
+              //   },
+              // ),
+              // DrawerListTile(
+              //   title: "Club Users",
+              //   icon: Icons.person,
+              //   press: () {
+              //     setState(() {
+              //       tabNumber = 6;
+              //     });
+              //   },
+              // ),
             ],
           ),
           key: Provider.of<MenuProvider>(context, listen: false).scaffoldKey,
@@ -132,17 +145,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             });
                           },
                         ),
-                        Visibility(
-                          visible: adminType == MyAppConstants.superAdminType,
-                          child: DrawerListTile(
-                            title: "Clubs",
-                            icon: Icons.view_in_ar_outlined,
-                            press: () {
-                              setState(() {
-                                tabNumber = 1;
-                              });
-                            },
-                          ),
+                        DrawerListTile(
+                          title: "Clubs",
+                          icon: Icons.view_in_ar_outlined,
+                          press: () {
+                            setState(() {
+                              tabNumber = 1;
+                            });
+                          },
                         ),
                         DrawerListTile(
                           title: "Brands",
@@ -173,31 +183,31 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         DrawerListTile(
                           title: "Notifications",
-                          icon: Icons.library_books_outlined,
+                          icon: Icons.notifications_none,
                           press: () {
                             setState(() {
                               tabNumber = 5;
                             });
                           },
                         ),
-                        DrawerListTile(
-                          title: "Club Profile",
-                          icon: Icons.library_books_outlined,
-                          press: () {
-                            setState(() {
-                              tabNumber = 6;
-                            });
-                          },
-                        ),
-                        DrawerListTile(
-                          title: "Club Users",
-                          icon: Icons.person,
-                          press: () {
-                            setState(() {
-                              tabNumber = 7;
-                            });
-                          },
-                        ),
+                        // DrawerListTile(
+                        //   title: "Club Profile",
+                        //   icon: Icons.library_books_outlined,
+                        //   press: () {
+                        //     setState(() {
+                        //       tabNumber = 6;
+                        //     });
+                        //   },
+                        // ),
+                        // DrawerListTile(
+                        //   title: "Club Users",
+                        //   icon: Icons.person,
+                        //   press: () {
+                        //     setState(() {
+                        //       tabNumber = 7;
+                        //     });
+                        //   },
+                        // ),
                       ],
                     ),
                   ),
@@ -248,14 +258,14 @@ class _HomeScreenState extends State<HomeScreen> {
         {
           return const NotificationListScreenNavigator();
         }
-        case 6:
-        {
-          return const ClubProfileScreenNavigator();
-        }
-        case 7:
-        {
-          return const ClubUserScreenNavigator();
-        }
+        // case 6:
+        // {
+        //   return const ClubProfileScreenNavigator();
+        // }
+        // case 7:
+        // {
+        //   return const ClubUserScreenNavigator();
+        // }
       default:
         {
           return const SystemScreenNavigator();

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:club_app_admin/backend/club_backend/club_controller.dart';
 import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_app_admin/backend/navigation/navigation_arguments.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/configs/styles.dart';
 import 'package:club_model/view/common/components/common_text.dart';
@@ -11,9 +12,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../../backend/products_backend/product_controller.dart';
-import '../../../configs/constants.dart';
 import '../../common/components/common_button.dart';
 import '../../common/components/common_image_view_box.dart';
 import '../../common/components/common_text_form_field.dart';
@@ -21,11 +19,9 @@ import '../../common/components/header_widget.dart';
 
 class AddClub extends StatefulWidget {
   static const String routeName = "/AddClub";
-  ClubModel? clubModel;
-  bool isEdit = false;
-  int? index;
+  final AddClubScreenNavigationArguments arguments;
+  AddClub({required this.arguments});
 
-  AddClub({this.clubModel, this.isEdit = false, this.index});
 
   @override
   State<AddClub> createState() => _AddClubState();
@@ -100,19 +96,17 @@ class _AddClubState extends State<AddClub> {
     MyPrint.printOnConsole("clubImageListInString Length: ${clubImageListInString.length}");
 
 
-    if (widget.clubModel != null && widget.index != null && widget.isEdit == true) {
-      MyPrint.printOnConsole("test model edit this with index: ${widget.index} edit: ${widget.isEdit}");
+    if (widget.arguments.clubModel != null && widget.arguments.index != null && widget.arguments.isEdit == true) {
+      MyPrint.printOnConsole("test model edit this with index: ${widget.arguments.index} edit: ${widget.arguments.isEdit}");
       ClubModel clubModel = ClubModel(
-        id: widget.clubModel!.id,
-        password: passwordController.text.trim(),
-        userId: userIdController.text.trim(),
+        id: widget.arguments.clubModel!.id,
         name: clubNameController.text.trim(),
         address: clubAddressController.text.trim(),
         mobileNumber: mobileNumberController.text.trim(),
         thumbnailImageUrl: thumbnailImageUrl,
-        createdTime: widget.clubModel!.createdTime,
+        createdTime: widget.arguments.clubModel!.createdTime,
         adminEnabled: isAdminEnabled,
-        clubEnabled: isClubEnabled,
+        clubOwners:[{userIdController.text.trim() : passwordController.text.trim()}] ,
         images: clubImageListInString,
         updatedTime: Timestamp.now(),
       );
@@ -126,14 +120,11 @@ class _AddClubState extends State<AddClub> {
       ClubModel clubModel = ClubModel(
         id: newId,
         name: clubNameController.text.trim(),
-        password: passwordController.text.trim(),
-        userId: userIdController.text.trim(),
+        clubOwners:[{userIdController.text.trim() : passwordController.text.trim()}] ,
         address: clubAddressController.text.trim(),
         mobileNumber: mobileNumberController.text.trim(),
         thumbnailImageUrl: thumbnailImageUrl,
         adminEnabled: isAdminEnabled,
-        // adminType: MyAppConstants.subAdminType,
-        clubEnabled: isClubEnabled,
         images: clubImageListInString,
         createdTime: Timestamp.now(),
       );
@@ -158,25 +149,8 @@ class _AddClubState extends State<AddClub> {
         clubImagesInBytes.add(xfile);
         clubImageFileList.add(element);
       }
-      // clubImageFileList = xFiles;
     }
     if (mounted) setState(() {});
-
-    // FilePickerResult? result = await FilePicker.platform.pickFiles(
-    //   type: FileType.image,
-    //   allowMultiple: false,
-    //   withData: true,
-    //   allowCompression: true,
-    // );
-    //
-    // if (result?.files.firstElement != null) {
-    //   PlatformFile platformFile = result!.files.firstElement!;
-    //
-    //   if (platformFile.bytes != null) {
-    //     clubImagesInBytes.add(platformFile.bytes!);
-    //     if (mounted) setState(() {});
-    //   }
-    // }
   }
 
   Future<void> getData() async {}
@@ -565,6 +539,7 @@ class _AddClubState extends State<AddClub> {
               return;
             }
             await addClub();
+            Navigator.pop(context);
           }
         },
         text: "+ Add Club");

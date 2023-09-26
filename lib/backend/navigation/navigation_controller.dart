@@ -4,12 +4,12 @@ import 'package:club_app_admin/views/brand/screens/brand_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/add_club.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/club_user_list.dart';
+import 'package:club_app_admin/views/club_profile/club_profile_screen.dart';
 import 'package:club_app_admin/views/system/componants/add_banner_screen.dart';
 import 'package:club_app_admin/views/system/screens/banner_list_screen.dart';
 import 'package:club_app_admin/views/system/screens/system_main_screen.dart';
 import 'package:club_app_admin/views/users/screens/disabled_users_list.dart';
 import 'package:club_app_admin/views/users/screens/user_list_screen.dart';
-import 'package:club_app_admin/views/club_profile/club_profile_screen.dart';
 import 'package:club_model/backend/navigation/navigation_operation.dart';
 import 'package:club_model/backend/navigation/navigation_operation_parameters.dart';
 import 'package:club_model/utils/my_print.dart';
@@ -26,7 +26,6 @@ import '../../views/product/screens/add_product.dart';
 import '../../views/product/screens/product_list_screen.dart';
 import '../../views/splash/splash_screen.dart';
 import '../../views/system/screens/offer_list_screen.dart';
-import 'navigation_arguments.dart';
 
 class NavigationController {
   static NavigationController? _instance;
@@ -187,15 +186,6 @@ class NavigationController {
   static Route? onClubGeneratedRoutes(RouteSettings settings) {
     MyPrint.printOnConsole(
         "Club Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
-
-    if (kIsWeb) {
-      if (!["/", SplashScreen.routeName].contains(settings.name) &&
-          NavigationController.checkDataAndNavigateToSplashScreen()) {
-        return null;
-      }
-    }
-
-    MyPrint.printOnConsole("First Page:$isFirst");
     Widget? page;
 
     switch (settings.name) {
@@ -426,11 +416,11 @@ class NavigationController {
           break;
         }
 
-      case AddClub.routeName:
-        {
-          page = parseAddClubScreen(settings: settings);
-          break;
-        }
+      // case AddClub.routeName:
+      //   {
+      //     page = parseAddClubScreen(settings: settings);
+      //     break;
+      //   }
     }
 
     if (page != null) {
@@ -534,7 +524,15 @@ class NavigationController {
   }
 
   static Widget? parseAddClubScreen({required RouteSettings settings}) {
-    return AddClub();
+    if (settings.arguments is AddClubScreenNavigationArguments) {
+      AddClubScreenNavigationArguments arguments = settings.arguments as AddClubScreenNavigationArguments;
+      return AddClub(
+        arguments: arguments,
+      );
+    } else {
+      MyPrint.printOnConsole("parseAddClubScreen arguments not fine");
+      return null;
+    }
   }
 
   static Widget? parseAddClubUserScreen({required RouteSettings settings}) {
@@ -590,10 +588,11 @@ class NavigationController {
   }
 
   static Future<dynamic> navigateToAddClubScreen(
-      {required NavigationOperationParameters navigationOperationParameters}) {
+      {required NavigationOperationParameters navigationOperationParameters, required AddClubScreenNavigationArguments addClubScreenNavigationArguments}) {
     return NavigationOperation.navigate(
         navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: AddClub.routeName,
+      arguments: addClubScreenNavigationArguments,
     ));
   }
 

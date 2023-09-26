@@ -1,14 +1,16 @@
 import 'package:club_app_admin/backend/club_backend/club_controller.dart';
 import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_app_admin/backend/navigation/navigation_arguments.dart';
 import 'package:club_app_admin/configs/constants.dart';
 import 'package:club_app_admin/views/common/components/header_widget.dart';
 import 'package:club_model/club_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
+import '../../common/components/common_popup.dart';
 
 class ClubScreenNavigator extends StatefulWidget {
   const ClubScreenNavigator({Key? key}) : super(key: key);
@@ -73,12 +75,15 @@ class _ClubListScreenState extends State<ClubListScreen> {
                             color: Styles.white,
                           ),
                           onTap: () {
+                            BuildContext? context = NavigationController.clubScreenNavigator.currentContext;
+                            if(context == null) return;
                             NavigationController.navigateToAddClubScreen(
-                                navigationOperationParameters:
-                                    NavigationOperationParameters(
-                              navigationType: NavigationType.pushNamed,
-                              context: context,
-                            ));
+                              navigationOperationParameters: NavigationOperationParameters(
+                                navigationType: NavigationType.pushNamed,
+                                context: context,
+                              ),
+                              addClubScreenNavigationArguments: AddClubScreenNavigationArguments(),
+                            );
                           }),
                     ),
                     const SizedBox(
@@ -175,51 +180,69 @@ class _ClubListScreenState extends State<ClubListScreen> {
               width: 20,
             ),
             const Spacer(),
-            // Row(
-            //   children: [
-            //     Column(
-            //       children: [
-            //         CommonText(text: 'Admin'),
-            //         const SizedBox(
-            //           height: 3,
-            //         ),
-            //         getEnableSwitch(
-            //             value: clubModel.adminEnabled,
-            //             onChanged: (val) {
-            //               Map<String, dynamic> data = {
-            //                 MyAppConstants.cAdminEnabled: val,
-            //               };
-            //               clubController.EnableDisableClubInFirebase(
-            //                   editableData: data,
-            //                   id: clubModel.id,
-            //                   listIndex: index,
-            //                   isAdminEnabled: true);
-            //             }),
-            //       ],
-            //     ),
-            //     const SizedBox(height: 3),
-            //     Column(
-            //       children: [
-            //         CommonText(text: 'Club'),
-            //         const SizedBox(
-            //           height: 3,
-            //         ),
-            //         getEnableSwitch(
-            //             value: clubModel.clubEnabled,
-            //             onChanged: (val) {
-            //               Map<String, dynamic> data = {
-            //                 MyAppConstants.cClubEnabled: val,
-            //               };
-            //               clubController.EnableDisableClubInFirebase(
-            //                   editableData: data,
-            //                   id: clubModel.id,
-            //                   listIndex: index,
-            //                   isAdminEnabled: false);
-            //             }),
-            //       ],
-            //     ),
-            //   ],
-            // ),
+            Row(
+              children: [
+                Tooltip(
+                  message: 'Edit Club',
+                  child: InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return CommonPopup(
+                            text: "Want to Edit Club?",
+                            rightText: "Yes",
+                            rightOnTap: () async {
+                              NavigationController.navigateToAddClubScreen(
+                                navigationOperationParameters: NavigationOperationParameters(
+                                  navigationType: NavigationType.pushNamed,
+                                  context: NavigationController.clubScreenNavigator.currentContext!,
+                                ),
+                                addClubScreenNavigationArguments: AddClubScreenNavigationArguments(
+                                  clubModel: clubModel,
+                                  index: index,
+                                  isEdit: true,
+                                ),
+                              );
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
+                      );
+                    },
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        child: const Icon(
+                          Icons.edit,
+                          color: Styles.bgSideMenu,
+                          size: 28,
+                        )),
+                  ),
+                ),
+                SizedBox(width: 15,),
+                Column(
+                  children: [
+                    CommonText(text: 'Admin'),
+                    const SizedBox(
+                      height: 3,
+                    ),
+                    getEnableSwitch(
+                        value: clubModel.adminEnabled,
+                        onChanged: (val) {
+                          Map<String, dynamic> data = {
+                            MyAppConstants.cAdminEnabled: val,
+                          };
+                          clubController.EnableDisableClubInFirebase(
+                            editableData: data,
+                            id: clubModel.id,
+                            listIndex: index,
+                          );
+                        }),
+                  ],
+                ),
+                const SizedBox(height: 5),
+              ],
+            ),
             const SizedBox(
               width: 20,
             ),

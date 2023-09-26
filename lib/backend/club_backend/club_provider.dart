@@ -35,16 +35,6 @@ class ClubProvider extends ChangeNotifier {
     }
   }
 
-  void updateEnableDisableOfClubInList(bool value, int index,
-      {bool isNotify = true}) {
-    if (index < _clubsList.length) {
-      _clubsList[index].clubEnabled = value;
-    }
-
-    if (isNotify) {
-      notifyListeners();
-    }
-  }
 
   void updateEnableDisableOfAdminInList(bool value, int index,
       {bool isNotify = true}) {
