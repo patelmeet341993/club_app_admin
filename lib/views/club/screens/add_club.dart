@@ -43,6 +43,7 @@ class _AddClubState extends State<AddClub> {
   String? thumbnailImageUrl;
   Uint8List? thumbnailImage;
   List<dynamic> clubCoverImages = [];
+  List<String> coverImagesToDeleteList = [];
 
   bool isClubEnabled = true;
   bool isAdminEnabled = true;
@@ -80,6 +81,9 @@ class _AddClubState extends State<AddClub> {
           clubCoverImages.add(imageUrls.first);
         }
       }
+    }
+    for (var element in coverImagesToDeleteList) {
+        await  CloudinaryManager().deleteImagesFromCloudinary(images: [element]);
     }
     MyPrint.printOnConsole("Club Cover Images Length: ${clubCoverImages.length}");
 
@@ -140,7 +144,7 @@ class _AddClubState extends State<AddClub> {
     });
   }
 
-  Future<void> chooseClubImagesMethod(List<dynamic> list) async {
+  Future<void> chooseClubGalleryImagesMethod(List<dynamic> list) async {
     List<XFile> xFiles = await _picker.pickMultiImage();
 
     if (xFiles.isNotEmpty) {
@@ -148,6 +152,16 @@ class _AddClubState extends State<AddClub> {
         Uint8List xFile = await element.readAsBytes();
         list.add(xFile);
       }
+    }
+    if (mounted) setState(() {});
+  }
+
+  Future<void> chooseClubCoverImagesMethod() async {
+    XFile? xFileAbove = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (xFileAbove != null) {
+      Uint8List xFile = await xFileAbove.readAsBytes();
+      clubCoverImages.add(xFile);
     }
     if (mounted) setState(() {});
   }
@@ -164,7 +178,7 @@ class _AddClubState extends State<AddClub> {
       clubAddressController.text = pageClubModel!.address;
       thumbnailImageUrl = pageClubModel!.thumbnailImageUrl;
       isAdminEnabled = pageClubModel!.adminEnabled;
-      clubCoverImages = pageClubModel!.coverImages;
+      clubCoverImages.addAll(pageClubModel!.coverImages);
       // clubImagesView = methodClubModel.images;
     }
   }
@@ -231,7 +245,7 @@ class _AddClubState extends State<AddClub> {
             const SizedBox(
               height: 30,
             ),
-            CommonText(text: " Product Basic Information", fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu.withOpacity(.6)),
+            CommonText(text: " Product Basic Information", fontWeight: FontWeight.bold, fontSize: 25, color: Styles.bgSideMenu.withOpacity(.6)),
             const SizedBox(
               height: 20,
             ),
@@ -247,7 +261,7 @@ class _AddClubState extends State<AddClub> {
             const SizedBox(
               height: 30,
             ),
-            CommonText(text: " Images", fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu.withOpacity(.6)),
+            CommonText(text: " Images", fontWeight: FontWeight.bold, fontSize: 25, color: Styles.bgSideMenu.withOpacity(.6)),
             const SizedBox(
               height: 10,
             ),
@@ -256,10 +270,6 @@ class _AddClubState extends State<AddClub> {
               height: 30,
             ),
             getClubCoverImages(),
-            const SizedBox(
-              height: 30,
-            ),
-            getClubGalleryImages(),
             const SizedBox(
               height: 40,
             ),
@@ -500,10 +510,13 @@ class _AddClubState extends State<AddClub> {
                             dynamic image = clubCoverImages[index];
                             MyPrint.printOnConsole("image type : ${image.runtimeType.toString()}");
                             return CommonImageViewBox(
-                              imageAsBytes: image.runtimeType is Uint8List ? image : null,
-                              url: image.runtimeType is String ? image : null,
+                              imageAsBytes: image is Uint8List ? image : null,
+                              url: image is String ? image : null,
                               rightOnTap: () {
                                 clubCoverImages.removeAt(index);
+                                if(image is String){
+                                  coverImagesToDeleteList.add(image);
+                                }
                                 MyPrint.printOnConsole('Club List Length is " ${clubCoverImages.length}');
                                 setState(() {});
                               },
@@ -515,7 +528,7 @@ class _AddClubState extends State<AddClub> {
             clubCoverImages.length < 10
                 ? InkWell(
                     onTap: () async {
-                      await chooseClubImagesMethod(clubCoverImages);
+                      await chooseClubCoverImagesMethod();
                       MyPrint.printOnConsole('Club Cover Images Length: ${clubCoverImages.length}');
                       MyPrint.printOnConsole('Club Cover Images Type: ${clubCoverImages.first.runtimeType}');
                     },

@@ -220,6 +220,16 @@ class _ClubListScreenState extends State<ClubListScreen> {
                   ),
                 ),
                 SizedBox(width: 15,),
+                InkWell(
+                    onTap: () async {},
+                    child: Tooltip(
+                      message: 'delete banner',
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Icon(Icons.delete,color: Colors.red,),
+                      ),
+                    )),
+                SizedBox(width: 15,),
                 Column(
                   children: [
                     CommonText(text: 'Admin'),
