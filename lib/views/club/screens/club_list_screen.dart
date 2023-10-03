@@ -193,6 +193,7 @@ class _ClubListScreenState extends State<ClubListScreen> {
                             text: "Want to Edit Club?",
                             rightText: "Yes",
                             rightOnTap: () async {
+                              Navigator.pop(context);
                               NavigationController.navigateToAddClubScreen(
                                 navigationOperationParameters: NavigationOperationParameters(
                                   navigationType: NavigationType.pushNamed,
@@ -204,7 +205,6 @@ class _ClubListScreenState extends State<ClubListScreen> {
                                   isEdit: true,
                                 ),
                               );
-                              Navigator.pop(context);
                             },
                           );
                         },
