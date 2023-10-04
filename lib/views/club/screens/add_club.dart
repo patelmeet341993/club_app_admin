@@ -112,7 +112,7 @@ class _AddClubState extends State<AddClub> {
         coverImages: methodCoverImages,
         updatedTime: Timestamp.now(),
       );
-      await clubController.AddClubToFirebase(clubModel);
+      await clubController.AddClubToFirebase(clubModel,isEdit: true);
       if (context.mounted && context.checkMounted()) {
         MyToast.showSuccess(context: context, msg: 'Club Updated successfully');
       }

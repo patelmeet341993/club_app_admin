@@ -51,10 +51,21 @@ class ClubController {
     }
   }
 
-  Future<void> AddClubToFirebase(ClubModel clubModel) async {
+  Future<void> AddClubToFirebase(ClubModel clubModel,{bool isEdit = false}) async {
     try {
       await clubRepository.AddClubRepo(clubModel);
-      clubProvider.addClubModelInClubList(clubModel);
+      if(!isEdit) clubProvider.addClubModelInClubList(clubModel) ;
+    } catch (e, s) {
+      MyPrint.printOnConsole(
+          'Error in Add Club to Firebase in Club Controller $e');
+      MyPrint.printOnConsole(s);
+    }
+  }
+
+  Future<void> deleteClubFromFirebase(ClubModel clubModel,int index) async {
+    try {
+      await clubRepository.deleteClubRepo(clubModel);
+      clubProvider.removeClubModelFromClubList(index);
     } catch (e, s) {
       MyPrint.printOnConsole(
           'Error in Add Club to Firebase in Club Controller $e');

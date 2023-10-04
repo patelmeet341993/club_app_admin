@@ -16,6 +16,7 @@ class ClubScreenNavigator extends StatefulWidget {
   const ClubScreenNavigator({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _ClubScreenNavigatorState createState() => _ClubScreenNavigatorState();
 }
 
@@ -44,6 +45,26 @@ class _ClubListScreenState extends State<ClubListScreen> {
 
   Future<void> getData() async {
     await clubController.getClubList();
+  }
+
+  Future<void> deleteClub(ClubModel clubModel,int index) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CommonPopup(
+          text: "Want to Delete this club?",
+          rightText: "Yes",
+          rightOnTap: () async {
+            await clubController.deleteClubFromFirebase(clubModel,index);
+            // ignore: use_build_context_synchronously
+            Navigator.pop(context);
+            setState(() {
+
+            });
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -219,17 +240,19 @@ class _ClubListScreenState extends State<ClubListScreen> {
                         )),
                   ),
                 ),
-                SizedBox(width: 15,),
+                const SizedBox(width: 15,),
                 InkWell(
-                    onTap: () async {},
-                    child: Tooltip(
-                      message: 'delete banner',
+                    onTap: () async {
+                      await deleteClub(clubModel,index);
+                    },
+                    child: const Tooltip(
+                      message: 'delete club',
                       child: Padding(
-                        padding: const EdgeInsets.all(15.0),
+                        padding: EdgeInsets.all(15.0),
                         child: Icon(Icons.delete,color: Colors.red,),
                       ),
                     )),
-                SizedBox(width: 15,),
+                const SizedBox(width: 15,),
                 Column(
                   children: [
                     CommonText(text: 'Admin'),

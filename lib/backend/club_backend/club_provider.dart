@@ -53,6 +53,13 @@ class ClubProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void removeClubModelFromClubList(int index ,{bool isNotify = true}) {
+    _clubsList.removeAt(index);
+    if (isNotify) {
+      notifyListeners();
+    }
+  }
   void addClubUserModelInClubUserList(ClubUserModel value, {bool isNotify = true}) {
     _clubUserList.insert(0, value);
     if (isNotify) {

@@ -56,6 +56,11 @@ class ClubRepository {
     await FirebaseNodes.clubDocumentReference(clubId: clubModel.id)
         .set(clubModel.toMap());
   }
+
+  Future<void> deleteClubRepo(ClubModel clubModel) async {
+    await FirebaseNodes.clubDocumentReference(clubId: clubModel.id)
+        .delete();
+  }
   Future<void> AddClubUserRepo(ClubUserModel clubModel) async {
     await FirebaseNodes.clubUserDocumentReference(clubId: clubModel.id)
         .set(clubModel.toMap());
