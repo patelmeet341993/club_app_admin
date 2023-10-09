@@ -1,7 +1,8 @@
 import 'package:club_model/club_model.dart';
+import 'package:club_model/models/club/data_model/club_operator_model.dart';
 
-class ClubRepository {
-  Future<List<ClubModel>> getClubListRepo() async {
+class ClubOperatorRepository {
+  Future<List<ClubModel>> getClubOperatorListRepo() async {
     List<ClubModel> clubList = [];
 
     try {
@@ -26,46 +27,16 @@ class ClubRepository {
     return clubList;
   }
 
-/*
-  Future<List<ClubUserModel>> getClubUserListRepo() async {
-    List<ClubUserModel> clubUserList = [];
 
-    try {
-      MyFirestoreQuerySnapshot querySnapshot =
-          await FirebaseNodes.clubUserCollectionReference.get();
-      if (querySnapshot.docs.isNotEmpty) {
-        for (MyFirestoreQueryDocumentSnapshot queryDocumentSnapshot
-            in querySnapshot.docs) {
-          if (queryDocumentSnapshot.data().isNotEmpty) {
-            clubUserList.add(ClubUserModel.fromMap(queryDocumentSnapshot.data()));
-          } else {
-            MyPrint.printOnConsole(
-                "Club Document Empty for Document Id:${queryDocumentSnapshot.id}");
-          }
-        }
-      }
-    } catch (e, s) {
-      MyPrint.printOnConsole('Error in getClubListRepo in ClubRepository $e');
-      MyPrint.printOnConsole(s);
-    }
-
-    return clubUserList;
-  }
-*/
-
-  Future<void> AddClubRepo(ClubModel clubModel) async {
-    await FirebaseNodes.clubDocumentReference(clubId: clubModel.id)
-        .set(clubModel.toMap());
+  Future<void> AddClubOperatorRepo(ClubOperatorModel clubOperatorModel) async {
+    await FirebaseNodes.clubOperatorDocumentReference(clubOperatorId: clubOperatorModel.id)
+        .set(clubOperatorModel.toMap());
   }
 
-  Future<void> deleteClubRepo(ClubModel clubModel) async {
-    await FirebaseNodes.clubDocumentReference(clubId: clubModel.id)
+  Future<void> deleteClubOperatorRepo(ClubOperatorModel clubOperatorModel) async {
+    await FirebaseNodes.clubOperatorDocumentReference(clubOperatorId: clubOperatorModel.id)
         .delete();
   }
-  // Future<void> AddClubUserRepo(ClubUserModel clubModel) async {
-  //   await FirebaseNodes.clubUserDocumentReference(clubId: clubModel.id)
-  //       .set(clubModel.toMap());
-  // }
 
   Future<ClubModel?> checkLoginClubMethod({required String adminId, required String password}) async {
     try {

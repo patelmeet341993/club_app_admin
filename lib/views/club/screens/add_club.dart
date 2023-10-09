@@ -106,9 +106,9 @@ class _AddClubState extends State<AddClub> {
         thumbnailImageUrl: cloudinaryThumbnailImageUrl.isNotEmpty ? cloudinaryThumbnailImageUrl : widget.arguments.clubModel!.thumbnailImageUrl,
         createdTime: widget.arguments.clubModel!.createdTime,
         adminEnabled: isAdminEnabled,
-        clubOwners: [
-          {userIdController.text.trim(): passwordController.text.trim()}
-        ],
+        // clubOwners: [
+        //   {userIdController.text.trim(): passwordController.text.trim()}
+        // ],
         coverImages: methodCoverImages,
         updatedTime: Timestamp.now(),
       );
@@ -122,9 +122,9 @@ class _AddClubState extends State<AddClub> {
       ClubModel clubModel = ClubModel(
         id: newId,
         name: clubNameController.text.trim(),
-        clubOwners: [
-          {userIdController.text.trim(): passwordController.text.trim()}
-        ],
+        // clubOwners: [
+        //   {userIdController.text.trim(): passwordController.text.trim()}
+        // ],
         address: clubAddressController.text.trim(),
         mobileNumber: mobileNumberController.text.trim(),
         thumbnailImageUrl: cloudinaryThumbnailImageUrl,
@@ -172,8 +172,8 @@ class _AddClubState extends State<AddClub> {
       pageClubModel = widget.arguments.clubModel!;
       MyPrint.printOnConsole('Club Model : ${pageClubModel!.toMap()}');
       clubNameController.text = pageClubModel!.name;
-      userIdController.text = pageClubModel!.clubOwners.first.keys.first;
-      passwordController.text = pageClubModel!.clubOwners.first.values.first;
+      // userIdController.text = pageClubModel!.clubOwners.first.keys.first;
+      // passwordController.text = pageClubModel!.clubOwners.first.values.first;
       mobileNumberController.text = pageClubModel!.mobileNumber;
       clubAddressController.text = pageClubModel!.address;
       thumbnailImageUrl = pageClubModel!.thumbnailImageUrl;

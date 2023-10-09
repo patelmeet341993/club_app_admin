@@ -1,7 +1,7 @@
 import 'package:club_app_admin/backend/club_backend/club_provider.dart';
-import 'package:club_app_admin/configs/constants.dart';
 import 'package:club_app_admin/views/brand/screens/brand_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
+import 'package:club_app_admin/views/club_operator/screens/club_operator_screen.dart';
 import 'package:club_app_admin/views/product/screens/product_list_screen.dart';
 import 'package:club_app_admin/views/system/screens/system_main_screen.dart';
 import 'package:club_app_admin/views/users/screens/user_list_screen.dart';
@@ -71,11 +71,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               DrawerListTile(
+                title: "Club Operators",
+                icon: Icons.person_outline,
+                press: () {
+                  setState(() {
+                    tabNumber = 2;
+                  });
+                },
+              ),
+              DrawerListTile(
                 title: "Brands",
                 icon: Icons.branding_watermark,
                 press: () {
                   setState(() {
-                    tabNumber = 2;
+                    tabNumber = 3;
                   });
                 },
               ),
@@ -84,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.person_outline,
                 press: () {
                   setState(() {
-                    tabNumber = 3;
+                    tabNumber = 4;
                   });
                 },
               ),
@@ -93,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.library_books_outlined,
                 press: () {
                   setState(() {
-                    tabNumber = 4;
+                    tabNumber = 5;
                   });
                 },
               ),
@@ -102,28 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.notifications_none,
                 press: () {
                   setState(() {
-                    tabNumber = 5;
+                    tabNumber = 6;
                   });
                 },
               ),
-              // DrawerListTile(
-              //   title: "Club Profile",
-              //   icon: Icons.library_books_outlined,
-              //   press: () {
-              //     setState(() {
-              //       tabNumber = 6;
-              //     });
-              //   },
-              // ),
-              // DrawerListTile(
-              //   title: "Club Users",
-              //   icon: Icons.person,
-              //   press: () {
-              //     setState(() {
-              //       tabNumber = 6;
-              //     });
-              //   },
-              // ),
             ],
           ),
           key: Provider.of<MenuProvider>(context, listen: false).scaffoldKey,
@@ -155,11 +146,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                         DrawerListTile(
+                          title: "Club Operators",
+                          icon: Icons.person_outline,
+                          press: () {
+                            setState(() {
+                              tabNumber = 2;
+                            });
+                          },
+                        ),
+                        DrawerListTile(
                           title: "Brands",
                           icon: Icons.branding_watermark,
                           press: () {
                             setState(() {
-                              tabNumber = 2;
+                              tabNumber = 3;
                             });
                           },
                         ),
@@ -168,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Icons.person_outline,
                           press: () {
                             setState(() {
-                              tabNumber = 3;
+                              tabNumber = 4;
                             });
                           },
                         ),
@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Icons.library_books_outlined,
                           press: () {
                             setState(() {
-                              tabNumber = 4;
+                              tabNumber = 5;
                             });
                           },
                         ),
@@ -186,28 +186,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Icons.notifications_none,
                           press: () {
                             setState(() {
-                              tabNumber = 5;
+                              tabNumber = 6;
                             });
                           },
                         ),
-                        // DrawerListTile(
-                        //   title: "Club Profile",
-                        //   icon: Icons.library_books_outlined,
-                        //   press: () {
-                        //     setState(() {
-                        //       tabNumber = 6;
-                        //     });
-                        //   },
-                        // ),
-                        // DrawerListTile(
-                        //   title: "Club Users",
-                        //   icon: Icons.person,
-                        //   press: () {
-                        //     setState(() {
-                        //       tabNumber = 7;
-                        //     });
-                        //   },
-                        // ),
                       ],
                     ),
                   ),
@@ -244,28 +226,24 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       case 2:
         {
-          return const BrandListScreenNavigator();
+          return const ClubOperatorScreenNavigator();
         }
       case 3:
         {
-          return const UserScreenNavigator();
+          return const BrandListScreenNavigator();
         }
       case 4:
         {
+          return const UserScreenNavigator();
+        }
+      case 5:
+        {
           return const SystemScreenNavigator();
         }
-        case 5:
+      case 6:
         {
           return const NotificationListScreenNavigator();
         }
-        // case 6:
-        // {
-        //   return const ClubProfileScreenNavigator();
-        // }
-        // case 7:
-        // {
-        //   return const ClubUserScreenNavigator();
-        // }
       default:
         {
           return const SystemScreenNavigator();

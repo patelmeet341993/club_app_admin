@@ -21,7 +21,7 @@ class _NotificationListScreenNavigatorState extends State<NotificationListScreen
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: NavigationController.notificatioScreenNavigator,
+      key: NavigationController.notificationScreenNavigator,
       onGenerateRoute: NavigationController.onNotificationGeneratedRoutes,
     );
   }

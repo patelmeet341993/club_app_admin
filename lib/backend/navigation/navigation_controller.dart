@@ -3,8 +3,6 @@ import 'package:club_app_admin/views/brand/screens/add_brand_screen.dart';
 import 'package:club_app_admin/views/brand/screens/brand_list_screen.dart';
 import 'package:club_app_admin/views/club/screens/add_club.dart';
 import 'package:club_app_admin/views/club/screens/club_list_screen.dart';
-import 'package:club_app_admin/views/club/screens/club_user_list.dart';
-import 'package:club_app_admin/views/club_profile/club_profile_screen.dart';
 import 'package:club_app_admin/views/system/componants/add_banner_screen.dart';
 import 'package:club_app_admin/views/system/screens/banner_list_screen.dart';
 import 'package:club_app_admin/views/system/screens/system_main_screen.dart';
@@ -18,7 +16,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../views/authentication/screens/login_screen.dart';
-import '../../views/club/screens/add_club_user.dart';
+import '../../views/club_operator/screens/add_club_operator.dart';
+import '../../views/club_operator/screens/club_operator_screen.dart';
 import '../../views/homescreen/screens/homescreen.dart';
 import '../../views/notifications/screens/add_notification_screen.dart';
 import '../../views/notifications/screens/notification_list_screen.dart';
@@ -52,11 +51,11 @@ class NavigationController {
       GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> brandScreenNavigator =
       GlobalKey<NavigatorState>();
-  static final GlobalKey<NavigatorState> clubProfileNavigator =
+  static final GlobalKey<NavigatorState> clubOperatorNavigator =
       GlobalKey<NavigatorState>();
   static final GlobalKey<NavigatorState> clubUserNavigator =
       GlobalKey<NavigatorState>();
-  static final GlobalKey<NavigatorState> notificatioScreenNavigator =
+  static final GlobalKey<NavigatorState> notificationScreenNavigator =
       GlobalKey<NavigatorState>();
 
   static bool isUserProfileTabInitialized = false;
@@ -397,7 +396,7 @@ class NavigationController {
     return null;
   }
 
-  static Route? onClubProfileGeneratedRoutes(RouteSettings settings) {
+  static Route? onClubOperatorGeneratedRoutes(RouteSettings settings) {
     MyPrint.printOnConsole("Club Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
 
     if (kIsWeb) {
@@ -412,51 +411,13 @@ class NavigationController {
     switch (settings.name) {
       case "/":
         {
-          page = const ClubProfileScreen();
+          page = const ClubOperatorListScreen();
           break;
         }
 
-      // case AddClub.routeName:
-      //   {
-      //     page = parseAddClubScreen(settings: settings);
-      //     break;
-      //   }
-    }
-
-    if (page != null) {
-      return PageRouteBuilder(
-        pageBuilder: (c, a1, a2) => page!,
-        //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
-        transitionsBuilder: (c, anim, a2, child) => SizeTransition(sizeFactor: anim, child: child),
-        transitionDuration: const Duration(milliseconds: 0),
-        settings: settings,
-      );
-    }
-    return null;
-  }
-
-  static Route? onClubUserGeneratedRoutes(RouteSettings settings) {
-    MyPrint.printOnConsole("Club Generated Routes called for ${settings.name} with arguments:${settings.arguments}");
-
-    if (kIsWeb) {
-      if (!["/", SplashScreen.routeName].contains(settings.name) && NavigationController.checkDataAndNavigateToSplashScreen()) {
-        return null;
-      }
-    }
-
-    MyPrint.printOnConsole("First Page:$isFirst");
-    Widget? page;
-
-    switch (settings.name) {
-      case "/":
+      case AddClubOperator.routeName:
         {
-          page = const ClubUserListScreen();
-          break;
-        }
-
-      case AddClubUser.routeName:
-        {
-          page = parseAddClubUserScreen(settings: settings);
+          page = parseAddClubOperatorScreen(settings: settings);
           break;
         }
     }
@@ -464,7 +425,6 @@ class NavigationController {
     if (page != null) {
       return PageRouteBuilder(
         pageBuilder: (c, a1, a2) => page!,
-        //new commit
         //transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
         transitionsBuilder: (c, anim, a2, child) => SizeTransition(sizeFactor: anim, child: child),
         transitionDuration: const Duration(milliseconds: 0),
@@ -535,8 +495,16 @@ class NavigationController {
     }
   }
 
-  static Widget? parseAddClubUserScreen({required RouteSettings settings}) {
-    return const AddClubUser();
+  static Widget? parseAddClubOperatorScreen({required RouteSettings settings}) {
+    if (settings.arguments is AddClubOperatorNavigationArguments) {
+      AddClubOperatorNavigationArguments arguments = settings.arguments as AddClubOperatorNavigationArguments;
+      return AddClubOperator(
+        arguments: arguments,
+      );
+    } else {
+      MyPrint.printOnConsole("parseAddClubScreen arguments not fine");
+      return null;
+    }
   }
 
   static Widget? parseAddBannerScreen({required RouteSettings settings}) {
@@ -596,6 +564,15 @@ class NavigationController {
     ));
   }
 
+  static Future<dynamic> navigateToAddClubOperatorScreen(
+      {required NavigationOperationParameters navigationOperationParameters, required AddClubOperatorNavigationArguments addClubOperatorNavigationArguments}) {
+    return NavigationOperation.navigate(
+        navigationOperationParameters: navigationOperationParameters.copyWith(
+      routeName: AddClubOperator.routeName,
+      arguments: addClubOperatorNavigationArguments,
+    ));
+  }
+
   static Future<dynamic> navigateToDisabledUsersScreen(
       {required NavigationOperationParameters navigationOperationParameters}) {
     return NavigationOperation.navigate(
@@ -618,14 +595,6 @@ class NavigationController {
         navigationOperationParameters: navigationOperationParameters.copyWith(
       routeName: BannerListScreen.routeName,
     ));
-  }
-
-  static Future<dynamic> navigateToAddClubUserScreen(
-      {required NavigationOperationParameters navigationOperationParameters}) {
-    return NavigationOperation.navigate(
-        navigationOperationParameters: navigationOperationParameters.copyWith(
-          routeName: AddClubUser.routeName,
-        ));
   }
 
   static Future<dynamic> navigateToAddNotificationScreen(

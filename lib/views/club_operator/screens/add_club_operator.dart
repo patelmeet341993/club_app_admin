@@ -1,57 +1,49 @@
-import 'dart:typed_data';
+import 'dart:ui';
 
-import 'package:club_app_admin/backend/club_backend/club_controller.dart';
-import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_app_admin/backend/club_operator_backend/club_operator_controller.dart';
+import 'package:club_app_admin/backend/club_operator_backend/club_operator_provider.dart';
+import 'package:club_app_admin/backend/navigation/navigation_arguments.dart';
 import 'package:club_model/club_model.dart';
-import 'package:club_model/configs/styles.dart';
-import 'package:club_model/models/club/data_model/club_user_model.dart';
+import 'package:club_model/models/club/data_model/club_operator_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
-import 'package:club_model/view/common/components/loading_widget.dart';
-import 'package:club_model/view/common/components/modal_progress_hud.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../backend/products_backend/product_controller.dart';
-import '../../../configs/constants.dart';
+import '../../../backend/common/cloudinary_manager.dart';
 import '../../common/components/common_button.dart';
 import '../../common/components/common_image_view_box.dart';
 import '../../common/components/common_text_form_field.dart';
 import '../../common/components/header_widget.dart';
 
-class AddClubUser extends StatefulWidget {
-  static const String routeName = "/AddClubUser";
-  final ClubModel? clubModel;
-  final bool isEdit;
-  final int? index;
+class AddClubOperator extends StatefulWidget {
+  static const String routeName = "/AddClubOperator";
+  final AddClubOperatorNavigationArguments arguments;
 
-  const AddClubUser({super.key, this.clubModel, this.isEdit = false, this.index});
+  AddClubOperator({required this.arguments});
 
   @override
-  State<AddClubUser> createState() => _AddClubUserState();
+  State<AddClubOperator> createState() => _AddClubOperatorState();
 }
 
-class _AddClubUserState extends State<AddClubUser> {
+class _AddClubOperatorState extends State<AddClubOperator> {
   final _formKey = GlobalKey<FormState>();
   late Future<void> futureGetData;
   bool isLoading = false;
 
-  late ClubProvider clubProvider;
-  late ClubController clubController;
+  late ClubOperatorProvider clubOperatorProvider;
+  late ClubOperatorController clubOperatorController;
+  ClubOperatorModel? pageClubOperatorModel;
 
-  TextEditingController clubNameController = TextEditingController();
+  TextEditingController operatorNameController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
-  TextEditingController clubAddressController = TextEditingController();
-  TextEditingController userIdController = TextEditingController();
+  TextEditingController emailIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  String thumbnailImageUrl = '';
-  XFile? thumbnailImageFile;
-  Uint8List? thumbnailImage;
   final ImagePicker _picker = ImagePicker();
-
-  bool isClubEnabled = true;
+  String? profileImageUrl;
+  Uint8List? profileImageInBytes;
   bool isAdminEnabled = true;
 
   Future<void> addThumbnailImage() async {
@@ -59,82 +51,64 @@ class _AddClubUserState extends State<AddClubUser> {
     XFile? file = await _picker.pickImage(source: ImageSource.gallery);
 
     if (file != null) {
-      thumbnailImageFile = file;
-      thumbnailImage = await file.readAsBytes();
+      profileImageInBytes = await file.readAsBytes();
       MyPrint.printOnConsole("Mime type: ${file.mimeType}");
     }
     if (mounted) setState(() {});
-    // FilePickerResult? result = await FilePicker.platform.pickFiles(
-    //   type: FileType.image,
-    //   allowMultiple: false,
-    //   withData: true,
-    //   allowCompression: true,
-    // );
-    //
-    // if (result?.files.firstElement != null) {
-    //   PlatformFile platformFile = result!.files.firstElement!;
-    //   thumbnailImage = platformFile.bytes;
-    //
-    //   if (mounted) setState(() {});
-    // }
   }
 
-  Future<void> addClub() async {
+  Future<void> addClubOperator() async {
     setState(() {
       isLoading = true;
     });
-    ClubProvider clubProvider = Provider.of(context, listen: false);
-    ClubModel loggedInClubModel = clubProvider.getLoggedInClubModel();
-
     String newId = MyUtils.getNewId(isFromUUuid: false);
-    if (thumbnailImageFile != null) {
-      thumbnailImageUrl = await clubController.uploadImageToFirebase(thumbnailImageFile!);
+    String cloudinaryProfileImageUrl = '';
+
+    if (profileImageInBytes != null) {
+      List<String> uploadedImages = [];
+      uploadedImages = await CloudinaryManager().uploadImagesToCloudinary([profileImageInBytes!]);
+      if (uploadedImages.isNotEmpty) {
+        cloudinaryProfileImageUrl = uploadedImages.first;
+      }
     }
 
-    if (widget.clubModel != null && widget.index != null && widget.isEdit == true) {
-      MyPrint.printOnConsole("test model edit this with index: ${widget.index} edit: ${widget.isEdit}");
-      ClubUserModel clubUserModel = ClubUserModel(
-        id: widget.clubModel!.id,
-        password: passwordController.text.trim(),
-        userId: userIdController.text.trim(),
-        name: clubNameController.text.trim(),
-        profileImage: thumbnailImageUrl,
-        clubId: loggedInClubModel.id.isEmpty ? "" : loggedInClubModel.id,
+    if (widget.arguments.clubOperatorModel != null && widget.arguments.index != null && widget.arguments.isEdit == true) {
+
+      MyPrint.printOnConsole("club Operator model edit this with index: ${widget.arguments.index} edit: ${widget.arguments.isEdit}");
+      ClubOperatorModel clubOperatorModel = ClubOperatorModel(
+        id: widget.arguments.clubOperatorModel!.id,
+        name: operatorNameController.text.trim(),
+        emailId: emailIdController.text.trim(),
         mobileNumber: mobileNumberController.text.trim(),
-        createdTime: widget.clubModel!.createdTime,
+        password: passwordController.text.trim(),
+        profileImageUrl: cloudinaryProfileImageUrl.isNotEmpty ? cloudinaryProfileImageUrl : widget.arguments.clubOperatorModel!.profileImageUrl,
+        createdTime: widget.arguments.clubOperatorModel!.createdTime,
         adminEnabled: isAdminEnabled,
-        adminType: "club_user",
-        clubEnabled: isClubEnabled,
         updatedTime: Timestamp.now(),
+
       );
-
-      // await clubController.AddClubToFirebase(clubModel);
-      await clubController.AddClubUserToFirebase(clubUserModel);
-
+      await clubOperatorController.addClubOperatorToFirebase(clubOperatorModel,isEdit: true);
       if (context.mounted && context.checkMounted()) {
-        MyToast.showSuccess(context: context, msg: 'Product Edited successfully');
+        MyToast.showSuccess(context: context, msg: 'Club Operator Updated successfully');
       }
+
     } else {
-      MyPrint.printOnConsole("club model new duplicate");
-      ClubUserModel clubUserModel = ClubUserModel(
+
+      ClubOperatorModel clubOperatorModel = ClubOperatorModel(
         id: newId,
-        name: clubNameController.text.trim(),
-        password: passwordController.text.trim(),
-        userId: userIdController.text.trim(),
+        name: operatorNameController.text.trim(),
+        emailId: emailIdController.text.trim(),
         mobileNumber: mobileNumberController.text.trim(),
-        profileImage: thumbnailImageUrl,
+        profileImageUrl: cloudinaryProfileImageUrl,
         adminEnabled: isAdminEnabled,
-        adminType: MyAppConstants.clubUserType,
-        clubId: loggedInClubModel.id.isEmpty ? "": loggedInClubModel.id,
-        // adminType: adminType
-        clubEnabled: isClubEnabled,
+        password: passwordController.text.trim(),
         createdTime: Timestamp.now(),
       );
-
-      await clubController.AddClubUserToFirebase(clubUserModel);
+      await clubOperatorController.addClubOperatorToFirebase(clubOperatorModel);
       if (context.mounted && context.checkMounted()) {
-        MyToast.showSuccess(context: context, msg: 'Club added successfully');
+        MyToast.showSuccess(context: context, msg: 'Club Operator added successfully');
       }
+
     }
 
     setState(() {
@@ -142,13 +116,25 @@ class _AddClubUserState extends State<AddClubUser> {
     });
   }
 
-  Future<void> getData() async {}
+  Future<void> getData() async {
+    MyPrint.printOnConsole('Page Club Operator Model : ${widget.arguments.clubOperatorModel}');
+    if (widget.arguments.clubOperatorModel != null) {
+      pageClubOperatorModel = widget.arguments.clubOperatorModel!;
+      MyPrint.printOnConsole('Club Operator Model : ${pageClubOperatorModel!.toMap()}');
+      operatorNameController.text = pageClubOperatorModel!.name;
+      emailIdController.text = pageClubOperatorModel!.emailId;
+      passwordController.text = pageClubOperatorModel!.password;
+      mobileNumberController.text = pageClubOperatorModel!.mobileNumber;
+      profileImageUrl = pageClubOperatorModel!.profileImageUrl;
+      isAdminEnabled = pageClubOperatorModel!.adminEnabled;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    clubProvider = Provider.of<ClubProvider>(context, listen: false);
-    clubController = ClubController(clubProvider: clubProvider);
+    clubOperatorProvider = context.read<ClubOperatorProvider>();
+    clubOperatorController = ClubOperatorController(clubOperatorProvider: clubOperatorProvider);
     futureGetData = getData();
   }
 
@@ -182,8 +168,8 @@ class _AddClubUserState extends State<AddClubUser> {
                         ),
                         Expanded(
                             child: HeaderWidget(
-                          title: "Add Club User",
-                        )),
+                              title: "Add Club Operator",
+                            )),
                       ],
                     ),
                     getMainBody(),
@@ -191,6 +177,9 @@ class _AddClubUserState extends State<AddClubUser> {
                 ),
               ),
             );
+
+
+
           } else {
             return const Center(child: LoadingWidget());
           }
@@ -206,7 +195,7 @@ class _AddClubUserState extends State<AddClubUser> {
             const SizedBox(
               height: 30,
             ),
-            CommonText(text: " Basic Information", fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu.withOpacity(.6)),
+            CommonText(text: " Club Operator Basic Information", fontWeight: FontWeight.bold, fontSize: 25, color: Styles.bgSideMenu.withOpacity(.6)),
             const SizedBox(
               height: 20,
             ),
@@ -214,23 +203,19 @@ class _AddClubUserState extends State<AddClubUser> {
             const SizedBox(
               height: 30,
             ),
-            getUserIdAndPasswordField(),
+            getEmailIdAndPasswordField(),
             const SizedBox(
               height: 30,
             ),
-            // getEnabledRow(),
-            // const SizedBox(
-            //   height: 30,
-            // ),
-            CommonText(text: " Images", fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu.withOpacity(.6)),
+            CommonText(text: " Images", fontWeight: FontWeight.bold, fontSize: 25, color: Styles.bgSideMenu.withOpacity(.6)),
             const SizedBox(
               height: 10,
             ),
-            getAddImageRow(),
+            getAddProfileImage(),
             const SizedBox(
-              height: 30,
+              height: 40,
             ),
-            getAddClubButton(),
+            getAddClubOperatorButton(),
             const SizedBox(
               height: 40,
             )
@@ -261,13 +246,13 @@ class _AddClubUserState extends State<AddClubUser> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              getTitle(title: "Enter User Name*"),
+              getTitle(title: "Enter Club Operator Name*"),
               CommonTextFormField(
-                controller: clubNameController,
-                hintText: "Enter Club Name",
+                controller: operatorNameController,
+                hintText: "Enter Club Operator Name",
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "  Please enter a Club Name";
+                    return "  Please enter a Club Operator Name";
                   }
                   return null;
                 },
@@ -307,11 +292,15 @@ class _AddClubUserState extends State<AddClubUser> {
             ],
           ),
         ),
+        const SizedBox(
+          width: 20,
+        ),
+        getEnabledRow(),
       ],
     );
   }
 
-  Widget getUserIdAndPasswordField() {
+  Widget getEmailIdAndPasswordField() {
     return Row(
       children: [
         Expanded(
@@ -319,13 +308,14 @@ class _AddClubUserState extends State<AddClubUser> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              getTitle(title: "Enter UserId*"),
+              getTitle(title: "Enter Email Id*"),
               CommonTextFormField(
-                controller: userIdController,
-                hintText: "Enter UserId",
+                controller: emailIdController,
+                hintText: "Enter email Id",
+                keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "  Please enter a userId";
+                    return "  Please enter a email Id";
                   }
                   return null;
                 },
@@ -348,19 +338,9 @@ class _AddClubUserState extends State<AddClubUser> {
                 validator: (val) {
                   if (val == null || val.isEmpty) {
                     return "Password cannot be empty";
-                  } else {
-                    if (val.length < 6) {
-                      return "Password must be of six characters";
-                    } else {
-                      return null;
-                    }
                   }
+                  return null;
                 },
-                keyboardType: TextInputType.number,
-                textInputFormatter: [
-                  LengthLimitingTextInputFormatter(10),
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
               ),
             ],
           ),
@@ -370,46 +350,21 @@ class _AddClubUserState extends State<AddClubUser> {
   }
 
   Widget getEnabledRow() {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              getTitle(
-                title: 'Admin Enabled :    ',
-              ),
-              getTestEnableSwitch(
-                value: isAdminEnabled,
-                onChanged: (val) {
-                  setState(() {
-                    isAdminEnabled = val ?? true;
-                  });
-                },
-              )
-            ],
-          ),
+        getTitle(
+          title: 'Admin Enabled',
         ),
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              getTitle(
-                title: 'Club Enabled :    ',
-              ),
-              getTestEnableSwitch(
-                value: isClubEnabled,
-                onChanged: (val) {
-                  setState(() {
-                    isClubEnabled = val ?? true;
-                  });
-                },
-              )
-            ],
-          ),
-        ),
+        getTestEnableSwitch(
+          value: isAdminEnabled,
+          onChanged: (val) {
+            setState(() {
+              isAdminEnabled = val ?? true;
+            });
+          },
+        )
       ],
     );
   }
@@ -425,39 +380,51 @@ class _AddClubUserState extends State<AddClubUser> {
     );
   }
 
-  Widget getAddImageRow() {
+  Widget getAddProfileImage() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        getTitle(title: "Choose Club User Image*"),
-        thumbnailImage == null
+        getTitle(title: "Choose Club Operator Profile Image*"),
+        profileImageInBytes == null && profileImageUrl == null && (profileImageUrl?.isEmpty ?? true)
             ? InkWell(
-                onTap: () async {
-                  await addThumbnailImage();
-                },
-                child: const EmptyImageViewBox())
+            onTap: () async {
+              await addThumbnailImage();
+            },
+            child: const EmptyImageViewBox())
             : CommonImageViewBox(
-                imageAsBytes: thumbnailImage,
-                rightOnTap: () {
-                  thumbnailImage = null;
-                  setState(() {});
-                },
-              ),
+          imageAsBytes: profileImageInBytes,
+          url: profileImageUrl,
+          rightOnTap: () {
+            profileImageInBytes = null;
+            profileImageUrl = null;
+            setState(() {});
+          },
+        ),
       ],
     );
   }
 
-  Widget getAddClubButton() {
+  Widget getClubGalleryImages(){
+    return Column(
+      children: [
+        getTitle(title: "Choose Gallery Images for different Categories"),
+
+      ],
+    );
+  }
+
+  Widget getAddClubOperatorButton() {
     return CommonButton(
         onTap: () async {
           if (_formKey.currentState!.validate()) {
-            if (thumbnailImage == null) {
-              MyToast.showError(context: context, msg: 'Please upload a club thumbnail image');
+            if (profileImageInBytes == null && profileImageUrl.checkEmpty) {
+              MyToast.showError(context: context, msg: 'Please upload a Club Operator Profile Image');
               return;
             }
-            await addClub();
+            await addClubOperator();
+            Navigator.pop(context);
           }
         },
-        text: "+ Add Club User");
+        text: pageClubOperatorModel != null ? 'Update Club Operator' : "+ Add Club Operator");
   }
 }

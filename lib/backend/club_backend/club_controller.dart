@@ -4,7 +4,6 @@ import 'package:club_app_admin/backend/club_backend/club_provider.dart';
 import 'package:club_app_admin/backend/club_backend/club_repository.dart';
 import 'package:club_app_admin/configs/constants.dart';
 import 'package:club_model/club_model.dart';
-import 'package:club_model/models/club/data_model/club_user_model.dart';
 import 'package:club_model/utils/my_print.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -24,13 +23,13 @@ class ClubController {
     }
   }
 
-  Future<void> getClubUserList() async {
-    List<ClubUserModel> clubList = [];
-    clubList = await clubRepository.getClubUserListRepo();
-    if (clubList.isNotEmpty) {
-      clubProvider.setClubUserList(clubList);
-    }
-  }
+  // Future<void> getClubUserList() async {
+  //   List<ClubUserModel> clubList = [];
+  //   clubList = await clubRepository.getClubUserListRepo();
+  //   if (clubList.isNotEmpty) {
+  //     clubProvider.setClubUserList(clubList);
+  //   }
+  // }
 
   Future<void> EnableDisableClubInFirebase({
     required Map<String, dynamic> editableData,
@@ -73,16 +72,16 @@ class ClubController {
     }
   }
 
-  Future<void> AddClubUserToFirebase(ClubUserModel clubModel) async {
-    try {
-      await clubRepository.AddClubUserRepo(clubModel);
-      clubProvider.addClubUserModelInClubUserList(clubModel);
-    } catch (e, s) {
-      MyPrint.printOnConsole(
-          'Error in Add Club to Firebase in Club Controller $e');
-      MyPrint.printOnConsole(s);
-    }
-  }
+  // Future<void> AddClubUserToFirebase(ClubUserModel clubModel) async {
+  //   try {
+  //     await clubRepository.AddClubUserRepo(clubModel);
+  //     clubProvider.addClubUserModelInClubUserList(clubModel);
+  //   } catch (e, s) {
+  //     MyPrint.printOnConsole(
+  //         'Error in Add Club to Firebase in Club Controller $e');
+  //     MyPrint.printOnConsole(s);
+  //   }
+  // }
 
   Future<String> uploadImageToFirebase(XFile imageFile, {String clubId = ""}) async {
     String imageUrl = "";
