@@ -33,8 +33,8 @@ class ClubOperatorRepository {
         .set(clubOperatorModel.toMap());
   }
 
-  Future<void> deleteClubOperatorRepo(ClubOperatorModel clubOperatorModel) async {
-    await FirebaseNodes.clubOperatorDocumentReference(clubOperatorId: clubOperatorModel.id)
+  Future<void> deleteClubOperatorRepo(String operatorId) async {
+    await FirebaseNodes.clubOperatorDocumentReference(clubOperatorId: operatorId)
         .delete();
   }
 

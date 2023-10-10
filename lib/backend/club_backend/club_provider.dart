@@ -1,95 +1,57 @@
-import 'package:club_model/utils/my_print.dart';
-import 'package:flutter/foundation.dart';
 import 'package:club_model/club_model.dart';
 
-class ClubProvider extends ChangeNotifier {
-  List<ClubModel> _clubsList = [];
+class ClubProvider extends CommonProvider {
+  ClubProvider(){
+    clubList = CommonProviderListParameter<ClubModel>(
+      list: [],
+      notify: notify,
+    );
+    lastDocument = CommonProviderPrimitiveParameter<DocumentSnapshot<Map<String, dynamic>>?>(
+      value:null,
+      notify: notify,
+    );
+    clubCount = CommonProviderPrimitiveParameter<int>(
+      value:0,
+      notify: notify,
+    );
+    hasMoreClub = CommonProviderPrimitiveParameter<bool>(
+      value:false,
+      notify: notify,
+    );
+    clubLoading = CommonProviderPrimitiveParameter<bool>(
+      value:false,
+      notify: notify,
+    );
+  }
 
-  List<ClubModel> get clubsList => _clubsList;
+  late CommonProviderListParameter<ClubModel> clubList;
+  late CommonProviderPrimitiveParameter<DocumentSnapshot<Map<String, dynamic>>?> lastDocument;
+  late CommonProviderPrimitiveParameter<int> clubCount;
+  late CommonProviderPrimitiveParameter<bool> hasMoreClub;
+  late CommonProviderPrimitiveParameter<bool> clubLoading;
 
-  // List<ClubUserModel> _clubUserList = [];
-  //
-  // List<ClubUserModel> get clubUserList => _clubUserList;
-
-  ClubModel? _loggedInClubModel;
-
-  // ClubUserModel? _loggedInClubUserModel;
-
-
-  void setClubList(List<ClubModel> value, {bool isNotify = true}) {
-    _clubsList.clear();
-    _clubsList = value;
-    MyPrint.printOnConsole('Clubs List Length is : ${_clubsList.length}');
-    if (isNotify) {
+  void addAllClubList(List<ClubModel> value,{bool isNotify = true}) {
+    clubList.setList(list: value);
+    if(isNotify) {
       notifyListeners();
     }
   }
 
-  // void setClubUserList(List<ClubUserModel> value, {bool isNotify = true}) {
-  //   _clubUserList.clear();
-  //   _clubUserList = value;
-  //   MyPrint.printOnConsole('Clubs List Length is : ${_clubsList.length}');
-  //   if (isNotify) {
-  //     notifyListeners();
-  //   }
-  // }
-
-
-  void updateEnableDisableOfAdminInList(bool value, int index,
-      {bool isNotify = true}) {
-    if (index < _clubsList.length) {
-      _clubsList[index].adminEnabled = value;
-    }
-
-    if (isNotify) {
+  void addClubInList(ClubModel value,{bool isNotify = true}) {
+    clubList.setList(list: [value],isClear: false);
+    if(isNotify) {
       notifyListeners();
     }
   }
 
-  void addClubModelInClubList(ClubModel value, {bool isNotify = true}) {
-    _clubsList.insert(0, value);
-    if (isNotify) {
+  void removeClubFromList(int index,{bool isNotify = true}) {
+    clubList.getList().removeAt(index);
+    if(isNotify) {
       notifyListeners();
     }
   }
 
-  void removeClubModelFromClubList(int index ,{bool isNotify = true}) {
-    _clubsList.removeAt(index);
-    if (isNotify) {
-      notifyListeners();
-    }
-  }
-  // void addClubUserModelInClubUserList(ClubUserModel value, {bool isNotify = true}) {
-  //   _clubUserList.insert(0, value);
-  //   if (isNotify) {
-  //     notifyListeners();
-  //   }
-  // }
 
-
-  ClubModel getLoggedInClubModel() {
-    if (_loggedInClubModel != null) {
-      return _loggedInClubModel!;
-    } else {
-      MyPrint.printOnConsole("Admin is Null");
-      return ClubModel();
-    }
-  }
-
-  // ClubUserModel getLoggedInClubUserModel() {
-  //   if (_loggedInClubUserModel != null) {
-  //     return _loggedInClubUserModel!;
-  //   } else {
-  //     MyPrint.printOnConsole("Admin is Null");
-  //     return ClubUserModel();
-  //   }
-  // }
-
-  void setClubModel(ClubModel value, {bool isNotify = true}) {
-    _loggedInClubModel = value;
-    if (isNotify) {
-      notifyListeners();
-    }
-  }
 
 }
+

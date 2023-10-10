@@ -82,7 +82,7 @@ class ClubOperatorController {
   Future<void> EnableDisableClubOperatorInFirebase({
     required bool adminEnabled,
     required String id,
-    required ClubOperatorModel model,
+    ClubOperatorModel? model,
   }) async {
     try {
       Map<String, dynamic> data = {
@@ -90,7 +90,7 @@ class ClubOperatorController {
       };
       await FirebaseNodes.clubOperatorDocumentReference(clubOperatorId: id)
           .update(data);
-      model.adminEnabled = adminEnabled;
+      model?.adminEnabled = adminEnabled;
 
     } catch (e, s) {
       MyPrint.printOnConsole(
@@ -112,7 +112,7 @@ class ClubOperatorController {
 
   Future<void> deleteClubOperatorFromFirebase(ClubOperatorModel clubOperatorModel) async {
     try {
-      await clubOperatorRepository.deleteClubOperatorRepo(clubOperatorModel);
+      await clubOperatorRepository.deleteClubOperatorRepo(clubOperatorModel.id);
       clubOperatorProvider.clubOperatorList.removeObject(model: clubOperatorModel);
     } catch (e, s) {
       MyPrint.printOnConsole(

@@ -1,7 +1,9 @@
 import 'package:club_app_admin/backend/club_backend/club_controller.dart';
 import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_app_admin/backend/club_operator_backend/club_operator_provider.dart';
 import 'package:club_app_admin/backend/navigation/navigation_arguments.dart';
 import 'package:club_model/club_model.dart';
+import 'package:club_model/models/club/data_model/club_operator_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import '../../common/components/common_button.dart';
 import '../../common/components/common_image_view_box.dart';
 import '../../common/components/common_text_form_field.dart';
 import '../../common/components/header_widget.dart';
+import '../componants/add_club_operator_dialog.dart';
 
 class AddClub extends StatefulWidget {
   static const String routeName = "/AddClub";
@@ -31,6 +34,7 @@ class _AddClubState extends State<AddClub> {
 
   late ClubProvider clubProvider;
   late ClubController clubController;
+  ClubOperatorProvider clubOperatorProvider = ClubOperatorProvider();
   ClubModel? pageClubModel;
 
   TextEditingController clubNameController = TextEditingController();
@@ -47,6 +51,8 @@ class _AddClubState extends State<AddClub> {
 
   bool isClubEnabled = true;
   bool isAdminEnabled = true;
+  bool isUserOperator = false;
+
 
   Future<void> addThumbnailImage() async {
     setState(() {});
@@ -57,6 +63,15 @@ class _AddClubState extends State<AddClub> {
       MyPrint.printOnConsole("Mime type: ${file.mimeType}");
     }
     if (mounted) setState(() {});
+  }
+
+  Future<void> getAddUserOperator() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AddClubOperatorDialog(clubOperatorProvider: clubOperatorProvider,);
+      },
+    );
   }
 
   Future<void> addClub() async {
@@ -106,9 +121,6 @@ class _AddClubState extends State<AddClub> {
         thumbnailImageUrl: cloudinaryThumbnailImageUrl.isNotEmpty ? cloudinaryThumbnailImageUrl : widget.arguments.clubModel!.thumbnailImageUrl,
         createdTime: widget.arguments.clubModel!.createdTime,
         adminEnabled: isAdminEnabled,
-        // clubOwners: [
-        //   {userIdController.text.trim(): passwordController.text.trim()}
-        // ],
         coverImages: methodCoverImages,
         updatedTime: Timestamp.now(),
       );
@@ -122,9 +134,6 @@ class _AddClubState extends State<AddClub> {
       ClubModel clubModel = ClubModel(
         id: newId,
         name: clubNameController.text.trim(),
-        // clubOwners: [
-        //   {userIdController.text.trim(): passwordController.text.trim()}
-        // ],
         address: clubAddressController.text.trim(),
         mobileNumber: mobileNumberController.text.trim(),
         thumbnailImageUrl: cloudinaryThumbnailImageUrl,
@@ -270,6 +279,14 @@ class _AddClubState extends State<AddClub> {
               height: 30,
             ),
             getClubCoverImages(),
+            const SizedBox(
+              height: 40,
+            ),
+            CommonText(text: " Club Owner", fontWeight: FontWeight.bold, fontSize: 22, color: Styles.bgSideMenu.withOpacity(.6)),
+            const SizedBox(
+              height: 20,
+            ),
+            getClubOperator(),
             const SizedBox(
               height: 40,
             ),
@@ -540,14 +557,93 @@ class _AddClubState extends State<AddClub> {
     );
   }
 
-  Widget getClubGalleryImages(){
-    return Column(
-      children: [
-        getTitle(title: "Choose Gallery Images for different Categories"),
-
-      ],
+  Widget getClubOperator(){
+    // if(isUserOperator){
+    //   return getClubOperatorWidget();
+    // }
+    return InkWell(
+      onTap: () async {
+        await getAddUserOperator();
+      },
+      child: Card(
+        elevation: 4,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 12).copyWith(top: 14),
+          decoration: BoxDecoration(
+            color: Colors.grey.withOpacity(.4),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: CommonText(
+            text: '+ Add Club Owner',
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black45,
+          ),
+        ),
+      ),
     );
   }
+
+  Widget getClubOperatorWidget(ClubOperatorModel clubOperatorModel, index) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Styles.white,
+        border: Border.all(color: Styles.yellow, width: 1),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
+            ),
+            child: CommonCachedNetworkImage(
+              imageUrl: clubOperatorModel.profileImageUrl,
+              height: 50,
+              width: 50,
+              borderRadius: 4,
+            ),
+          ),
+          const SizedBox(
+            width: 30,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CommonText(
+                text: clubOperatorModel.name,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+              const SizedBox(height: 5),
+              CommonText(
+                text: 'Mobile Number: ${clubOperatorModel.mobileNumber}',
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+              ),
+              const SizedBox(height: 3),
+              CommonText(
+                text: clubOperatorModel.createdTime == null
+                    ? 'Created Date: No Data'
+                    : 'Created Date: ${DateFormat("dd-MMM-yyyy").format(clubOperatorModel.createdTime!.toDate())}',
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                fontSize: 14,
+                textOverFlow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget getAddClubButton() {
     return CommonButton(

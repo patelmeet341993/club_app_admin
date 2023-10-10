@@ -43,8 +43,15 @@ class _ClubListScreenState extends State<ClubListScreen> {
   late Future<void> futureGetData;
   bool isLoading = false;
 
+
   Future<void> getData() async {
-    await clubController.getClubList();
+    setState(() {
+      isLoading = true;
+    });
+    await clubController.getClubList(isNotify: false);
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> deleteClub(ClubModel clubModel,int index) async {
@@ -55,12 +62,10 @@ class _ClubListScreenState extends State<ClubListScreen> {
           text: "Want to Delete this club?",
           rightText: "Yes",
           rightOnTap: () async {
-            await clubController.deleteClubFromFirebase(clubModel,index);
+            await clubController.deleteClubFromFirebase(clubModel);
             // ignore: use_build_context_synchronously
             Navigator.pop(context);
-            setState(() {
-
-            });
+            setState(() {});
           },
         );
       },
@@ -122,27 +127,54 @@ class _ClubListScreenState extends State<ClubListScreen> {
   }
 
   Widget getClubsList() {
-    return Consumer(builder: (BuildContext context, ClubProvider clubProvider, Widget? child) {
-      if (clubProvider.clubsList.isEmpty) {
-        return Center(
-          child: CommonText(
-            text: "No Clubs Available",
-            fontWeight: FontWeight.bold,
-            fontSize: 30,
-          ),
-        );
-      }
+    return Consumer(
+        builder: (BuildContext context,ClubProvider clubProvider,Widget? child){
+          if(clubProvider.clubList.length<1){
+            return Center(
+              child: CommonText(
+                text: "No Clubs Available",
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+              ),
+            );
+          }
 
-      //List<NewsFeedModel> newsList = newsProvider.newsList;
-      return ListView.builder(
-        itemCount: clubProvider.clubsList.length,
-        //shrinkWrap: true,
-        itemBuilder: (context, index) {
-          return SingleClub(clubProvider.clubsList[index], index);
-        },
-      );
-    });
+          //List<NewsFeedModel> newsList = newsProvider.newsList;
+          return ListView.builder(
+            itemCount: clubProvider.clubList.length +1 ,
+            //shrinkWrap: true,
+            itemBuilder: (context,index){
+              if((index == 0 && clubProvider.clubList.length == 0) || (index ==  clubProvider.clubList.length)){
+                if(clubProvider.clubLoading.get()){
+                  return Container(
+                    margin: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Styles.bgColor,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Center(child: CircularProgressIndicator(color: Styles.bgSideMenu)),
+                  );
+                }else{
+                  return const SizedBox();
+                }
+
+              }
+
+              if(clubProvider.hasMoreClub.get() && index > (clubProvider.clubList.length - MyAppConstants.clubRefreshIndexForPagination)) {
+                WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                  clubController.getClubList(isRefresh: false,isNotify: false);
+                });
+              }
+
+
+              return SingleClub(clubProvider.clubList.getList()[index],index);
+            },
+          );
+        }
+    );
   }
+
 
   Widget SingleClub(ClubModel clubModel, index) {
     return InkWell(
@@ -262,14 +294,12 @@ class _ClubListScreenState extends State<ClubListScreen> {
                     getEnableSwitch(
                         value: clubModel.adminEnabled,
                         onChanged: (val) {
-                          Map<String, dynamic> data = {
-                            MyAppConstants.cAdminEnabled: val,
-                          };
                           clubController.EnableDisableClubInFirebase(
-                            editableData: data,
+                            adminEnabled: val ?? true,
                             id: clubModel.id,
-                            listIndex: index,
+                            model: clubModel,
                           );
+                          setState((){});
                         }),
                   ],
                 ),

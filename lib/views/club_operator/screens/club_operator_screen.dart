@@ -45,27 +45,36 @@ class _ClubOperatorListScreenState extends State<ClubOperatorListScreen> {
   bool isLoading = false;
 
   Future<void> getData() async {
+    setState(() {
+      isLoading = true;
+    });
     await clubOperatorController.getClubOperatorFromFirebase(isNotify: false);
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  Future<void> deleteClubOperator(clubOperatorModel) async {
-    showDialog(
+  Future<void> deleteClubOperator(ClubOperatorModel clubOperatorModel) async {
+    dynamic value = await showDialog(
       context: context,
       builder: (context) {
         return CommonPopup(
           text: "Want to Delete this club?",
           rightText: "Yes",
           rightOnTap: () async {
-            await clubOperatorController.deleteClubOperatorFromFirebase(clubOperatorModel);
             // ignore: use_build_context_synchronously
-            Navigator.pop(context);
-            setState(() {
-
-            });
+            Navigator.pop(context, true);
           },
         );
       },
     );
+
+    if(value != true) {
+      return;
+    }
+
+    await clubOperatorController.deleteClubOperatorFromFirebase(clubOperatorModel);
+    setState(() {});
   }
 
   @override
@@ -243,10 +252,10 @@ class _ClubOperatorListScreenState extends State<ClubOperatorListScreen> {
                             rightText: "Yes",
                             rightOnTap: () async {
                               Navigator.pop(context);
-                              NavigationController.navigateToAddClubOperatorScreen(
+                              await NavigationController.navigateToAddClubOperatorScreen(
                                 navigationOperationParameters: NavigationOperationParameters(
                                   navigationType: NavigationType.pushNamed,
-                                  context: NavigationController.clubScreenNavigator.currentContext!,
+                                  context: NavigationController.clubOperatorNavigator.currentContext!,
                                 ),
                                 addClubOperatorNavigationArguments: AddClubOperatorNavigationArguments(
                                   clubOperatorModel: clubOperatorModel,
@@ -254,6 +263,7 @@ class _ClubOperatorListScreenState extends State<ClubOperatorListScreen> {
                                   isEdit: true,
                                 ),
                               );
+                              getData();
                             },
                           );
                         },
