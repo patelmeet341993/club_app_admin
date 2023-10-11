@@ -26,33 +26,6 @@ class ClubRepository {
     return clubList;
   }
 
-/*
-  Future<List<ClubUserModel>> getClubUserListRepo() async {
-    List<ClubUserModel> clubUserList = [];
-
-    try {
-      MyFirestoreQuerySnapshot querySnapshot =
-          await FirebaseNodes.clubUserCollectionReference.get();
-      if (querySnapshot.docs.isNotEmpty) {
-        for (MyFirestoreQueryDocumentSnapshot queryDocumentSnapshot
-            in querySnapshot.docs) {
-          if (queryDocumentSnapshot.data().isNotEmpty) {
-            clubUserList.add(ClubUserModel.fromMap(queryDocumentSnapshot.data()));
-          } else {
-            MyPrint.printOnConsole(
-                "Club Document Empty for Document Id:${queryDocumentSnapshot.id}");
-          }
-        }
-      }
-    } catch (e, s) {
-      MyPrint.printOnConsole('Error in getClubListRepo in ClubRepository $e');
-      MyPrint.printOnConsole(s);
-    }
-
-    return clubUserList;
-  }
-*/
-
   Future<void> AddClubRepo(ClubModel clubModel) async {
     await FirebaseNodes.clubDocumentReference(clubId: clubModel.id)
         .set(clubModel.toMap());
@@ -62,10 +35,6 @@ class ClubRepository {
     await FirebaseNodes.clubDocumentReference(clubId: clubModel.id)
         .delete();
   }
-  // Future<void> AddClubUserRepo(ClubUserModel clubModel) async {
-  //   await FirebaseNodes.clubUserDocumentReference(clubId: clubModel.id)
-  //       .set(clubModel.toMap());
-  // }
 
   Future<ClubModel?> checkLoginClubMethod({required String adminId, required String password}) async {
     try {

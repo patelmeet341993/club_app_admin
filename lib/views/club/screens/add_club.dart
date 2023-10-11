@@ -36,6 +36,7 @@ class _AddClubState extends State<AddClub> {
   late ClubController clubController;
   ClubOperatorProvider clubOperatorProvider = ClubOperatorProvider();
   ClubModel? pageClubModel;
+  ClubOperatorModel? pageClubOperatorModel;
 
   TextEditingController clubNameController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
@@ -66,12 +67,18 @@ class _AddClubState extends State<AddClub> {
   }
 
   Future<void> getAddUserOperator() async {
-    showDialog(
+   dynamic value = await showDialog(
       context: context,
       builder: (context) {
         return AddClubOperatorDialog(clubOperatorProvider: clubOperatorProvider,);
       },
-    );
+   );
+
+   if(value != null && value is ClubOperatorModel){
+     pageClubOperatorModel = value;
+     setState(() {});
+   }
+
   }
 
   Future<void> addClub() async {
@@ -111,7 +118,6 @@ class _AddClubState extends State<AddClub> {
 
 
     if (widget.arguments.clubModel != null && widget.arguments.index != null && widget.arguments.isEdit == true) {
-
       MyPrint.printOnConsole("club model edit this with index: ${widget.arguments.index} edit: ${widget.arguments.isEdit}");
       ClubModel clubModel = ClubModel(
         id: widget.arguments.clubModel!.id,
@@ -121,6 +127,8 @@ class _AddClubState extends State<AddClub> {
         thumbnailImageUrl: cloudinaryThumbnailImageUrl.isNotEmpty ? cloudinaryThumbnailImageUrl : widget.arguments.clubModel!.thumbnailImageUrl,
         createdTime: widget.arguments.clubModel!.createdTime,
         adminEnabled: isAdminEnabled,
+        clubUsersList: pageClubOperatorModel != null ? [pageClubOperatorModel!.id] : null,
+        userRoles: pageClubOperatorModel != null ? {pageClubOperatorModel!.id : ClubOperatorRoles.owner} : null,
         coverImages: methodCoverImages,
         updatedTime: Timestamp.now(),
       );
@@ -128,9 +136,7 @@ class _AddClubState extends State<AddClub> {
       if (context.mounted && context.checkMounted()) {
         MyToast.showSuccess(context: context, msg: 'Club Updated successfully');
       }
-
     } else {
-
       ClubModel clubModel = ClubModel(
         id: newId,
         name: clubNameController.text.trim(),
@@ -140,14 +146,14 @@ class _AddClubState extends State<AddClub> {
         adminEnabled: isAdminEnabled,
         coverImages: methodCoverImages,
         createdTime: Timestamp.now(),
+        clubUsersList: pageClubOperatorModel != null ? [pageClubOperatorModel!.id] : null,
+        userRoles: pageClubOperatorModel != null ? {pageClubOperatorModel!.id : ClubOperatorRoles.owner} : null,
       );
       await clubController.AddClubToFirebase(clubModel);
       if (context.mounted && context.checkMounted()) {
         MyToast.showSuccess(context: context, msg: 'Club added successfully');
       }
-
     }
-
     setState(() {
       isLoading = false;
     });
@@ -181,14 +187,18 @@ class _AddClubState extends State<AddClub> {
       pageClubModel = widget.arguments.clubModel!;
       MyPrint.printOnConsole('Club Model : ${pageClubModel!.toMap()}');
       clubNameController.text = pageClubModel!.name;
-      // userIdController.text = pageClubModel!.clubOwners.first.keys.first;
-      // passwordController.text = pageClubModel!.clubOwners.first.values.first;
       mobileNumberController.text = pageClubModel!.mobileNumber;
       clubAddressController.text = pageClubModel!.address;
       thumbnailImageUrl = pageClubModel!.thumbnailImageUrl;
       isAdminEnabled = pageClubModel!.adminEnabled;
       clubCoverImages.addAll(pageClubModel!.coverImages);
-      // clubImagesView = methodClubModel.images;
+      if(pageClubModel!.clubUsersList.first.isNotEmpty){
+      String clubOwnerId = pageClubModel!.clubUsersList.first;
+      dynamic value = await clubController.getClubOperatorFromId(clubOwnerId);
+      if(value != null && value is ClubOperatorModel){
+        pageClubOperatorModel = value;
+       }
+      }
     }
   }
 
@@ -259,10 +269,6 @@ class _AddClubState extends State<AddClub> {
               height: 20,
             ),
             getNameAndMobileNumber(),
-            const SizedBox(
-              height: 30,
-            ),
-            getUserIdAndPasswordField(),
             const SizedBox(
               height: 30,
             ),
@@ -367,6 +373,10 @@ class _AddClubState extends State<AddClub> {
             ],
           ),
         ),
+        const SizedBox(
+          width: 20,
+        ),
+        getEnabledRow(),
       ],
     );
   }
@@ -558,9 +568,9 @@ class _AddClubState extends State<AddClub> {
   }
 
   Widget getClubOperator(){
-    // if(isUserOperator){
-    //   return getClubOperatorWidget();
-    // }
+    if(pageClubOperatorModel != null){
+      return getClubOperatorWidget(pageClubOperatorModel!);
+    }
     return InkWell(
       onTap: () async {
         await getAddUserOperator();
@@ -568,23 +578,24 @@ class _AddClubState extends State<AddClub> {
       child: Card(
         elevation: 4,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 12).copyWith(top: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 30,vertical: 12).copyWith(top: 15),
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(.4),
+            color: Styles.bgSideMenu,
             borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: Styles.bgSideMenu)
           ),
           child: CommonText(
             text: '+ Add Club Owner',
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.black45,
+            color: Colors.white,
           ),
         ),
       ),
     );
   }
 
-  Widget getClubOperatorWidget(ClubOperatorModel clubOperatorModel, index) {
+  Widget getClubOperatorWidget(ClubOperatorModel clubOperatorModel) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       padding: const EdgeInsets.all(10),
@@ -610,34 +621,57 @@ class _AddClubState extends State<AddClub> {
           const SizedBox(
             width: 30,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CommonText(
-                text: clubOperatorModel.name,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-              const SizedBox(height: 5),
-              CommonText(
-                text: 'Mobile Number: ${clubOperatorModel.mobileNumber}',
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
-              ),
-              const SizedBox(height: 3),
-              CommonText(
-                text: clubOperatorModel.createdTime == null
-                    ? 'Created Date: No Data'
-                    : 'Created Date: ${DateFormat("dd-MMM-yyyy").format(clubOperatorModel.createdTime!.toDate())}',
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                fontSize: 14,
-                textOverFlow: TextOverflow.ellipsis,
-              ),
-            ],
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CommonText(
+                  text: clubOperatorModel.name,
+                  fontSize: 20,
+                  maxLines: 1,
+                  fontWeight: FontWeight.bold,
+                  textOverFlow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    Flexible(
+                      child: CommonText(
+                        text: 'Mobile Number : ${clubOperatorModel.mobileNumber}',
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        textOverFlow: TextOverflow.ellipsis,
+                         maxLines: 1,
+                      ),
+                    ),
+                    const SizedBox(width: 50),
+                    Flexible(
+                      child: CommonText(
+                        text: 'Email : ${clubOperatorModel.emailId}',
+                        textAlign: TextAlign.center,
+                        maxLines:1,
+                        fontSize: 16,
+                        textOverFlow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           const SizedBox(
             width: 20,
+          ),
+          // Spacer(),
+          InkWell(
+            onTap: (){
+              pageClubOperatorModel = null;
+              setState(() {});
+            },
+            child: const Padding(
+              padding: EdgeInsets.all(4.0),
+              child: Icon(Icons.close,color: Styles.bgSideMenu,),
+            ),
           ),
         ],
       ),

@@ -4,6 +4,7 @@ import 'package:club_app_admin/backend/club_backend/club_provider.dart';
 import 'package:club_app_admin/backend/club_backend/club_repository.dart';
 import 'package:club_app_admin/configs/constants.dart';
 import 'package:club_model/club_model.dart';
+import 'package:club_model/models/club/data_model/club_operator_model.dart';
 import 'package:club_model/utils/my_print.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -100,6 +101,19 @@ class ClubController {
     try {
       await clubRepository.AddClubRepo(clubModel);
       if(!isEdit) clubProvider.clubList.insertAtIndex(index: 0, model: clubModel);
+    } catch (e, s) {
+      MyPrint.printOnConsole(
+          'Error in Add Club to Firebase in Club Controller $e');
+      MyPrint.printOnConsole(s);
+    }
+  }
+
+  Future<ClubOperatorModel?> getClubOperatorFromId(String clubOperatorId) async {
+    try {
+      MyFirestoreDocumentSnapshot snapshot = await FirebaseNodes.clubOperatorDocumentReference(clubOperatorId: clubOperatorId).get();
+       if(snapshot.exists && snapshot.data().checkNotEmpty){
+         return ClubOperatorModel.fromMap(snapshot.data()!);
+       }
     } catch (e, s) {
       MyPrint.printOnConsole(
           'Error in Add Club to Firebase in Club Controller $e');
