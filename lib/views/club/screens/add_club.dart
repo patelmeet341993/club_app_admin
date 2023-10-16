@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../backend/club_operator_backend/club_operator_controller.dart';
 import '../../../backend/common/cloudinary_manager.dart';
 import '../../common/components/common_button.dart';
 import '../../common/components/common_image_view_box.dart';
@@ -37,7 +38,8 @@ class _AddClubState extends State<AddClub> {
   ClubOperatorProvider clubOperatorProvider = ClubOperatorProvider();
   ClubModel? pageClubModel;
   ClubOperatorModel? pageClubOperatorModel;
-
+  late ClubOperatorController myClubOperatorController;
+  late ClubOperatorProvider myClubOperatorProvider;
   TextEditingController clubNameController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
   TextEditingController clubAddressController = TextEditingController();
@@ -133,6 +135,11 @@ class _AddClubState extends State<AddClub> {
         updatedTime: Timestamp.now(),
       );
       await clubController.AddClubToFirebase(clubModel,isEdit: true);
+      if(pageClubOperatorModel != null){
+        pageClubOperatorModel!.clubIds = [clubModel.id];
+        pageClubOperatorModel!.clubRoles = {clubModel.id:ClubOperatorRoles.owner};
+        await myClubOperatorController.addClubOperatorToFirebase(pageClubOperatorModel!,isEdit: true);
+      }
       if (context.mounted && context.checkMounted()) {
         MyToast.showSuccess(context: context, msg: 'Club Updated successfully');
       }
@@ -148,8 +155,14 @@ class _AddClubState extends State<AddClub> {
         createdTime: Timestamp.now(),
         clubUsersList: pageClubOperatorModel != null ? [pageClubOperatorModel!.id] : null,
         userRoles: pageClubOperatorModel != null ? {pageClubOperatorModel!.id : ClubOperatorRoles.owner} : null,
+
       );
       await clubController.AddClubToFirebase(clubModel);
+      if(pageClubOperatorModel != null){
+        pageClubOperatorModel!.clubIds = [clubModel.id];
+        pageClubOperatorModel!.clubRoles = {clubModel.id:ClubOperatorRoles.owner};
+        await myClubOperatorController.addClubOperatorToFirebase(pageClubOperatorModel!,isEdit: false);
+      }
       if (context.mounted && context.checkMounted()) {
         MyToast.showSuccess(context: context, msg: 'Club added successfully');
       }
@@ -207,6 +220,8 @@ class _AddClubState extends State<AddClub> {
     super.initState();
     clubProvider = Provider.of<ClubProvider>(context, listen: false);
     clubController = ClubController(clubProvider: clubProvider);
+    myClubOperatorProvider = Provider.of<ClubOperatorProvider>(context, listen: false);
+    myClubOperatorController = ClubOperatorController(clubOperatorProvider: myClubOperatorProvider);
     futureGetData = getData();
   }
 
