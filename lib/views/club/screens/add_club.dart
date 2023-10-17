@@ -129,8 +129,8 @@ class _AddClubState extends State<AddClub> {
         thumbnailImageUrl: cloudinaryThumbnailImageUrl.isNotEmpty ? cloudinaryThumbnailImageUrl : widget.arguments.clubModel!.thumbnailImageUrl,
         createdTime: widget.arguments.clubModel!.createdTime,
         adminEnabled: isAdminEnabled,
-        clubUsersList: pageClubOperatorModel != null ? [pageClubOperatorModel!.id] : null,
-        userRoles: pageClubOperatorModel != null ? {pageClubOperatorModel!.id : ClubOperatorRoles.owner} : null,
+        clubOperatorList: pageClubOperatorModel != null ? [pageClubOperatorModel!.id] : null,
+        operatorRoles: pageClubOperatorModel != null ? {pageClubOperatorModel!.id : ClubOperatorRoles.owner} : null,
         coverImages: methodCoverImages,
         updatedTime: Timestamp.now(),
       );
@@ -153,8 +153,8 @@ class _AddClubState extends State<AddClub> {
         adminEnabled: isAdminEnabled,
         coverImages: methodCoverImages,
         createdTime: Timestamp.now(),
-        clubUsersList: pageClubOperatorModel != null ? [pageClubOperatorModel!.id] : null,
-        userRoles: pageClubOperatorModel != null ? {pageClubOperatorModel!.id : ClubOperatorRoles.owner} : null,
+        clubOperatorList: pageClubOperatorModel != null ? [pageClubOperatorModel!.id] : null,
+        operatorRoles: pageClubOperatorModel != null ? {pageClubOperatorModel!.id : ClubOperatorRoles.owner} : null,
 
       );
       await clubController.AddClubToFirebase(clubModel);
@@ -205,8 +205,8 @@ class _AddClubState extends State<AddClub> {
       thumbnailImageUrl = pageClubModel!.thumbnailImageUrl;
       isAdminEnabled = pageClubModel!.adminEnabled;
       clubCoverImages.addAll(pageClubModel!.coverImages);
-      if(pageClubModel!.clubUsersList.first.isNotEmpty){
-      String clubOwnerId = pageClubModel!.clubUsersList.first;
+      if(pageClubModel!.clubOperatorList.first.isNotEmpty){
+      String clubOwnerId = pageClubModel!.clubOperatorList.first;
       dynamic value = await clubController.getClubOperatorFromId(clubOwnerId);
       if(value != null && value is ClubOperatorModel){
         pageClubOperatorModel = value;
