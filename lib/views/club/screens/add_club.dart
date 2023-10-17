@@ -279,7 +279,7 @@ class _AddClubState extends State<AddClub> {
             const SizedBox(
               height: 30,
             ),
-            CommonText(text: " Product Basic Information", fontWeight: FontWeight.bold, fontSize: 25, color: Styles.bgSideMenu.withOpacity(.6)),
+            CommonText(text: " Club Basic Information", fontWeight: FontWeight.bold, fontSize: 25, color: Styles.bgSideMenu.withOpacity(.6)),
             const SizedBox(
               height: 20,
             ),
@@ -287,7 +287,7 @@ class _AddClubState extends State<AddClub> {
             const SizedBox(
               height: 30,
             ),
-            getDescriptionTextField(),
+            getAddressTextField(),
             const SizedBox(
               height: 30,
             ),
@@ -396,69 +396,7 @@ class _AddClubState extends State<AddClub> {
     );
   }
 
-  Widget getUserIdAndPasswordField() {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getTitle(title: "Enter UserId*"),
-              CommonTextFormField(
-                controller: userIdController,
-                hintText: "Enter UserId",
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "  Please enter a userId";
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(
-          width: 20,
-        ),
-        Expanded(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              getTitle(title: "Enter Password*"),
-              CommonTextFormField(
-                controller: passwordController,
-                hintText: "Enter Password",
-                validator: (val) {
-                  if (val == null || val.isEmpty) {
-                    return "Password cannot be empty";
-                  } else {
-                    if (val.length > 6) {
-                      return "Password must be of six numbers";
-                    } else {
-                      return null;
-                    }
-                  }
-                },
-                keyboardType: TextInputType.number,
-                textInputFormatter: [
-                  LengthLimitingTextInputFormatter(6),
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(
-          width: 20,
-        ),
-        getEnabledRow(),
-      ],
-    );
-  }
-
-  Widget getDescriptionTextField() {
+  Widget getAddressTextField() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
