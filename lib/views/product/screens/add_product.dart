@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:club_app_admin/backend/navigation/navigation_arguments.dart';
@@ -9,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../backend/brands_backend/brand_provider.dart';
-import '../../../backend/navigation/navigation_arguments.dart';
 import '../../../backend/products_backend/product_controller.dart';
 import '../../../backend/products_backend/product_provider.dart';
 import '../../common/components/add_price_widget.dart';
@@ -49,6 +47,9 @@ class _AddProductState extends State<AddProduct> {
   List<BrandModel> brandModelList = [];
   BrandModel? selectedBrandModel;
 
+  List<String> productTypes = [];
+  String? productTypeValue;
+
   final ImagePicker _picker = ImagePicker();
 
   Future<void> addThumbnailImage() async {
@@ -64,12 +65,11 @@ class _AddProductState extends State<AddProduct> {
   }
 
   Future<void> getData() async {
+    productTypes = ProductType.values;
     MyPrint.printOnConsole('is edit is ${widget.arguments.isEdit}');
     brandModelList.addAll(brandProvider.brandsList);
-    MyPrint.printOnConsole('is edit is again${brandModelList}');
     for (BrandModel element in brandModelList) {
       brandNameList.add(element.name);
-      MyPrint.printOnConsole('is edit is 2${brandNameList}');
     }
 
     if (widget.arguments.productModel != null) {
@@ -81,6 +81,7 @@ class _AddProductState extends State<AddProduct> {
       priceController.text = ParsingHelper.parseStringMethod(pageProductModel!.price);
       sizeInMLController.text = ParsingHelper.parseStringMethod(pageProductModel!.sizeInML);
       thumbnailImageUrl = pageProductModel!.thumbnailImageUrl;
+      productTypeValue = pageProductModel!.productType;
     }else{
       priceController.text = ParsingHelper.parseStringMethod(0);
       sizeInMLController.text = ParsingHelper.parseStringMethod(0);
@@ -105,6 +106,8 @@ class _AddProductState extends State<AddProduct> {
         price: double.tryParse(priceController.text) ?? 0,
         sizeInML: double.tryParse(sizeInMLController.text) ?? 0,
         thumbnailImageUrl: thumbnailImageUrl,
+        productType: productTypeValue ?? '',
+        createdBy: ProductCreatorType.admin,
         createdTime: widget.arguments.productModel!.createdTime,
         updatedTime: Timestamp.now(),
       );
@@ -121,6 +124,8 @@ class _AddProductState extends State<AddProduct> {
         price: double.tryParse(priceController.text) ?? 0,
         sizeInML: double.tryParse(sizeInMLController.text) ?? 0,
         thumbnailImageUrl: thumbnailImageUrl,
+        productType: productTypeValue ?? '',
+        createdBy: ProductCreatorType.admin,
         createdTime: Timestamp.now(),
         updatedTime: Timestamp.now(),
       );
@@ -312,7 +317,7 @@ class _AddProductState extends State<AddProduct> {
                     }
                   }
                   // selectedApplicationModelList.add(tempApplicationModelList.first);
-                  MyPrint.printOnConsole("Name of selected Brand ModelList : ${selectedBrandModel}");
+                  MyPrint.printOnConsole("Name of selected Brand ModelList : $selectedBrandModel");
                   setState(() {});
                 },
               ),
@@ -396,6 +401,53 @@ class _AddProductState extends State<AddProduct> {
                   return null;
                 },
               )
+            ],
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Expanded(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              getTitle(title: "Choose Product Type"),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(width: 1, color: Styles.bgSideMenu),
+                ),
+                child: DropdownButton<String>(
+                  value: productTypeValue,
+                  style: const TextStyle(
+                    color: Styles.bgSideMenu,
+                    fontSize: 18,
+                  ),
+                  dropdownColor: Colors.white,
+                  underline: Container(),
+                  iconEnabledColor: Colors.black,
+                  isExpanded: true,
+                  hint: CommonText(
+                    text: 'Select your Product Type',
+                  ),
+                  borderRadius: BorderRadius.circular(4),
+                  items: productTypes.map((type) {
+                    return DropdownMenuItem(
+                      value: type,
+                      child: Text(type),
+                    );
+                  }).toList(),
+                  onChanged: (val) async {
+                    //await changeStatus(currentProductName: val);
+                    if (val is String) {
+                      productTypeValue = val;
+                      setState(() {});
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ),
@@ -491,7 +543,7 @@ class _AddProductState extends State<AddProduct> {
                             onSelected(option.toString());
                           },
                           child: Container(
-                            margin: EdgeInsets.symmetric(vertical: 2),
+                            margin: const EdgeInsets.symmetric(vertical: 2),
                             child: Card(
                               color: Colors.white,
                               elevation: 5,
