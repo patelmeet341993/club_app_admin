@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:club_app_admin/utils/WebPageLoad/web_page_load.dart';
 import 'package:club_model/club_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,12 +31,13 @@ Future<void>? runErrorSafeApp({bool isDev = false}) {
 
 /// It provides initial initialisation the app and its global services
 Future<void> initApp({bool isDev = false}) async {
+  usePathUrlStrategy();
+  checkPageLoad();
+
   WidgetsFlutterBinding.ensureInitialized();
   AppController.isDev = isDev;
 
   List<Future> futures = [];
-
-  usePathUrlStrategy();
 
   if (kIsWeb) {
     FirebaseOptions options = getFirebaseOptions(isDev: isDev);
@@ -49,12 +51,12 @@ Future<void> initApp({bool isDev = false}) async {
         DeviceOrientation.landscapeLeft,
       ]),
     ]);
-  }
-  else {
-    if(Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+  } else {
+    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
       HttpOverrides.global = MyHttpOverrides();
       HttpClient httpClient = HttpClient();
-      httpClient.badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
+      httpClient.badCertificateCallback =
+          ((X509Certificate cert, String host, int port) => true);
 
       futures.addAll([
         Firebase.initializeApp(),
@@ -67,7 +69,7 @@ Future<void> initApp({bool isDev = false}) async {
 
   await Future.wait(futures);
 
-  if(!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
+  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS || Platform.isMacOS)) {
     try {
       await Future.wait([
         FirebaseMessaging.instance.requestPermission(),
@@ -77,8 +79,7 @@ Future<void> initApp({bool isDev = false}) async {
           sound: true,
         ),
       ]);
-    }
-    catch(e, s) {
+    } catch (e, s) {
       MyPrint.printOnConsole("Error in Requesting Notifications Permission:$e");
       MyPrint.printOnConsole(s);
     }

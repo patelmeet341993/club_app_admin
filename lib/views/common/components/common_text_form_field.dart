@@ -1,82 +1,127 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 
 class CommonTextFormField extends StatelessWidget {
-  final TextEditingController controller;
-  final String? hintText;
-  final int? maxLines;
-  final int? minLines;
-  final bool transparent;
-  final IconData? suffixIcon,prefixIcon;
-  final Function()? suffixOnTap,prefixOnTap;
-  final String? Function(String?)? validator;
-  final List<TextInputFormatter>? inputFormatter;
-  final TextInputType? keyboardType;
+  CommonTextFormField(
+      {Key? key,
+      this.enabled = true,
+      this.onTap,
+      this.keyboardType,
+      this.inputAction,
+      this.controller,
+      this.hintText,
+      this.width,
+      this.fillColor,
+      this.textInputFormatter = const [],
+      //this.contentPadding = const EdgeInsets.symmetric(horizontal: MySize.getScaledSizeHeight(10), vertical: MySize.getScaledSizeHeight(18)),
+      this.maxLines = 1,
+      this.minLines = 1,
+      this.prefixIcon,
+      this.onChanged,
+      this.suffixIcon,
+      this.textCapitalization = TextCapitalization.none,
+      this.focusNode,
+      this.cursorColor = Colors.black,
+      this.onFieldSubmitted,
+      this.validator,
+      this.maxLength,
+      this.obscureText = false,
+      this.verticalPadding = 12,
+      this.horizontalPadding = 12,
+      this.fontSize = 18})
+      : super(key: key);
+  double? width;
+  String? hintText;
+  //EdgeInsetsGeometry contentPadding;
+  TextEditingController? controller;
+  TextInputAction? inputAction;
+  int? maxLines;
+  int? minLines;
+  TextInputType? keyboardType;
+  List<TextInputFormatter> textInputFormatter;
+  Widget? prefixIcon;
+  Widget? suffixIcon;
+  TextCapitalization? textCapitalization;
+  FocusNode? focusNode;
+  Color? cursorColor;
+  Color? fillColor;
+  double verticalPadding;
+  int? maxLength;
+  double horizontalPadding;
+  bool obscureText = false;
+  void Function(String)? onFieldSubmitted = (String s) {};
+  String? Function(String?)? validator = (String? s) {};
 
-  const CommonTextFormField({
-    Key? key,
-    required this.controller,
-    this.hintText,
-    this.maxLines=1,
-    this.minLines=1,
-    this.suffixIcon,
-    this.suffixOnTap,
-    this.prefixIcon,
-    this.prefixOnTap,
-    this.transparent = false,
-    this.inputFormatter,
-    this.keyboardType,
-    this.validator,
-  }) : super(key: key);
+  bool? enabled = true;
+  double fontSize;
+  void Function()? onTap = () {};
 
+  void Function(String)? onChanged = (String s) {};
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
-    return TextFormField(
-      obscureText:false,
-      enableInteractiveSelection: false,
-      controller: controller,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        isDense: true,
-        fillColor: transparent?Colors.transparent:themeData.inputDecorationTheme.fillColor,
-        contentPadding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-        border: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.transparent,
+    return Card(
+        color: Colors.grey[50],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        elevation: 2,
+        child: Container(
+          width: width,
+          child: TextFormField(
+            validator: validator,
+            enabled: enabled,
+            onTap: onTap,
+            obscureText: obscureText,
+            onChanged: onChanged,
+            controller: controller,
+            focusNode: focusNode,
+            onFieldSubmitted: onFieldSubmitted,
+            textInputAction: inputAction,
+            textCapitalization: textCapitalization!,
+            maxLines: maxLines,
+            minLines: minLines,
+            cursorColor: cursorColor,
+            keyboardType: keyboardType,
+            maxLength: maxLength,
+            inputFormatters: textInputFormatter,
+            decoration: InputDecoration(
+              filled: true,
+              suffixIcon: suffixIcon,
+              fillColor: fillColor,
+              prefixIcon: prefixIcon,
+              hintText: '$hintText',
+              hintStyle: TextStyle(
+                color: Colors.grey,
+                fontSize: 15,
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding, vertical: verticalPadding),
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.transparent,
+                  ),
+                  borderRadius: BorderRadius.circular(4)),
+              disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.transparent,
+                  ),
+                  borderRadius: BorderRadius.circular(4)),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.black.withOpacity(.75),
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(4)),
+              border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.transparent,
+                  ),
+                  borderRadius: BorderRadius.circular(4)),
             ),
-            borderRadius: BorderRadius.circular(8)),
-        focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.transparent,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: fontSize,
             ),
-            borderRadius: BorderRadius.circular(8)),
-        enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: Colors.transparent,
-            ),
-            borderRadius: BorderRadius.circular(8)),
-        hintText: hintText??" ",
-        filled: true,
-        suffix: suffixIcon!=null?InkWell(
-          onTap: suffixOnTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14.0),
-            child: Icon(suffixIcon,size: 20,color:themeData.primaryColor),
           ),
-        ):null,
-        prefix: prefixIcon!=null?InkWell(
-          onTap: prefixOnTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14.0),
-            child: Icon(prefixIcon,size: 20,color:themeData.primaryColor),
-          ),
-        ):null,
-      ),
-      validator: validator,
-      inputFormatters: inputFormatter,
-      maxLines: maxLines,
-      minLines: minLines,
-    );
+        ));
   }
 }
