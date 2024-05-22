@@ -1,7 +1,8 @@
 import 'package:club_model/club_model.dart';
+import 'package:club_model/models/club/data_model/club_operator_model.dart';
 
-class ClubRepository {
-  Future<List<ClubModel>> getClubListRepo() async {
+class ClubOperatorRepository {
+  Future<List<ClubModel>> getClubOperatorListRepo() async {
     List<ClubModel> clubList = [];
 
     try {
@@ -26,13 +27,14 @@ class ClubRepository {
     return clubList;
   }
 
-  Future<void> AddClubRepo(ClubModel clubModel) async {
-    await FirebaseNodes.clubDocumentReference(clubId: clubModel.id)
-        .set(clubModel.toMap());
+
+  Future<void> AddClubOperatorRepo(ClubOperatorModel clubOperatorModel) async {
+    await FirebaseNodes.clubOperatorDocumentReference(clubOperatorId: clubOperatorModel.id)
+        .set(clubOperatorModel.toMap());
   }
 
-  Future<void> deleteClubRepo(ClubModel clubModel) async {
-    await FirebaseNodes.clubDocumentReference(clubId: clubModel.id)
+  Future<void> deleteClubOperatorRepo(String operatorId) async {
+    await FirebaseNodes.clubOperatorDocumentReference(clubOperatorId: operatorId)
         .delete();
   }
 

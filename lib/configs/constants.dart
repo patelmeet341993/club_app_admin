@@ -16,6 +16,12 @@ class MyAppConstants {
 
   static const int userDocumentLimitForPagination = 15; //25 //5
   static const int userRefreshIndexForPagination = 5;
+
+  static const int clubOperatorDocumentLimitForPagination = 15; //25 //5
+  static const int clubOperatorRefreshIndexForPagination = 5;
+
+  static const int clubDocumentLimitForPagination = 15; //25 //5
+  static const int clubRefreshIndexForPagination = 5;
 }
 
 class AppUIConfiguration {

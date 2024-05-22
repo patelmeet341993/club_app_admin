@@ -67,6 +67,13 @@ class _SystemMainScreenState extends State<SystemMainScreen> {
                     ));
                   }),
               getGoToPageButtons(title: "Profile Details", onTap: () {}),
+              getGoToPageButtons(title: "Home Page Banners", onTap: () {
+                NavigationController.navigateToBannerListScreen(
+                    navigationOperationParameters: NavigationOperationParameters(
+                      navigationType: NavigationType.pushNamed,
+                      context: NavigationController.systemProfileNavigator.currentContext!,
+                    ));
+              }),
               getGoToPageButtons(
                   title: "Logout",
                   onTap: () {
@@ -83,7 +90,7 @@ class _SystemMainScreenState extends State<SystemMainScreen> {
                             AuthenticationProvider provider = Provider.of<AuthenticationProvider>(context,listen: false);
                             ClubProvider clubProvider = Provider.of<ClubProvider>(context,listen: false);
                             provider.setAdminUserModel(AdminUserModel());
-                            clubProvider.setClubModel(ClubModel());
+                            clubProvider.clubList.setList(list: [ClubModel()]);
 
                             NavigationController.navigateToLoginScreen(
                               navigationOperationParameters: NavigationOperationParameters(

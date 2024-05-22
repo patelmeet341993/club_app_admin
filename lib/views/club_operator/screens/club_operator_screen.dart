@@ -1,9 +1,10 @@
-import 'package:club_app_admin/backend/club_backend/club_controller.dart';
-import 'package:club_app_admin/backend/club_backend/club_provider.dart';
+import 'package:club_app_admin/backend/club_operator_backend/club_operator_controller.dart';
+import 'package:club_app_admin/backend/club_operator_backend/club_operator_provider.dart';
 import 'package:club_app_admin/backend/navigation/navigation_arguments.dart';
 import 'package:club_app_admin/configs/constants.dart';
 import 'package:club_app_admin/views/common/components/header_widget.dart';
 import 'package:club_model/club_model.dart';
+import 'package:club_model/models/club/data_model/club_operator_model.dart';
 import 'package:club_model/view/common/components/common_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,71 +13,75 @@ import '../../../backend/navigation/navigation_controller.dart';
 import '../../common/components/common_button.dart';
 import '../../common/components/common_popup.dart';
 
-class ClubScreenNavigator extends StatefulWidget {
-  const ClubScreenNavigator({Key? key}) : super(key: key);
+class ClubOperatorScreenNavigator extends StatefulWidget {
+  const ClubOperatorScreenNavigator({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _ClubScreenNavigatorState createState() => _ClubScreenNavigatorState();
+  _ClubOperatorScreenNavigatorState createState() => _ClubOperatorScreenNavigatorState();
 }
 
-class _ClubScreenNavigatorState extends State<ClubScreenNavigator> {
+class _ClubOperatorScreenNavigatorState extends State<ClubOperatorScreenNavigator> {
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      key: NavigationController.clubScreenNavigator,
-      onGenerateRoute: NavigationController.onClubGeneratedRoutes,
+      key: NavigationController.clubOperatorNavigator,
+      onGenerateRoute: NavigationController.onClubOperatorGeneratedRoutes,
     );
   }
 }
 
-class ClubListScreen extends StatefulWidget {
-  const ClubListScreen({Key? key}) : super(key: key);
+class ClubOperatorListScreen extends StatefulWidget {
+  const ClubOperatorListScreen({Key? key}) : super(key: key);
 
   @override
-  State<ClubListScreen> createState() => _ClubListScreenState();
+  State<ClubOperatorListScreen> createState() => _ClubOperatorListScreenState();
 }
 
-class _ClubListScreenState extends State<ClubListScreen> {
-  late ClubProvider clubProvider;
-  late ClubController clubController;
+class _ClubOperatorListScreenState extends State<ClubOperatorListScreen> {
+  late ClubOperatorProvider clubOperatorProvider;
+  late ClubOperatorController clubOperatorController;
   late Future<void> futureGetData;
   bool isLoading = false;
-
 
   Future<void> getData() async {
     setState(() {
       isLoading = true;
     });
-    await clubController.getClubList(isNotify: false);
+    await clubOperatorController.getClubOperatorFromFirebase(isNotify: false);
     setState(() {
       isLoading = false;
     });
   }
 
-  Future<void> deleteClub(ClubModel clubModel,int index) async {
-    showDialog(
+  Future<void> deleteClubOperator(ClubOperatorModel clubOperatorModel) async {
+    dynamic value = await showDialog(
       context: context,
       builder: (context) {
         return CommonPopup(
           text: "Want to Delete this club?",
           rightText: "Yes",
           rightOnTap: () async {
-            await clubController.deleteClubFromFirebase(clubModel);
             // ignore: use_build_context_synchronously
-            Navigator.pop(context);
-            setState(() {});
+            Navigator.pop(context, true);
           },
         );
       },
     );
+
+    if(value != true) {
+      return;
+    }
+
+    await clubOperatorController.deleteClubOperatorFromFirebase(clubOperatorModel);
+    setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
-    clubProvider = Provider.of<ClubProvider>(context, listen: false);
-    clubController = ClubController(clubProvider: clubProvider);
+    clubOperatorProvider = context.read<ClubOperatorProvider>();
+    clubOperatorController = ClubOperatorController(clubOperatorProvider: clubOperatorProvider);
     futureGetData = getData();
   }
 
@@ -85,54 +90,54 @@ class _ClubListScreenState extends State<ClubListScreen> {
     return FutureBuilder(
         future: futureGetData,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-              backgroundColor: Styles.bgColor,
-              body: ModalProgressHUD(
-                inAsyncCall: isLoading,
-                child: Column(
-                  children: [
-                    HeaderWidget(
-                      title: "Clubs",
-                      suffixWidget: CommonButton(
-                          text: "Add Club",
-                          icon: Icon(
-                            Icons.add,
-                            color: Styles.white,
-                          ),
-                          onTap: () {
-                            BuildContext? context = NavigationController.clubScreenNavigator.currentContext;
-                            if(context == null) return;
-                            NavigationController.navigateToAddClubScreen(
-                              navigationOperationParameters: NavigationOperationParameters(
-                                navigationType: NavigationType.pushNamed,
-                                context: context,
-                              ),
-                              addClubScreenNavigationArguments: AddClubScreenNavigationArguments(),
-                            );
-                          }),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Expanded(child: getClubsList()),
-                  ],
-                ),
-              ),
-            );
-          } else {
-            return const Center(child: LoadingWidget());
-          }
-        });
+      if (snapshot.connectionState == ConnectionState.done) {
+      return Scaffold(
+        body: Column(
+          children: [
+            HeaderWidget(
+              title: "Club Operators",
+              suffixWidget: CommonButton(
+                  text: "Add Club Operator",
+                  icon: Icon(
+                    Icons.add,
+                    color: Styles.white,
+                  ),
+                  onTap: () {
+                    BuildContext? context = NavigationController.clubOperatorNavigator.currentContext;
+                    if (context == null) return;
+                    NavigationController.navigateToAddClubOperatorScreen(
+                      navigationOperationParameters: NavigationOperationParameters(
+                        navigationType: NavigationType.pushNamed,
+                        context: context,
+                      ),
+                      addClubOperatorNavigationArguments: AddClubOperatorNavigationArguments(),
+                    );
+                  }),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(child: getClubOperatorsList()),
+            const SizedBox(
+              height: 20,
+            ),
+          ],
+        ),
+      );
+      } else {
+        return const Center(child: LoadingWidget());
+      }
+        }
+    );
   }
 
-  Widget getClubsList() {
+  Widget getClubOperatorsList() {
     return Consumer(
-        builder: (BuildContext context,ClubProvider clubProvider,Widget? child){
-          if(clubProvider.clubList.length<1){
+        builder: (BuildContext context,ClubOperatorProvider clubOperatorProvider,Widget? child){
+          if(clubOperatorProvider.clubOperatorList.length<1){
             return Center(
               child: CommonText(
-                text: "No Clubs Available",
+                text: "No Club Operators Available",
                 fontWeight: FontWeight.bold,
                 fontSize: 25,
               ),
@@ -141,11 +146,11 @@ class _ClubListScreenState extends State<ClubListScreen> {
 
           //List<NewsFeedModel> newsList = newsProvider.newsList;
           return ListView.builder(
-            itemCount: clubProvider.clubList.length +1 ,
+            itemCount: clubOperatorProvider.clubOperatorList.length +1 ,
             //shrinkWrap: true,
             itemBuilder: (context,index){
-              if((index == 0 && clubProvider.clubList.length == 0) || (index ==  clubProvider.clubList.length)){
-                if(clubProvider.clubLoading.get()){
+              if((index == 0 && clubOperatorProvider.clubOperatorList.length == 0) || (index ==  clubOperatorProvider.clubOperatorList.length)){
+                if(clubOperatorProvider.clubOperatorsLoading.get()){
                   return Container(
                     margin: const EdgeInsets.all(10),
                     padding: const EdgeInsets.all(10),
@@ -161,22 +166,21 @@ class _ClubListScreenState extends State<ClubListScreen> {
 
               }
 
-              if(clubProvider.hasMoreClub.get() && index > (clubProvider.clubList.length - MyAppConstants.clubRefreshIndexForPagination)) {
+              if(clubOperatorProvider.hasMoreClubOperators.get() && index > (clubOperatorProvider.clubOperatorList.length - MyAppConstants.clubOperatorRefreshIndexForPagination)) {
                 WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                  clubController.getClubList(isRefresh: false,isNotify: false);
+                  clubOperatorController.getClubOperatorFromFirebase(isRefresh: false,isNotify: false);
                 });
               }
 
 
-              return SingleClub(clubProvider.clubList.getList()[index],index);
+              return SingleClubOperator(clubOperatorProvider.clubOperatorList.getList()[index],index);
             },
           );
         }
     );
   }
 
-
-  Widget SingleClub(ClubModel clubModel, index) {
+  Widget SingleClubOperator(ClubOperatorModel clubOperatorModel, index) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -190,16 +194,17 @@ class _ClubListScreenState extends State<ClubListScreen> {
         child: Row(
           children: [
             Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
-                ),
-                child: CommonCachedNetworkImage(
-                  imageUrl: clubModel.thumbnailImageUrl,
-                  height: 80,
-                  width: 80,
-                  borderRadius: 4,
-                )),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: Styles.bgSideMenu.withOpacity(.6)),
+              ),
+              child: CommonCachedNetworkImage(
+                imageUrl: clubOperatorModel.profileImageUrl,
+                height: 80,
+                width: 80,
+                borderRadius: 4,
+              ),
+            ),
             const SizedBox(
               width: 30,
             ),
@@ -207,21 +212,21 @@ class _ClubListScreenState extends State<ClubListScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CommonText(
-                  text: clubModel.name,
+                  text: clubOperatorModel.name,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
                 const SizedBox(height: 5),
                 CommonText(
-                  text: 'Mobile Number: ${clubModel.mobileNumber}',
+                  text: 'Mobile Number: ${clubOperatorModel.mobileNumber}',
                   fontSize: 16,
                   fontWeight: FontWeight.normal,
                 ),
                 const SizedBox(height: 3),
                 CommonText(
-                  text: clubModel.createdTime == null
+                  text: clubOperatorModel.createdTime == null
                       ? 'Created Date: No Data'
-                      : 'Created Date: ${DateFormat("dd-MMM-yyyy").format(clubModel.createdTime!.toDate())}',
+                      : 'Created Date: ${DateFormat("dd-MMM-yyyy").format(clubOperatorModel.createdTime!.toDate())}',
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   fontSize: 14,
@@ -243,21 +248,22 @@ class _ClubListScreenState extends State<ClubListScreen> {
                         context: context,
                         builder: (context) {
                           return CommonPopup(
-                            text: "Want to Edit Club?",
+                            text: "Want to Edit this Club Operator?",
                             rightText: "Yes",
                             rightOnTap: () async {
                               Navigator.pop(context);
-                              NavigationController.navigateToAddClubScreen(
+                              await NavigationController.navigateToAddClubOperatorScreen(
                                 navigationOperationParameters: NavigationOperationParameters(
                                   navigationType: NavigationType.pushNamed,
-                                  context: NavigationController.clubScreenNavigator.currentContext!,
+                                  context: NavigationController.clubOperatorNavigator.currentContext!,
                                 ),
-                                addClubScreenNavigationArguments: AddClubScreenNavigationArguments(
-                                  clubModel: clubModel,
+                                addClubOperatorNavigationArguments: AddClubOperatorNavigationArguments(
+                                  clubOperatorModel: clubOperatorModel,
                                   index: index,
                                   isEdit: true,
                                 ),
                               );
+                              getData();
                             },
                           );
                         },
@@ -272,19 +278,26 @@ class _ClubListScreenState extends State<ClubListScreen> {
                         )),
                   ),
                 ),
-                const SizedBox(width: 15,),
+                const SizedBox(
+                  width: 15,
+                ),
                 InkWell(
                     onTap: () async {
-                      await deleteClub(clubModel,index);
+                      await deleteClubOperator(clubOperatorModel);
                     },
                     child: const Tooltip(
                       message: 'delete club',
                       child: Padding(
                         padding: EdgeInsets.all(15.0),
-                        child: Icon(Icons.delete,color: Colors.red,),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
                       ),
                     )),
-                const SizedBox(width: 15,),
+                const SizedBox(
+                  width: 15,
+                ),
                 Column(
                   children: [
                     CommonText(text: 'Admin'),
@@ -292,15 +305,16 @@ class _ClubListScreenState extends State<ClubListScreen> {
                       height: 3,
                     ),
                     getEnableSwitch(
-                        value: clubModel.adminEnabled,
-                        onChanged: (val) {
-                          clubController.EnableDisableClubInFirebase(
+                        value: clubOperatorModel.adminEnabled,
+                        onChanged: (val) async {
+                          await clubOperatorController.EnableDisableClubOperatorInFirebase(
                             adminEnabled: val ?? true,
-                            id: clubModel.id,
-                            model: clubModel,
+                            id: clubOperatorModel.id,
+                            model: clubOperatorModel,
                           );
                           setState((){});
-                        }),
+                        }
+                        ),
                   ],
                 ),
                 const SizedBox(height: 5),

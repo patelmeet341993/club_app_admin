@@ -1,7 +1,7 @@
 import 'package:club_model/backend/common/common_provider.dart';
 import 'package:club_model/club_model.dart';
 
-class AdminProvider extends CommonProvider {
+class MyAdminProvider extends CommonProvider {
   PropertyModel _propertyModel = PropertyModel();
   PropertyModel get propertyModel => _propertyModel;
 
@@ -18,7 +18,4 @@ class AdminProvider extends CommonProvider {
     notify(isNotify: isNotify);
   }
 
-  List<String> getBannerImages() {
-    return propertyModel.bannerImages;
-  }
 }

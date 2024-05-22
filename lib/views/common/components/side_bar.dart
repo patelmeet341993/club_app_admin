@@ -30,19 +30,19 @@ class _SideBarState extends State<SideBar> {
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
                   ),
-                  InkWell(
-                      onTap: () {
-                        // showDialog(context: context, builder: (context){
-                        //   return NotificationDialog();
-                        // });
-                      },
-                      child: Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                          child: Icon(
-                            Icons.notifications,
-                            color: Colors.white,
-                          ))),
+                  // InkWell(
+                  //     onTap: () {
+                  //       // showDialog(context: context, builder: (context){
+                  //       //   return NotificationDialog();
+                  //       // });
+                  //     },
+                  //     child: Container(
+                  //         padding:
+                  //             EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                  //         child: Icon(
+                  //           Icons.notifications,
+                  //           color: Colors.white,
+                  //         ))),
                 ],
               ),
             ),

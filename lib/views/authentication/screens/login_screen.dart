@@ -38,9 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> checkAdmin() async {
     AdminUserModel? adminModel = await AdminUserRepository().checkLoginAdminMethod(adminId: idController.text, password: passwordController.text.trim());
     if (adminModel == null) {
-      ClubModel? clubModel = await ClubRepository().checkLoginClubMethod(adminId: idController.text, password: passwordController.text.trim());
-      if (clubModel != null) {
-        clubProvider.setClubModel(clubModel);
+      // ClubModel? clubModel = await ClubRepository().checkLoginClubMethod(adminId: idController.text, password: passwordController.text.trim());
+      // if (clubModel != null) {
+      //   clubProvider.setClubModel(clubModel);
         if (context.mounted && context.checkMounted()) {
           MyToast.showSuccess(context: context, msg: "Logged In Successfully");
           NavigationController.navigateToHomeScreen(
@@ -52,11 +52,11 @@ class _LoginScreenState extends State<LoginScreen> {
         }
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setBool(MySharePreferenceKeys.isLogin, true);
-      } else {
-        if (context.mounted && context.checkMounted()) {
-          MyToast.showError(context: context, msg: "Please Enter Valid ID or Password");
-        }
-      }
+      // } else {
+      //   if (context.mounted && context.checkMounted()) {
+      //     MyToast.showError(context: context, msg: "Please Enter Valid ID or Password");
+      //   }
+      // }
     } else {
       adminProvider.setAdminUserModel(adminModel);
       if (context.mounted && context.checkMounted()) {
